@@ -7,6 +7,10 @@ using namespace Net;
 void ProtocolHandler::start()
 {
   session_.request(10);
+  std::string str("Hello !");
+  ByteArray b(str.size());
+  memcpy(&b[0], str.c_str(), str.size());
+  session_.post(std::move(b));
   state_ = WAIT_HEADER;
 }
 

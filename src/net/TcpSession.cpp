@@ -2,6 +2,7 @@
 #include "net/ProtocolHandler.hpp"
 #include <iostream>
 #include <functional>
+#include "Log.hpp"
 
 using namespace Net;
 
@@ -17,7 +18,7 @@ writing_(false)
 
 TcpSession::~TcpSession()
 {
-  std::cout << "TcpSession desotryed" << std::endl;
+  INFO("TcpSession destroyed");
 }
 
 void TcpSession::request(std::size_t length)
@@ -56,7 +57,7 @@ void TcpSession::do_read()
 void TcpSession::post(ByteArray && bytes)
 {
   packetQueue_.push(bytes);
-  socket_.get_io_service().post(std::bind(&TcpSession::do_write, this));
+  socket_.get_io_service().post(std::bind(&TcpSession::do_write, shared_from_this()));
 }
 
 void TcpSession::do_write()
