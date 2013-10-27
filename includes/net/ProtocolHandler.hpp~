@@ -1,0 +1,21 @@
+#include <boost/asio.hpp>
+#include <boost/asio/steady_timer.hpp>
+#include <iostream>
+
+namespace Net
+{
+  using boost::asio::ip::tcp;
+  
+  class ProtocolHandler 
+  {
+  public:
+
+  private:
+    TcpSession & session_;
+    boost::asio::steady_timer timer_;
+    boost::asio::io_service::strand strand_;
+    enum { PACKET_MAX_LENGTH = 4096 };
+    char	data_[PACKET_MAX_LENGTH];
+  };
+};
+

@@ -1,0 +1,93 @@
+#include "net/TcpSession.hpp"
+#include "net/ProtocolHandler.hpp"
+#include <iostream>
+#include <functional>
+
+using namespace Net;
+
+TcpSession::TcpSession(tcp::socket socket) :
+socket_(std::move(socket)),
+timer_(socket_.get_io_service()),
+strand_(socket_.get_io_service()),
+protocolHandler_(std::make_shared<ProtocolHandler>(*this)),
+writing_(false)
+{
+  std::cout << "New TcpSession created." << std::endl;
+}
+
+TcpSession::~TcpSession()
+{
+  std::cout << "TcpSession desotryed" << std::endl;
+}
+
+void TcpSession::request(std::size_t length)
+{
+  readBuffers_.push(std::move(ByteArray(length)));
+  if (reading_) // queue the buffer;
+    {
+      return;
+    }
+  do_read();
+}
+
+void TcpSession::do_read()
+{
+  if (reading_ || readBuffers_.empty())
+    return;
+  reading_ = true;
+  writing_ = true;
+  auto self(shared_from_this());
+  auto bytePtr = std::make_shared<ByteArray > (std::move(readBuffers_.front()));
+  readBuffers_.pop();
+
+  boost::asio::async_read(socket_, boost::asio::buffer(*bytePtr),
+                          [this, self, bytePtr]
+                          (boost::system::error_code ec, std::size_t length)
+  {
+                          reading_ = false;
+                          if (!ec)
+      {
+                          protocolHandler_->bytesAvailable(std::move(*bytePtr));
+                          do_read();
+      }
+  });
+}
+
+void TcpSession::post(ByteArray && bytes)
+{
+  packetQueue_.push(bytes);
+  socket_.get_io_service().post(std::bind(&TcpSession::do_write, this));
+}
+
+void TcpSession::do_write()
+{
+  if (writing_ || packetQueue_.empty())
+    return;
+  writing_ = true;
+  auto self(shared_from_this());
+  auto bytePtr = std::make_shared<ByteArray > (std::move(packetQueue_.front()));
+  packetQueue_.pop();
+  // We keep the bytesPtr by value, so we guarantee that the buffer memory stays
+  // valid until the read completes.
+
+  boost::asio::async_write(socket_, boost::asio::buffer(*bytePtr),
+                           [this, self, bytePtr](boost::system::error_code ec, std::size_t /*length*/)
+  {
+                           writing_ = false;
+                           if (!ec)
+      {
+                           do_write();
+      }
+    else
+      {
+                           std::cerr << "error" << std::endl;
+      }
+  });
+
+}
+
+void TcpSession::start()
+{
+  std::cout << "Starting TcpSession." << std::endl;
+  protocolHandler_->start();
+}

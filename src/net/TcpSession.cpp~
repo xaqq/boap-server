@@ -1,0 +1,18 @@
+#include "net/TcpSession.hpp"
+#include <iostream>
+
+namespace Net
+{
+  using boost::asio::ip;
+  class TcpSession : public std::enable_shared_from_this<TcpSession>
+  {
+  public:
+    TcpSession(tcp::socket socket) : socket_(std::move(socket))
+    {
+      std::cout << "New TcpSession started..." < std::endl;
+    }
+
+    private:
+    tcp::socket socket_;
+  };
+};
