@@ -41,14 +41,6 @@ namespace Net
     void do_read();
     void do_write();
     tcp::socket socket_;
-    boost::asio::steady_timer timer_;
-    boost::asio::io_service::strand strand_;
-
-    enum
-    {
-      PACKET_MAX_LENGTH = 4096
-    };
-    char data_[PACKET_MAX_LENGTH];
 
     /**
      * Read buffer; We build a new buffer each time a request()

@@ -5,7 +5,7 @@
 int main(int argc, char* argv[])
 {
   try
-    {
+    {            
       Log::defaultConfig();
       boost::asio::io_service io_service;
       Net::TcpServer server(io_service, 4242);

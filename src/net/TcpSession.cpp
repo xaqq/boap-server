@@ -8,12 +8,10 @@ using namespace Net;
 
 TcpSession::TcpSession(tcp::socket socket) :
 socket_(std::move(socket)),
-timer_(socket_.get_io_service()),
-strand_(socket_.get_io_service()),
 protocolHandler_(std::make_shared<ProtocolHandler>(*this)),
 writing_(false)
 {
-  std::cout << "New TcpSession created." << std::endl;
+  INFO("New TcpSession created:" << this);
 }
 
 TcpSession::~TcpSession()
