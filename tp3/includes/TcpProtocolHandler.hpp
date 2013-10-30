@@ -6,8 +6,7 @@
  */
 
 #pragma once
-
-#include "net/DefaultTcpProtocolHandler.hpp"
+#include "net/ATcpProtocolHandler.hpp"
 
 namespace Net
 {
@@ -15,7 +14,7 @@ namespace Net
 
   class TcpSession;
 
-  class TcpProtocolHandler : public DefaultTcpProtocolHandler
+  class TcpProtocolHandler : public ATcpProtocolHandler
   {
   public:
 
@@ -26,9 +25,20 @@ namespace Net
     void bytesAvailable(ByteArray && bytes);
     void start();
     void stop();
-    
+
   private:
+    std::size_t opcode_;
+    std::size_t packetSize_;
     std::size_t bytesReceived_;
+
+    void readOpcode(ByteArray && bytes);
+    void readSize(ByteArray && bytes);
+    void readBody(ByteArray && bytes);
+
+    /**
+     * Internal handler called by bytesAvailable.
+     */
+    std::function<void(ByteArray &&) > handler_;
   };
 };
 

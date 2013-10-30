@@ -8,6 +8,8 @@ add_subdirectory("default-impl")
 
 #link_directories("logger/logger")
 set(SOURCES src/main.cpp
+            src/net/ATcpProtocolHandler.cpp
+            src/net/AUdpProtocolHandler.cpp
 	    src/net/TcpServer.cpp
 	    src/net/TcpSession.cpp
             src/net/UdpServer.cpp

@@ -1,18 +1,20 @@
 #include "net/TcpSession.hpp"
 #include "TcpProtocolHandler.hpp"
 #include <iostream>
+#include <functional>
 #include "Log.hpp"
 
 using namespace Net;
 
 TcpProtocolHandler::TcpProtocolHandler(TcpSession & s) :
-DefaultTcpProtocolHandler(s),
+ATcpProtocolHandler(s),
 bytesReceived_(0) { }
 
 void TcpProtocolHandler::start()
 {
   INFO("Starting TP3 protocol handler !");
-  session().request(1);
+  session().request(sizeof (opcode_));
+  handler_ = std::bind(&TcpProtocolHandler::readOpcode, this, std::placeholders::_1);
 }
 
 void TcpProtocolHandler::stop()
@@ -20,14 +22,45 @@ void TcpProtocolHandler::stop()
   INFO("Protocol handler stopped");
 }
 
+void TcpProtocolHandler::readOpcode(ByteArray && bytes)
+{
+  assert(bytes.size() == sizeof (opcode_));
+  memcpy(&opcode_, &bytes[0], sizeof (opcode_));
+
+  DEBUG("RECEIVED OPCODE");
+  handler_ = std::bind(&TcpProtocolHandler::readSize, this, std::placeholders::_1);
+  session().request(sizeof (packetSize_));
+}
+
+void TcpProtocolHandler::readSize(ByteArray && bytes)
+{
+  assert(bytes.size() == sizeof (packetSize_));
+  memcpy(&packetSize_, &bytes[0], sizeof (packetSize_));
+  DEBUG("RECEIVED SIZE: " << packetSize_ );
+  
+  if (packetSize_ > 1024)
+    {
+      WARN("Packet too big ! (" << packetSize_ << ")");
+      handler_ = std::bind(&TcpProtocolHandler::readOpcode, this, std::placeholders::_1);
+      session().request(sizeof(opcode_));
+      return;
+    }
+  
+  handler_ = std::bind(&TcpProtocolHandler::readBody, this, std::placeholders::_1);
+  session().request(packetSize_);
+}
+
+void TcpProtocolHandler::readBody(ByteArray && bytes)
+{
+  assert(bytes.size() == packetSize_);
+
+  INFO("Received Body");
+
+  handler_ = std::bind(&TcpProtocolHandler::readOpcode, this, std::placeholders::_1);
+  session().request(sizeof (opcode_));
+}
+
 void TcpProtocolHandler::bytesAvailable(ByteArray && bytes)
 {
-  bytesReceived_ += bytes.size();
-  ByteArray msg;
-  std::stringstream ss;
-  ss << "We received " << bytesReceived_ << " bytes from you." << std::endl;  
-  msg.resize(ss.str().size());
-  memcpy(&msg[0], ss.str().c_str(), ss.str().size());
-  session().post(std::move(msg));
-  session().request(1);
+  handler_(std::move(bytes));
 }

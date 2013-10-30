@@ -9,13 +9,17 @@
 #define	DEFAULTUDPPROTOCOLHANDLER_HPP
 
 #include <string>
-#include "net/IUdpProtocolHandler.hpp"
+#include "net/AUdpProtocolHandler.hpp"
 
 namespace Net
 {
   class UdpServer;
 
-  class DefaultUdpProtocolHandler : public IUdpProtocolHandler
+  /**
+   * Default UDP Handler; This class receive all datagram the server receive,
+   * and send them back; You can build a client-based dispatcher from this class;
+   */
+  class DefaultUdpProtocolHandler : public AUdpProtocolHandler
   {
   public:
     DefaultUdpProtocolHandler(UdpServer &s);
@@ -23,13 +27,6 @@ namespace Net
     virtual ~DefaultUdpProtocolHandler();
 
     virtual void bytesAvailable(ByteArray && bytes, boost::asio::ip::udp::endpoint e);
-  protected:
-    /**
-     * Call this function to write data to a endpoint; ByteArray will be passed
-     * to the UDP server;
-     */
-    void write(ByteArray && bytes, boost::asio::ip::udp::endpoint e);
-    UdpServer &server_;
   };
 
 }

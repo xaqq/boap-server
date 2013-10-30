@@ -1,7 +1,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <iostream>
-#include "net/ITcpProtocolHandler.hpp"
+#include "net/ATcpProtocolHandler.hpp"
 #include "net/TcpSession.hpp"
 
 #pragma once
@@ -12,24 +12,16 @@ namespace Net
 
   class TcpSession;
 
-  class DefaultTcpProtocolHandler : public ITcpProtocolHandler
+  class DefaultTcpProtocolHandler : public ATcpProtocolHandler
   {
   public:
 
-    DefaultTcpProtocolHandler(TcpSession & s) : ITcpProtocolHandler(s), session_(s) { }
+    DefaultTcpProtocolHandler(TcpSession & s) : ATcpProtocolHandler(s) { }
     virtual ~DefaultTcpProtocolHandler();
 
     virtual void bytesAvailable(ByteArray && bytes);
     virtual void start();
     virtual void stop();
-
-  private:
-    TcpSession &session_;
-
-  protected:
-
-    TcpSession &session() override;
-    const TcpSession &session() const override;
   };
 };
 
