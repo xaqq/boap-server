@@ -21,6 +21,13 @@ namespace Net
      * Called by the server when ready
      */
     void start();
+    
+    /**
+     * Called by the server when stopped
+     * @param bytes
+     */
+    void stop();
+    
     /**
      * Called by ProtocolHandler implemented to request some data.
      * When thoses are available, the socket will notify the ProtocolHandler.

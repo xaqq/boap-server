@@ -5,6 +5,18 @@
 
 using namespace Net;
 
+TcpServer::TcpServer(boost::asio::io_service& io_service, short port)
+: acceptor_(io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)),
+socket_(io_service)
+{
+  do_accept();
+}
+
+TcpServer::~TcpServer()
+{
+  INFO("TcpServer deleted");
+}
+
 void TcpServer::do_accept()
 {
 
@@ -21,6 +33,6 @@ void TcpServer::do_accept()
 
 void TcpServer::stop()
 {
-  INFO("Stopping server...");
+  INFO("Stopping TCP server...");
   acceptor_.get_io_service().stop();
 }

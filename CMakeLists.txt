@@ -7,8 +7,10 @@ add_subdirectory("logger/logger")
 set(SOURCES src/main.cpp
 	    src/net/TcpServer.cpp
 	    src/net/TcpSession.cpp
+            src/net/UdpServer.cpp
             src/net/IProtocolHandler.cpp
-	    src/net/ProtocolHandler.cpp)
+	    src/net/ProtocolHandler.cpp
+            src/Server.cpp)
 
 find_package(Boost COMPONENTS system REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS} "includes" "logger/logger/includes")

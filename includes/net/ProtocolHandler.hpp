@@ -19,6 +19,7 @@ namespace Net
     virtual ~ProtocolHandler() { };
     void bytesAvailable(ByteArray &&bytes);
     void start();
+    void stop();
 
   private:
     void recvHeader(const char *data, std::size_t length);

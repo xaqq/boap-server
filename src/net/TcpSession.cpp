@@ -49,6 +49,11 @@ void TcpSession::do_read()
                           protocolHandler_->bytesAvailable(std::move(*bytePtr));
                           do_read();
       }
+    else
+      {
+                          ERROR("Error reading on socket " << ec);
+                          this->stop();
+      }
   });
 }
 
@@ -79,7 +84,8 @@ void TcpSession::do_write()
       }
     else
       {
-                           std::cerr << "error" << std::endl;
+                           ERROR("Error writing on socket " << ec);
+                           this->stop();
       }
   });
 
@@ -87,6 +93,13 @@ void TcpSession::do_write()
 
 void TcpSession::start()
 {
-  std::cout << "Starting TcpSession." << std::endl;
+  INFO("Starting TcpSession: " << this);
   protocolHandler_->start();
+}
+
+void TcpSession::stop()
+{
+  INFO("Stopping TcpSession: " << this);
+  protocolHandler_->stop();
+  socket_.close();
 }

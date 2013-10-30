@@ -23,7 +23,8 @@ namespace Net
      * 
      * @param bytes ByteArray you requested; Those data are your responsability now;
      */
-    virtual void bytesAvailable(ByteArray &&bytes) = 0;
+    virtual void bytesAvailable(ByteArray && bytes) = 0;
     virtual void start() = 0;
+    virtual void stop() = 0;
   };
 };
