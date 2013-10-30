@@ -7,12 +7,14 @@
 
 #include "net/UdpServer.hpp"
 #include "Log.hpp"
+#include "BoapFactory.hpp"
 using namespace Net;
 using namespace boost::asio::ip;
 
 UdpServer::UdpServer(boost::asio::io_service& io_service, short port) :
 socket_(io_service, udp::endpoint(udp::v4(), port)),
-buffer_(PACKET_MAX_SIZE)
+buffer_(PACKET_MAX_SIZE),
+protocolHandler_(BoapFactory::createUdpProtocolHandler())
 {
   start_receive();
 }
@@ -36,7 +38,10 @@ void UdpServer::start_receive()
                              [this](boost::system::error_code ec,
                                     std::size_t bytes)
   {
-                             INFO("Received UDP datagram from unknown endpoint");
+                             protocolHandler_->bytesAvailable(std::move(buffer_),
+                                                              std::make_pair(remoteEndpoint_.port(),
+                                                                             remoteEndpoint_.address().to_string()));
+                             buffer_.resize(PACKET_MAX_SIZE);
                              start_receive();
   });
 }

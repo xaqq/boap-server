@@ -9,6 +9,7 @@ include_directories ("${PROJECT_SOURCE_DIR}/includes" "${PROJECT_SOURCE_DIR}/../
 
 set (SOURCES
   "src/DefaultTcpProtocolHandler.cpp"
+  "src/DefaultUdpProtocolHandler.cpp"
   "src/BoapFactory.cpp"
 )
 

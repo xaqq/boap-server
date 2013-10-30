@@ -19,13 +19,13 @@ namespace Net
     DefaultTcpProtocolHandler(TcpSession & s) : ITcpProtocolHandler(s), session_(s) { }
     virtual ~DefaultTcpProtocolHandler();
 
-    void bytesAvailable(ByteArray && bytes);
-    void start();
-    void stop();
+    virtual void bytesAvailable(ByteArray && bytes);
+    virtual void start();
+    virtual void stop();
 
   private:
     TcpSession &session_;
-   
+
   protected:
 
     TcpSession &session() override;

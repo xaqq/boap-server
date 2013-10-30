@@ -10,6 +10,7 @@
 #include <boost/asio.hpp>
 
 #include "ITcpProtocolHandler.hpp"
+#include "IUdpProtocolHandler.hpp"
 
 
 namespace Net
@@ -40,6 +41,7 @@ namespace Net
     boost::asio::ip::udp::socket socket_;
     boost::asio::ip::udp::endpoint remoteEndpoint_;
     ByteArray buffer_;
+    std::shared_ptr<IUdpProtocolHandler> protocolHandler_;
   };
 }
 
