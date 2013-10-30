@@ -9,7 +9,7 @@
 #define	UDPSERVER_HPP
 #include <boost/asio.hpp>
 
-#include "IProtocolHandler.hpp"
+#include "ITcpProtocolHandler.hpp"
 
 
 namespace Net

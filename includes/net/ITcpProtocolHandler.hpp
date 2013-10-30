@@ -9,13 +9,13 @@ namespace Net
 
   class TcpSession;
 
-  class IProtocolHandler
+  class ITcpProtocolHandler
   {
   public:
 
-    IProtocolHandler(TcpSession &);
+    ITcpProtocolHandler(TcpSession &);
 
-    virtual ~IProtocolHandler();
+    virtual ~ITcpProtocolHandler();
     /**
      * This method is called by the socket when the data you requested are available;
      * You SHOULD call session_.request(std::size_t) to request more data, otherwise

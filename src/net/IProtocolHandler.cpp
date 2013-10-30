@@ -1,7 +1,7 @@
-#include "net/IProtocolHandler.hpp"
+#include "net/ITcpProtocolHandler.hpp"
 
 using namespace Net;
 
-IProtocolHandler::IProtocolHandler(TcpSession &) { }
+ITcpProtocolHandler::ITcpProtocolHandler(TcpSession &) { }
 
-IProtocolHandler::~IProtocolHandler() { }
+ITcpProtocolHandler::~ITcpProtocolHandler() { }

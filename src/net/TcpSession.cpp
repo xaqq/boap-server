@@ -1,5 +1,5 @@
 #include "net/TcpSession.hpp"
-#include "net/ProtocolHandler.hpp"
+#include "net/DefaultTcpProtocolHandler.hpp"
 #include <iostream>
 #include <functional>
 #include "Log.hpp"
@@ -8,7 +8,7 @@ using namespace Net;
 
 TcpSession::TcpSession(tcp::socket socket) :
 socket_(std::move(socket)),
-protocolHandler_(std::make_shared<ProtocolHandler>(*this)),
+protocolHandler_(std::make_shared<DefaultTcpProtocolHandler>(*this)),
 writing_(false)
 {
   INFO("New TcpSession created:" << this);

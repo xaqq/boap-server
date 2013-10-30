@@ -1,11 +1,11 @@
 #include "net/TcpSession.hpp"
-#include "net/ProtocolHandler.hpp"
+#include "net/DefaultTcpProtocolHandler.hpp"
 #include <iostream>
 #include "Log.hpp"
 
 using namespace Net;
 
-void ProtocolHandler::start()
+void DefaultTcpProtocolHandler::start()
 {
   session_.request(10);
   std::string str("Hello !");
@@ -15,12 +15,12 @@ void ProtocolHandler::start()
   state_ = WAIT_HEADER;
 }
 
-void ProtocolHandler::stop()
+void DefaultTcpProtocolHandler::stop()
 {
   INFO("Protocol handler stopped");
 }
 
-void ProtocolHandler::bytesAvailable(ByteArray && bytes)
+void DefaultTcpProtocolHandler::bytesAvailable(ByteArray && bytes)
 {
   std::cout << "Read (" << bytes.size() << "): ";
   for (char b : bytes)
@@ -29,7 +29,7 @@ void ProtocolHandler::bytesAvailable(ByteArray && bytes)
   //session_.request(10);
 }
 
-void ProtocolHandler::recvHeader(const char *data, std::size_t length)
+void DefaultTcpProtocolHandler::recvHeader(const char *data, std::size_t length)
 {
   assert(length == 4);
   memcpy(&packetSize_, &data[0], 2);
@@ -45,7 +45,7 @@ void ProtocolHandler::recvHeader(const char *data, std::size_t length)
     }
 }
 
-void ProtocolHandler::recvBody(const char *data, std::size_t length)
+void DefaultTcpProtocolHandler::recvBody(const char *data, std::size_t length)
 {
   std::cout << "Packet body" << std::endl;
 }

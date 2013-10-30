@@ -1,7 +1,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <iostream>
-#include "net/IProtocolHandler.hpp"
+#include "net/ITcpProtocolHandler.hpp"
 #include "TcpSession.hpp"
 
 namespace Net
@@ -10,13 +10,13 @@ namespace Net
 
   class TcpSession;
 
-  class ProtocolHandler : public IProtocolHandler
+  class DefaultTcpProtocolHandler : public ITcpProtocolHandler
   {
   public:
 
-    ProtocolHandler(TcpSession & s) : IProtocolHandler(s), session_(s) { }
+    DefaultTcpProtocolHandler(TcpSession & s) : ITcpProtocolHandler(s), session_(s) { }
 
-    virtual ~ProtocolHandler() { };
+    virtual ~DefaultTcpProtocolHandler() { };
     void bytesAvailable(ByteArray &&bytes);
     void start();
     void stop();
