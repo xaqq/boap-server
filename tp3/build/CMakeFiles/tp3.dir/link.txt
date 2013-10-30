@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC -std=c++11 -W -Wall -g   -shared -Wl,-soname,libtp3.so -o libtp3.so CMakeFiles/tp3.dir/src/TcpProtocolHandler.cpp.o CMakeFiles/tp3.dir/src/BoapFactory.cpp.o 
