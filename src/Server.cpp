@@ -19,7 +19,7 @@ void Server::run()
   while (isRunning_)
     {
       INFO("Server is running");
-      sleep(10);
+      sleep(1);
     }
 }
 

@@ -8,7 +8,8 @@
 #ifndef UDPSERVER_HPP
 #define	UDPSERVER_HPP
 #include <boost/asio.hpp>
-
+#include <queue>
+#include <memory>
 #include "ITcpProtocolHandler.hpp"
 #include "IUdpProtocolHandler.hpp"
 
@@ -16,7 +17,7 @@
 namespace Net
 {
 
-  class UdpServer
+  class UdpServer : public std::enable_shared_from_this<UdpServer>
   {
   public:
 
@@ -32,16 +33,22 @@ namespace Net
      * Schedule read on socket
      */
     void start_receive();
+    
+    void write(ByteArray &&data, boost::asio::ip::udp::endpoint);
 
   private:
+    void do_write();
     enum
     {
       PACKET_MAX_SIZE = 4096
     };
+    bool writing_;
     boost::asio::ip::udp::socket socket_;
     boost::asio::ip::udp::endpoint remoteEndpoint_;
     ByteArray buffer_;
     std::shared_ptr<IUdpProtocolHandler> protocolHandler_;
+    // need thread safe queue
+    std::queue<std::pair<boost::asio::ip::udp::endpoint, ByteArray>> packetQueue_;
   };
 }
 

@@ -68,9 +68,6 @@ void TcpSession::do_write()
   auto self(shared_from_this());
   auto bytePtr = std::make_shared<ByteArray > (std::move(packetQueue_.front()));
   packetQueue_.pop();
-  // We keep the bytesPtr by value, so we guarantee that the buffer memory stays
-  // valid until the read completes.
-
   boost::asio::async_write(socket_, boost::asio::buffer(*bytePtr),
                            [this, self, bytePtr](boost::system::error_code ec, std::size_t /*length*/)
   {

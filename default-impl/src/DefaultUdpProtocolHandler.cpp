@@ -6,16 +6,28 @@
  */
 
 #include "net/DefaultUdpProtocolHandler.hpp"
+#include "net/UdpServer.hpp"
 #include "Log.hpp"
+#include "net/DefaultTcpProtocolHandler.hpp"
 
 using namespace Net;
 
-DefaultUdpProtocolHandler::DefaultUdpProtocolHandler() { }
+DefaultUdpProtocolHandler::DefaultUdpProtocolHandler(UdpServer &s) : IUdpProtocolHandler(s),
+server_(s)
+{
+  INFO("Instanciating DefaultUdpProtocolHandler; I'm an echo server too !");
+}
 
 DefaultUdpProtocolHandler::~DefaultUdpProtocolHandler() { }
 
 void DefaultUdpProtocolHandler::bytesAvailable(ByteArray && bytes,
-                                               std::pair<unsigned short, std::string> endpoint)
+                                               boost::asio::ip::udp::endpoint e)
 {
-  INFO("Received UDP datagram from " << endpoint.second << ":" << endpoint.first);
+  INFO("Received UDP datagram from " << e.address().to_string() << ":" << e.port());
+  write(std::move(bytes), e);
+}
+
+void DefaultUdpProtocolHandler::write(ByteArray && bytes, boost::asio::ip::udp::endpoint e)
+{
+  server_.write(std::move(bytes), e);
 }

@@ -13,17 +13,23 @@
 
 namespace Net
 {
+  class UdpServer;
 
   class DefaultUdpProtocolHandler : public IUdpProtocolHandler
   {
   public:
-    DefaultUdpProtocolHandler();
+    DefaultUdpProtocolHandler(UdpServer &s);
     DefaultUdpProtocolHandler(const DefaultUdpProtocolHandler& orig) = delete;
     virtual ~DefaultUdpProtocolHandler();
 
-    virtual void bytesAvailable(ByteArray && bytes, std::pair<unsigned short, std::string>);
-  private:
-
+    virtual void bytesAvailable(ByteArray && bytes, boost::asio::ip::udp::endpoint e);
+  protected:
+    /**
+     * Call this function to write data to a endpoint; ByteArray will be passed
+     * to the UDP server;
+     */
+    void write(ByteArray && bytes, boost::asio::ip::udp::endpoint e);
+    UdpServer &server_;
   };
 
 }

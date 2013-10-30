@@ -9,18 +9,19 @@ namespace Net
 {
   using boost::asio::ip::tcp;
 
+  class UdpServer;
   class IUdpProtocolHandler
   {
   public:
 
-    IUdpProtocolHandler() {};
+    IUdpProtocolHandler(UdpServer &) { };
 
-    virtual ~IUdpProtocolHandler() {};
+    virtual ~IUdpProtocolHandler() { };
     /**
-     * This method is called by the socket when the data you requested are available;
+     * This method is called by the socket when datagram are available
      * 
      * @param bytes ByteArray you requested; Those data are your responsability now;
      */
-    virtual void bytesAvailable(ByteArray && bytes, std::pair<unsigned short, std::string>) = 0;
+    virtual void bytesAvailable(ByteArray && bytes, boost::asio::ip::udp::endpoint e) = 0;
   };
 };
