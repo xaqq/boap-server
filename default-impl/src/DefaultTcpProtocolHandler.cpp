@@ -5,6 +5,8 @@
 
 using namespace Net;
 
+DefaultTcpProtocolHandler::~DefaultTcpProtocolHandler() { }
+
 void DefaultTcpProtocolHandler::start()
 {
   INFO("Starting default protocol handler on socket."

@@ -9,9 +9,7 @@
 namespace Net
 {
   using boost::asio::ip::tcp;
-
-  class DefaultTcpProtocolHandler;
-
+  class ITcpProtocolHandler;
   class TcpSession : public std::enable_shared_from_this<TcpSession>
   {
   public:
@@ -54,7 +52,7 @@ namespace Net
      */
     std::queue<ByteArray> readBuffers_;
 
-    std::shared_ptr<DefaultTcpProtocolHandler> protocolHandler_;
+    std::shared_ptr<ITcpProtocolHandler> protocolHandler_;
 
     // TODO: Need thread safe queue
     std::queue<ByteArray> packetQueue_;

@@ -3,6 +3,8 @@
 #include <iostream>
 #include "ByteArray.hpp"
 
+#pragma once
+
 namespace Net
 {
   using boost::asio::ip::tcp;
@@ -13,9 +15,9 @@ namespace Net
   {
   public:
 
-    ITcpProtocolHandler(TcpSession &);
+    ITcpProtocolHandler(TcpSession &) {};
 
-    virtual ~ITcpProtocolHandler();
+    virtual ~ITcpProtocolHandler() {};
     /**
      * This method is called by the socket when the data you requested are available;
      * You SHOULD call session_.request(std::size_t) to request more data, otherwise

@@ -1,14 +1,15 @@
 #include "net/TcpSession.hpp"
-#include "net/DefaultTcpProtocolHandler.hpp"
+#include "net/ITcpProtocolHandler.hpp"
 #include <iostream>
 #include <functional>
 #include "Log.hpp"
+#include "BoapFactory.hpp"
 
 using namespace Net;
 
 TcpSession::TcpSession(tcp::socket socket) :
 socket_(std::move(socket)),
-protocolHandler_(std::make_shared<DefaultTcpProtocolHandler>(*this)),
+protocolHandler_(BoapFactory::createTcpProtocolHandler(*this)),
 writing_(false),
 reading_(false)
 {
