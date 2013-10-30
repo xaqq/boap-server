@@ -26,5 +26,12 @@ namespace Net
     virtual void bytesAvailable(ByteArray && bytes) = 0;
     virtual void start() = 0;
     virtual void stop() = 0;
+    /**
+     * ProtocolHandler must provide a way to retrieve session.
+     * This will be implemented in the TcpDefaultProtocolHandler.
+     */
+  protected:
+    virtual TcpSession &session() = 0;
+    virtual const TcpSession &session() const = 0;
   };
 };

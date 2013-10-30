@@ -9,7 +9,8 @@ using namespace Net;
 TcpSession::TcpSession(tcp::socket socket) :
 socket_(std::move(socket)),
 protocolHandler_(std::make_shared<DefaultTcpProtocolHandler>(*this)),
-writing_(false)
+writing_(false),
+reading_(false)
 {
   INFO("New TcpSession created:" << this);
 }
@@ -22,10 +23,6 @@ TcpSession::~TcpSession()
 void TcpSession::request(std::size_t length)
 {
   readBuffers_.push(std::move(ByteArray(length)));
-  if (reading_) // queue the buffer;
-    {
-      return;
-    }
   do_read();
 }
 
@@ -34,7 +31,6 @@ void TcpSession::do_read()
   if (reading_ || readBuffers_.empty())
     return;
   reading_ = true;
-  writing_ = true;
   auto self(shared_from_this());
   auto bytePtr = std::make_shared<ByteArray > (std::move(readBuffers_.front()));
   readBuffers_.pop();
@@ -59,7 +55,7 @@ void TcpSession::do_read()
 
 void TcpSession::post(ByteArray && bytes)
 {
-  packetQueue_.push(bytes);
+  packetQueue_.push(std::move(bytes));
   socket_.get_io_service().post(std::bind(&TcpSession::do_write, shared_from_this()));
 }
 

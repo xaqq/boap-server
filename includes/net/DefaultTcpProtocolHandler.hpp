@@ -15,31 +15,19 @@ namespace Net
   public:
 
     DefaultTcpProtocolHandler(TcpSession & s) : ITcpProtocolHandler(s), session_(s) { }
-
     virtual ~DefaultTcpProtocolHandler() { };
-    void bytesAvailable(ByteArray &&bytes);
+
+    void bytesAvailable(ByteArray && bytes);
     void start();
     void stop();
 
   private:
-    void recvHeader(const char *data, std::size_t length);
-    void recvBody(const char *data, std::size_t length);
-
     TcpSession &session_;
-    short packetSize_;
-    short opcode_;
+   
+  protected:
 
-    enum
-    {
-      PACKET_HEADER = 4
-    };
-
-    enum State
-    {
-      IDLE, WAIT_HEADER, WAIT_BODY
-    };
-    enum State state_;
-
+    TcpSession &session() override;
+    const TcpSession &session() const override;
   };
 };
 

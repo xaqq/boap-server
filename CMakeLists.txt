@@ -3,13 +3,15 @@ project (boapd)
 
 add_definitions("-g -W -Wall -std=c++11")
 add_subdirectory("logger/logger")
+add_subdirectory("tp3")
+
 #link_directories("logger/logger")
 set(SOURCES src/main.cpp
 	    src/net/TcpServer.cpp
 	    src/net/TcpSession.cpp
             src/net/UdpServer.cpp
             src/net/IProtocolHandler.cpp
-	    src/net/ProtocolHandler.cpp
+	    src/net/DefaultTcpProtocolHandler.cpp
             src/Server.cpp)
 
 find_package(Boost COMPONENTS system REQUIRED)
