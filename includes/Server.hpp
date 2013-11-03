@@ -26,6 +26,8 @@ public:
    * Server main loop;
    */
   void run();
+  
+//  std::shared_ptr<AClient> newClient();
 private:
   std::atomic_bool isRunning_;
 

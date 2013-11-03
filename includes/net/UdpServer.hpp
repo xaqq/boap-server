@@ -37,18 +37,28 @@ namespace Net
     void write(ByteArray &&data, boost::asio::ip::udp::endpoint);
 
   private:
+    std::map<boost::asio::ip::udp::endpoint, std::shared_ptr<IUdpProtocolHandler>> handlers_;
+
+    /**
+     * Cleanup handler for inactive endpoint;
+     */
+    void cleanup();
+    
     void do_write();
     enum
     {
-      PACKET_MAX_SIZE = 4096
+      PACKET_MAX_SIZE = 4096,
+      INACTIVE_DELAY = 10
     };
     bool writing_;
     boost::asio::ip::udp::socket socket_;
     boost::asio::ip::udp::endpoint remoteEndpoint_;
     ByteArray buffer_;
-    std::shared_ptr<IUdpProtocolHandler> protocolHandler_;
     // need thread safe queue
     std::queue<std::pair<boost::asio::ip::udp::endpoint, ByteArray>> packetQueue_;
+    
+    
+    boost::asio::deadline_timer cleanupTimer_;
   };
 }
 

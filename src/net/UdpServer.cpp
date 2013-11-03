@@ -14,10 +14,11 @@ using namespace boost::asio::ip;
 UdpServer::UdpServer(boost::asio::io_service& io_service, short port) :
 socket_(io_service, udp::endpoint(udp::v4(), port)),
 buffer_(PACKET_MAX_SIZE),
-protocolHandler_(BoapFactory::createUdpProtocolHandler(*this)),
-writing_(false)
+writing_(false),
+cleanupTimer_(io_service, boost::posix_time::seconds(10))
 {
   start_receive();
+  cleanupTimer_.async_wait(std::bind(&UdpServer::cleanup, this));
 }
 
 UdpServer::~UdpServer()
@@ -33,15 +34,42 @@ void UdpServer::stop()
 
 void UdpServer::start_receive()
 {
+
   socket_.async_receive_from(
                              boost::asio::buffer(buffer_), remoteEndpoint_,
                              [this](boost::system::error_code ec,
                                     std::size_t bytes)
   {
-                             protocolHandler_->bytesAvailable(std::move(buffer_), remoteEndpoint_);
+
+                             if (!handlers_.count(remoteEndpoint_))
+      {
+                             INFO("Unkown UDP endpoint; Will instanciate protocol handler");
+                             handlers_[remoteEndpoint_] = BoapFactory::createUdpProtocolHandler(*this, remoteEndpoint_);
+      }
+                             handlers_[remoteEndpoint_]->bytesAvailable(std::move(buffer_));
+                             handlers_[remoteEndpoint_]->lastActivity(time(NULL));
                              buffer_.resize(PACKET_MAX_SIZE);
                              start_receive();
   });
+}
+
+void UdpServer::cleanup()
+{
+  cleanupTimer_.expires_at(cleanupTimer_.expires_at() + boost::posix_time::seconds(10));
+  cleanupTimer_.async_wait(std::bind(&UdpServer::cleanup, this));
+  for (auto it = handlers_.begin(); it != handlers_.end();
+          )
+    {
+      if (time(NULL) - (*it).second->lastActivity() > INACTIVE_DELAY)
+        {
+          INFO("Removing inactive handler...");
+          it = handlers_.erase(it);
+        }
+      else
+        {
+          ++it;
+        }
+    }
 }
 
 void UdpServer::write(ByteArray && data, boost::asio::ip::udp::endpoint e)

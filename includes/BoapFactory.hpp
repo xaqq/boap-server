@@ -27,7 +27,7 @@ public:
   virtual ~BoapFactory();
 
   static std::shared_ptr<Net::ITcpProtocolHandler> createTcpProtocolHandler(Net::TcpSession &);
-  static std::shared_ptr<Net::IUdpProtocolHandler> createUdpProtocolHandler(Net::UdpServer &);
+  static std::shared_ptr<Net::IUdpProtocolHandler> createUdpProtocolHandler(Net::UdpServer &, boost::asio::ip::udp::endpoint e);
 
 private:
 

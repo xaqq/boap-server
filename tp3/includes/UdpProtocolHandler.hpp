@@ -12,16 +12,14 @@
 namespace Net
 {
   class UdpServer;
+
   class UdpProtocolHandler : public AUdpProtocolHandler
   {
   public:
-    UdpProtocolHandler(UdpServer &);
+    UdpProtocolHandler(UdpServer &, boost::asio::ip::udp::endpoint e);
     virtual ~UdpProtocolHandler();
 
-    virtual void bytesAvailable(ByteArray && bytes, boost::asio::ip::udp::endpoint e);
-
-  private:
-    std::map<boost::asio::ip::udp::endpoint, std::function<void (ByteArray &&)>> handlers_;
+    virtual void bytesAvailable(ByteArray && bytes);
   };
 }
 #endif	/* UDPPROTOCOLHANDLER_HPP */

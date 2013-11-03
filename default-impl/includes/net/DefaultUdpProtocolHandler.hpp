@@ -22,11 +22,11 @@ namespace Net
   class DefaultUdpProtocolHandler : public AUdpProtocolHandler
   {
   public:
-    DefaultUdpProtocolHandler(UdpServer &s);
+    DefaultUdpProtocolHandler(UdpServer &s, boost::asio::ip::udp::endpoint e);
     DefaultUdpProtocolHandler(const DefaultUdpProtocolHandler& orig) = delete;
     virtual ~DefaultUdpProtocolHandler();
 
-    virtual void bytesAvailable(ByteArray && bytes, boost::asio::ip::udp::endpoint e);
+    virtual void bytesAvailable(ByteArray && bytes);
   };
 
 }

@@ -11,16 +11,15 @@
 
 using namespace Net;
 
-DefaultUdpProtocolHandler::DefaultUdpProtocolHandler(UdpServer &s) : AUdpProtocolHandler(s)
+DefaultUdpProtocolHandler::DefaultUdpProtocolHandler(UdpServer &s, boost::asio::ip::udp::endpoint e) : AUdpProtocolHandler(s, e)
 {
   INFO("Instanciating DefaultUdpProtocolHandler; I'm an echo server too !");
 }
 
 DefaultUdpProtocolHandler::~DefaultUdpProtocolHandler() { }
 
-void DefaultUdpProtocolHandler::bytesAvailable(ByteArray && bytes,
-                                               boost::asio::ip::udp::endpoint e)
+void DefaultUdpProtocolHandler::bytesAvailable(ByteArray && bytes)
 {
-  INFO("Received UDP datagram from " << e.address().to_string() << ":" << e.port());
-  write(std::move(bytes), e);
+  INFO("Received UDP datagram from " << endpoint().address().to_string() << ":" << endpoint().port());
+  write(std::move(bytes));
 }

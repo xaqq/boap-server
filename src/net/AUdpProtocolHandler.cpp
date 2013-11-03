@@ -9,12 +9,35 @@
 #include "net/UdpServer.hpp"
 using namespace Net;
 
-AUdpProtocolHandler::AUdpProtocolHandler(UdpServer &s) : IUdpProtocolHandler(s),
+AUdpProtocolHandler::AUdpProtocolHandler(UdpServer &s, boost::asio::ip::udp::endpoint e) :
+IUdpProtocolHandler(s, e),
+endpoint_(e),
 server_(s) { }
 
 AUdpProtocolHandler::~AUdpProtocolHandler() { }
 
-void AUdpProtocolHandler::write(ByteArray && bytes, boost::asio::ip::udp::endpoint e)
+void AUdpProtocolHandler::write(ByteArray && bytes)
 {
-  server_.write(std::move(bytes), e);
+  server_.write(std::move(bytes), endpoint_);
+  lastActivity_ = time(NULL);
+}
+
+boost::asio::ip::udp::endpoint &AUdpProtocolHandler::endpoint()
+{
+  return endpoint_;
+}
+
+const boost::asio::ip::udp::endpoint &AUdpProtocolHandler::endpoint() const
+{
+  return endpoint_;
+}
+
+time_t AUdpProtocolHandler::lastActivity() const
+{
+  return lastActivity_;
+}
+
+void AUdpProtocolHandler::lastActivity(time_t t)
+{
+  lastActivity_ = t;
 }

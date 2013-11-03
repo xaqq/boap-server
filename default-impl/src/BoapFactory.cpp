@@ -8,7 +8,7 @@ std::shared_ptr<Net::ITcpProtocolHandler> BoapFactory::createTcpProtocolHandler(
   return std::shared_ptr<Net::ITcpProtocolHandler> (new Net::DefaultTcpProtocolHandler(session));
 }
 
-std::shared_ptr<Net::IUdpProtocolHandler> BoapFactory::createUdpProtocolHandler(Net::UdpServer &s)
+std::shared_ptr<Net::IUdpProtocolHandler> BoapFactory::createUdpProtocolHandler(Net::UdpServer &s, boost::asio::ip::udp::endpoint e)
 {
-  return std::shared_ptr<Net::IUdpProtocolHandler> (new Net::DefaultUdpProtocolHandler(s));
+  return std::shared_ptr<Net::IUdpProtocolHandler> (new Net::DefaultUdpProtocolHandler(s, e));
 }

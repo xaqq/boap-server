@@ -14,7 +14,7 @@ namespace Net
   {
   public:
 
-    IUdpProtocolHandler(UdpServer &) { };
+    IUdpProtocolHandler(UdpServer &, boost::asio::ip::udp::endpoint) { };
 
     virtual ~IUdpProtocolHandler() { };
     /**
@@ -22,6 +22,18 @@ namespace Net
      * 
      * @param bytes ByteArray you requested; Those data are your responsability now;
      */
-    virtual void bytesAvailable(ByteArray && bytes, boost::asio::ip::udp::endpoint e) = 0;
+    virtual void bytesAvailable(ByteArray && bytes) = 0;
+    virtual boost::asio::ip::udp::endpoint &endpoint() = 0;
+    virtual const boost::asio::ip::udp::endpoint &endpoint() const = 0;
+
+    /**
+     * @return timestamp of last activity -- used to expire handler;
+     */
+    virtual time_t lastActivity() const = 0;
+    /**
+     * Set last activity timestamp;
+     * @param 
+     */
+    virtual void lastActivity(time_t) = 0;
   };
 };

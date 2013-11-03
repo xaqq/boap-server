@@ -17,17 +17,26 @@ namespace Net
   class AUdpProtocolHandler : public IUdpProtocolHandler
   {
   public:
-    AUdpProtocolHandler(UdpServer &s);
+    AUdpProtocolHandler(UdpServer &s, boost::asio::ip::udp::endpoint e);
     AUdpProtocolHandler(const AUdpProtocolHandler& orig) = delete;
     virtual ~AUdpProtocolHandler();
+    
+    virtual void bytesAvailable(ByteArray && bytes) = 0;
+    
+    virtual boost::asio::ip::udp::endpoint &endpoint();
+    virtual const boost::asio::ip::udp::endpoint &endpoint() const;
+    
+    virtual time_t lastActivity() const;
+    virtual void lastActivity(time_t);
   protected:
     /**
      * Call this function to write data to a endpoint; ByteArray will be passed
-     * to the UDP server;
+     * to the UDP server; Helper method
      */
-    virtual void write(ByteArray && bytes, boost::asio::ip::udp::endpoint e) final;
+    void write(ByteArray && bytes);
     UdpServer &server_;
-
+    boost::asio::ip::udp::endpoint endpoint_;
+    time_t lastActivity_;
   };
 }
 #endif	/* AUDPPROTOCOLHANDLER_HPP */
