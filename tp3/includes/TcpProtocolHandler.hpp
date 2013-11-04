@@ -8,10 +8,10 @@
 #pragma once
 #include "net/ATcpProtocolHandler.hpp"
 
+class AClient;
 namespace Net
 {
   using boost::asio::ip::tcp;
-
   class TcpSession;
 
   class TcpProtocolHandler : public ATcpProtocolHandler
@@ -27,6 +27,7 @@ namespace Net
     void stop();
 
   private:
+    std::shared_ptr<AClient> client_;
     std::size_t opcode_;
     std::size_t packetSize_;
     std::size_t bytesReceived_;

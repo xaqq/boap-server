@@ -12,6 +12,7 @@ set (SOURCES
   "src/TcpProtocolHandler.cpp"
   "src/UdpProtocolHandler.cpp"
   "src/BoapFactory.cpp"
+  "src/Client.cpp"
 )
 
 add_library(tp3 SHARED ${SOURCES})

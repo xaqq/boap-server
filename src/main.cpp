@@ -22,9 +22,8 @@ void start_gameserver(Server *server)
   server->run();
 }
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
-  std::cout << "test" << std::endl;
   try
     {
       Log::defaultConfig();
@@ -61,7 +60,7 @@ int main(int argc, char* argv[])
     }
   catch (std::exception& e)
     {
-      std::cerr << "Exception: " << e.what() << "\n";
+      std::cerr << "Exception: " << e.what() << std::endl;
     }
 
   return 0;

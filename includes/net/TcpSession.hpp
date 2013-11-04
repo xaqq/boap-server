@@ -35,7 +35,6 @@ namespace Net
      */
     void request(std::size_t bytes);
 
-
     /**
      * This method will be thread safe;
      * @param b

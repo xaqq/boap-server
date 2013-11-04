@@ -7,7 +7,7 @@
 
 #include "net/ITcpProtocolHandler.hpp"
 #include "net/IUdpProtocolHandler.hpp"
-
+#include "AClient.hpp"
 
 #pragma once
 
@@ -31,7 +31,7 @@ public:
 
   static std::shared_ptr<Net::ITcpProtocolHandler> createTcpProtocolHandler(Net::TcpSession &);
   static std::shared_ptr<Net::IUdpProtocolHandler> createUdpProtocolHandler(Net::UdpServer &, boost::asio::ip::udp::endpoint e);
-  static std::shared_ptr<Client> createClient();
+  static std::shared_ptr<AClient> createClient();
   
 private:
 

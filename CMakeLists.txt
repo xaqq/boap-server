@@ -14,6 +14,7 @@ set(SOURCES src/main.cpp
 	    src/net/TcpSession.cpp
             src/net/UdpServer.cpp
             src/Server.cpp
+            src/AClient.cpp
             src/Scheduler.cpp
             src/SafeQueue.cpp)
 

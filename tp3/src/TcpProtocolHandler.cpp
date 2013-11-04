@@ -3,6 +3,9 @@
 #include <iostream>
 #include <functional>
 #include "Log.hpp"
+#include "Scheduler.hpp"
+#include "BoapFactory.hpp"
+#include "AClient.hpp"
 
 using namespace Net;
 
@@ -12,7 +15,9 @@ bytesReceived_(0) { }
 
 void TcpProtocolHandler::start()
 {
-  INFO("Starting TP3 protocol handler !");
+  INFO("Starting TP3 protocol handler ! Request an asynchronous client creation;");
+  client_ = BoapFactory::createClient();
+  
   session().request(sizeof (opcode_));
   handler_ = std::bind(&TcpProtocolHandler::readOpcode, this, std::placeholders::_1);
 }
