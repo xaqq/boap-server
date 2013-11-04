@@ -11,6 +11,9 @@
 
 #pragma once
 
+
+class Client;
+
 /**
  * This class implementation IS NOT PRESENT in the boapd;
  * The default implementation of protocolhandler, packets, and this factory are
@@ -28,7 +31,8 @@ public:
 
   static std::shared_ptr<Net::ITcpProtocolHandler> createTcpProtocolHandler(Net::TcpSession &);
   static std::shared_ptr<Net::IUdpProtocolHandler> createUdpProtocolHandler(Net::UdpServer &, boost::asio::ip::udp::endpoint e);
-
+  static std::shared_ptr<Client> createClient();
+  
 private:
 
 };

@@ -16,6 +16,8 @@ namespace Net
      * Called by signal handler when receiving SIGINT
      */
     void stop();
+    
+    boost::asio::io_service &ioService();
 
   private:
     void do_accept();

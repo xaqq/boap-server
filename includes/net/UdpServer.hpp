@@ -36,6 +36,7 @@ namespace Net
     
     void write(ByteArray &&data, boost::asio::ip::udp::endpoint);
 
+    boost::asio::io_service &ioService();
   private:
     std::map<boost::asio::ip::udp::endpoint, std::shared_ptr<IUdpProtocolHandler>> handlers_;
 

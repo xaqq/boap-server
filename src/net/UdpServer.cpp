@@ -100,6 +100,9 @@ void UdpServer::do_write()
                         ERROR("Error writing to UDP endpoint " << e.address().to_string() << ec);
       }
   });
+}
 
-
+boost::asio::io_service &UdpServer::ioService()
+{
+  return socket_.get_io_service();
 }

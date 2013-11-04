@@ -13,7 +13,9 @@ set(SOURCES src/main.cpp
 	    src/net/TcpServer.cpp
 	    src/net/TcpSession.cpp
             src/net/UdpServer.cpp
-            src/Server.cpp)
+            src/Server.cpp
+            src/Scheduler.cpp
+            src/SafeQueue.cpp)
 
 find_package(Boost COMPONENTS system REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS} "includes" "logger/logger/includes")

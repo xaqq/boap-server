@@ -14,11 +14,22 @@ Server::Server() : isRunning_(true) { }
 
 Server::~Server() { }
 
+void Server::flush_operations()
+{
+  std::function<void ()> f;
+  
+  while (operationQueue_.tryPop(f))
+    {      
+      f();
+    }
+}
+
 void Server::run()
 {
   while (isRunning_)
     {
       INFO("Server is running");
+      flush_operations();
       sleep(3);
     }
 }

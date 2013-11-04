@@ -36,3 +36,8 @@ void TcpServer::stop()
   INFO("Stopping TCP server...");
   acceptor_.get_io_service().stop();
 }
+
+boost::asio::io_service &TcpServer::ioService()
+{
+  return socket_.get_io_service();
+}
