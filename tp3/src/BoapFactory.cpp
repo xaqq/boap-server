@@ -5,6 +5,8 @@
 #include "TcpProtocolHandler.hpp"
 #include "UdpProtocolHandler.hpp"
 #include "Client.hpp"
+#include "APacketHandler.hpp"
+#include "HelloPacketHandler.hpp"
 
 std::shared_ptr<Net::ITcpProtocolHandler> BoapFactory::createTcpProtocolHandler(Net::TcpSession &session)
 {
@@ -19,4 +21,13 @@ std::shared_ptr<Net::IUdpProtocolHandler> BoapFactory::createUdpProtocolHandler(
 std::shared_ptr<AClient> BoapFactory::createClient()
 {
   return std::shared_ptr<AClient> (new Client());
+}
+
+std::list<std::shared_ptr<APacketHandler>> BoapFactory::createPacketHandlers()
+{
+  std::list<std::shared_ptr<APacketHandler>> list;
+  
+  list.push_back(std::shared_ptr<APacketHandler>(new HelloPacketHandler()));
+  
+  return list;
 }

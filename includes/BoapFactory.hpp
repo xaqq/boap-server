@@ -7,12 +7,11 @@
 
 #include "net/ITcpProtocolHandler.hpp"
 #include "net/IUdpProtocolHandler.hpp"
-#include "AClient.hpp"
-
+#include <list>
 #pragma once
 
-
-class Client;
+class APacketHandler;
+class AClient;
 
 /**
  * This class implementation IS NOT PRESENT in the boapd;
@@ -32,6 +31,7 @@ public:
   static std::shared_ptr<Net::ITcpProtocolHandler> createTcpProtocolHandler(Net::TcpSession &);
   static std::shared_ptr<Net::IUdpProtocolHandler> createUdpProtocolHandler(Net::UdpServer &, boost::asio::ip::udp::endpoint e);
   static std::shared_ptr<AClient> createClient();
+  static std::list<std::shared_ptr<APacketHandler>> createPacketHandlers();
   
 private:
 

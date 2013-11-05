@@ -28,7 +28,7 @@ int main(int, char**)
     {
       Log::defaultConfig();
       Scheduler *sched = Scheduler::instance();
-      Server server;
+      Server &server = Server::instance();
 
       sched->setServer(&server);
 
@@ -56,6 +56,7 @@ int main(int, char**)
       tcpThread.join();
       udpThread.join();
       gameServerThread.join();
+      delete &server;
       delete sched;
     }
   catch (std::exception& e)

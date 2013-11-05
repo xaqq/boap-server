@@ -12,14 +12,19 @@
 #include <memory>
 #include <list>
 #include "SafeQueue.hpp"
+#include "APacket.hpp"
+
+class APacket;
+class AClient;
+class APacketHandler;
 
 class Server
 {
-  class AClient;
 public:
-  Server();
   Server(const Server& orig) = delete;
   virtual ~Server();
+
+  static Server &instance();
 
   /**
    * Call to shutdown the server;
@@ -39,6 +44,13 @@ public:
   void addClient(std::shared_ptr<AClient> c);
 
   /**
+   * Asynchronously remove the client to the server's client list.
+   * This function is thread safe, because it simply queue the call
+   * @param c
+   */
+  void removeClient(std::shared_ptr<AClient> c);
+
+  /**
    * Use to schedule a call of f() in the server's thread.
    * This method is thread safe.
    * @param f
@@ -48,17 +60,37 @@ public:
     operationQueue_.push(f);
   }
 
+  /**
+   * Use to push a packet that will be handled later; 
+   * This is thread safe;
+   */
+  void pushPacket(std::shared_ptr<APacket> p)
+  {
+    packets_.push(p);
+  }
+  
 private:
-  typedef std::list<std::shared_ptr<AClient>> ClientList;
+  Server();
+  
+  static Server *instance_;
+
+  typedef std::list<std::shared_ptr<AClient >> ClientList;
+  typedef SafeQueue<std::shared_ptr<APacket >> PacketList;
+  typedef std::list<std::shared_ptr<APacketHandler >> PacketHandlerList;
+
   std::atomic_bool isRunning_;
 
   ClientList clients_;
-  
+  PacketList packets_;
+  PacketHandlerList packetHandlers_;
+
   /**
    * Invoke queued handler;
    */
   void flush_operations();
 
+  void handle_packets();
+  
   SafeQueue<std::function<void () >> operationQueue_;
 };
 

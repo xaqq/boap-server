@@ -16,7 +16,10 @@ set(SOURCES src/main.cpp
             src/Server.cpp
             src/AClient.cpp
             src/Scheduler.cpp
-            src/SafeQueue.cpp)
+            src/SafeQueue.cpp
+            src/APacket.cpp
+            src/APacketHandler.cpp
+)
 
 find_package(Boost COMPONENTS system REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS} "includes" "logger/logger/includes")
