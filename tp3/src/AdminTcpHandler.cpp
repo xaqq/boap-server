@@ -18,6 +18,7 @@ AdminTcpHandler::~AdminTcpHandler() { }
 
 void AdminTcpHandler::start()
 {
+  write("Welcome ! This is the AdminTcpHandler. It does nothing except greeting you.\n");
   request(0);
 }
 

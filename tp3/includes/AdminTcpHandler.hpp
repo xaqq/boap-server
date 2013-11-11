@@ -20,6 +20,8 @@ namespace Net
     AdminTcpHandler(const AdminTcpHandler& orig);
     virtual ~AdminTcpHandler();
     
+    virtual void start();
+    
     virtual void bytesAvailable(ByteArray &&bytes) override;
   private:
 

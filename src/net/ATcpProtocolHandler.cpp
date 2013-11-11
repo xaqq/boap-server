@@ -12,8 +12,7 @@
 #include "net/TcpSession.hpp"
 using namespace Net;
 
-ATcpProtocolHandler::ATcpProtocolHandler() 
-{ }
+ATcpProtocolHandler::ATcpProtocolHandler() { }
 
 ATcpProtocolHandler::~ATcpProtocolHandler()
 {
@@ -26,6 +25,18 @@ bool ATcpProtocolHandler::pushPacket(std::shared_ptr<APacket> p)
 
   if (session)
     return session->post(p->serialize());
+  return false;
+}
+
+bool ATcpProtocolHandler::write(const std::string& s)
+{
+  auto session = session_.lock();
+  ByteArray data;
+  
+  data.resize(s.length());
+  std::memcpy(&data[0], s.c_str(), s.length());
+  if (session)
+    return session->post(std::move(data));
   return false;
 }
 

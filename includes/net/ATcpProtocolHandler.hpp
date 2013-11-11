@@ -25,6 +25,7 @@ namespace Net
 
     virtual void bytesAvailable(ByteArray && bytes) = 0;
     virtual bool pushPacket(std::shared_ptr<APacket> p);
+    virtual bool write(const std::string &s);
 
     /**
      * This method is called by the session when it starts.

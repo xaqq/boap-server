@@ -59,6 +59,7 @@ void TcpSession::do_read_some()
                           reading_ = false;
                           if (!ec)
       {
+                          bytePtr->resize(length);
                           protocolHandler_->bytesAvailable(std::move(*bytePtr));
       }
     else
