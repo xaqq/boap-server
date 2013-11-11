@@ -5,8 +5,9 @@
 
 using namespace Net;
 
-TcpServer::TcpServer(boost::asio::io_service& io_service, short port)
+TcpServer::TcpServer(boost::asio::io_service& io_service, short port, TcpHandlerFactory handlerFactory)
 : acceptor_(io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)),
+handlerFactory_(handlerFactory),
 socket_(io_service)
 {
   do_accept();
@@ -25,7 +26,7 @@ void TcpServer::do_accept()
   {
                          if (!ec)
       {
-                         std::make_shared<TcpSession > (std::move(socket_))->start();
+                         std::make_shared<TcpSession > (std::move(socket_), handlerFactory_())->start();
       }
                          do_accept();
   });

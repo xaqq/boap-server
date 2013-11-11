@@ -12,6 +12,7 @@
 #include <memory>
 #include "AUdpProtocolHandler.hpp"
 #include "ByteArray.hpp"
+#include "Network.hpp"
 
 namespace Net
 {
@@ -19,7 +20,7 @@ namespace Net
   {
   public:
 
-    UdpServer(boost::asio::io_service& io_service, short port);
+    UdpServer(boost::asio::io_service& io_service, short port, UdpHandlerFactory factory);
     UdpServer(const UdpServer& orig) = delete;
     virtual ~UdpServer();
     /**
@@ -55,9 +56,11 @@ namespace Net
     ByteArray buffer_;
     // need thread safe queue
     std::queue<std::pair<boost::asio::ip::udp::endpoint, ByteArray>> packetQueue_;
-    
-    
+
     boost::asio::deadline_timer cleanupTimer_;
+    
+    UdpHandlerFactory handlerFactory_;
+
   };
 }
 

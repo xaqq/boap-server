@@ -11,11 +11,12 @@
 using namespace Net;
 using namespace boost::asio::ip;
 
-UdpServer::UdpServer(boost::asio::io_service& io_service, short port) :
+UdpServer::UdpServer(boost::asio::io_service& io_service, short port, UdpHandlerFactory factory) :
 socket_(io_service, udp::endpoint(udp::v4(), port)),
 buffer_(PACKET_MAX_SIZE),
 writing_(false),
-cleanupTimer_(io_service, boost::posix_time::seconds(10))
+cleanupTimer_(io_service, boost::posix_time::seconds(10)),
+        handlerFactory_(factory)
 {
   start_receive();
   cleanupTimer_.async_wait(std::bind(&UdpServer::cleanup, this));
@@ -44,7 +45,7 @@ void UdpServer::start_receive()
                              if (!handlers_.count(remoteEndpoint_))
       {
                              INFO("Unkown UDP endpoint; Will instanciate protocol handler");
-                             handlers_[remoteEndpoint_] = BoapFactory::createUdpProtocolHandler(*this, remoteEndpoint_);
+                             handlers_[remoteEndpoint_] = handlerFactory_(*this, remoteEndpoint_);
       }
                              handlers_[remoteEndpoint_]->bytesAvailable(std::move(buffer_));
                              handlers_[remoteEndpoint_]->lastActivity(time(NULL));

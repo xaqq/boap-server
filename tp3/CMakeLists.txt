@@ -10,6 +10,7 @@ include_directories ("${PROJECT_SOURCE_DIR}/includes" "${PROJECT_SOURCE_DIR}/../
 
 set (SOURCES
   "src/TcpProtocolHandler.cpp"
+  "src/AdminTcpHandler.cpp"
   "src/UdpProtocolHandler.cpp"
   "src/BoapFactory.cpp"
   "src/Client.cpp"

@@ -1,5 +1,6 @@
 #include <boost/asio.hpp>
 #include <thread>
+#include <functional>
 #include <memory>
 #include "net/TcpServer.hpp"
 #include "net/UdpServer.hpp"
@@ -7,6 +8,7 @@
 #include "LogMgr.hpp"
 #include "Server.hpp"
 #include "Scheduler.hpp"
+#include "BoapFactory.hpp"
 
 void start_tcp(boost::asio::io_service *tcp_io_service)
 {
@@ -46,6 +48,11 @@ void logConfig()
 #endif
 }
 
+namespace Net
+{
+  class ATcpProtocolHandler;
+};
+
 int main(int, char**)
 {
   try
@@ -57,12 +64,12 @@ int main(int, char**)
       sched->setServer(&server);
 
       boost::asio::io_service tcp_io_service;
-      Net::TcpServer tcpServer(tcp_io_service, 4242);
+      Net::TcpServer tcpServer(tcp_io_service, 4242, &BoapFactory::createTcpProtocolHandler);
       sched->setTcp(&tcpServer);
 
 
       boost::asio::io_service udp_io_service;
-      Net::UdpServer udpServer(udp_io_service, 4242);
+      Net::UdpServer udpServer(udp_io_service, 4242, &BoapFactory::createUdpProtocolHandler);
 
       sched->setUdp(&udpServer);
 

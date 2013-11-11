@@ -7,8 +7,7 @@
 #include <queue>
 #include "SafeQueue.hpp"
 #include "ByteArray.hpp"
-
-
+#include "Network.hpp"
 
 namespace Net
 {
@@ -18,7 +17,7 @@ namespace Net
   class TcpSession : public std::enable_shared_from_this<TcpSession>
   {
   public:
-    TcpSession(tcp::socket socket);
+    TcpSession(tcp::socket socket, std::shared_ptr<ATcpProtocolHandler> handler);
     ~TcpSession();
     /**
      * Called by the server when ready
@@ -34,10 +33,13 @@ namespace Net
 
     /**
      * Called by ProtocolHandler implemented to request some data.
-     * When thoses are available, the socket will notify the ProtocolHandler.
+     * When thoses data are available, the socket will notify the ProtocolHandler.
+     * 
+     * Do not call request() again before bytesAvailable() was call on your protocol handler;
      * 
      * request() IS NOT THREAD SAFE.
-     * @param bytes
+     * @param bytes number of bytes you request. if set to 0, will returns as soon as something
+     * is available;
      */
     void request(std::size_t bytes);
 
@@ -54,13 +56,15 @@ namespace Net
      */
     void stopped();
     void do_read();
+    void do_read_some();
     void do_write();
     tcp::socket socket_;
 
+
     /**
-     * Read buffer; We build a new buffer each time a request()
+     * The buffer we are reading into.
      */
-    std::queue<ByteArray> readBuffers_;
+    ByteArray readBuffer_;
 
     std::shared_ptr<ATcpProtocolHandler> protocolHandler_;
 
