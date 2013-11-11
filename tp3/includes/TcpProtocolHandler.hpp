@@ -16,17 +16,19 @@ namespace Net
   using boost::asio::ip::tcp;
   class TcpSession;
 
-  class TcpProtocolHandler : public ATcpProtocolHandler, public std::enable_shared_from_this<ITcpProtocolHandler>
+  class TcpProtocolHandler : public ATcpProtocolHandler, public std::enable_shared_from_this<ATcpProtocolHandler>
   {
   public:
 
-    TcpProtocolHandler(TcpSession & s);
+    TcpProtocolHandler();
 
     virtual ~TcpProtocolHandler() { };
 
     void bytesAvailable(ByteArray && bytes);
     void start();
     void stop();
+
+    virtual void disconnected() override;
 
   private:
     std::shared_ptr<Client> client_;

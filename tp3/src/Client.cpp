@@ -8,31 +8,15 @@
 #include "Client.hpp"
 #include "Log.hpp"
 #include "APacket.hpp"
-#include "net/ITcpProtocolHandler.hpp"
+#include "net/ATcpProtocolHandler.hpp"
 #include "Server.hpp"
 
-Client::Client() { }
-
-Client::~Client() { }
-
-void Client::pushPacket(std::shared_ptr<APacket> p)
+Client::Client()
 {
-  std::shared_ptr<Net::ITcpProtocolHandler> handler;
-  
-  if (handler = tcpHandler_.lock())
-    {
-      DEBUG("PUSHING PACKET TO HANDLER");
-      handler->pushPacket(p);
-    }
+  DEBUG("Client constructed");
 }
 
-void Client::disconnect()
+Client::~Client()
 {
-  std::shared_ptr<Net::ITcpProtocolHandler> handler;
-  
-  if (handler = tcpHandler_.lock())
-    {
-      handler->disconnect();
-    }
-  Server::instance().removeClient(shared_from_this());
+  DEBUG("Client destroyed");
 }

@@ -8,30 +8,58 @@
 #include "APacket.hpp"
 #include "net/ATcpProtocolHandler.hpp"
 #include "Scheduler.hpp"
+#include "Log.hpp"
+#include "net/TcpSession.hpp"
 using namespace Net;
 
-ATcpProtocolHandler::ATcpProtocolHandler(TcpSession &session) : ITcpProtocolHandler(session),
-session_(session) { }
+ATcpProtocolHandler::ATcpProtocolHandler() 
+{ }
 
-ATcpProtocolHandler::~ATcpProtocolHandler() { }
-
-TcpSession & ATcpProtocolHandler::session()
+ATcpProtocolHandler::~ATcpProtocolHandler()
 {
-  return session_;
+  DEBUG("ProtocolHandler destroyed");
 }
 
-const TcpSession & ATcpProtocolHandler::session() const
+bool ATcpProtocolHandler::pushPacket(std::shared_ptr<APacket> p)
 {
-  return session_;
-}
+  auto session = session_.lock();
 
-void ATcpProtocolHandler::pushPacket(std::shared_ptr<APacket> p)
-{
-  session().post(p->serialize());
+  if (session)
+    return session->post(p->serialize());
+  return false;
 }
 
 void ATcpProtocolHandler::disconnect()
 {
-  Scheduler::instance()->runInTcpThread(std::bind(&TcpSession::quit, &session()));
-  //session().quit();
+  auto session = session_.lock();
+
+  if (session)
+    Scheduler::instance()->runInTcpThread(std::bind(&TcpSession::stop, session, true)); //graceful
+  else
+    {
+      WARN("Calling disconnect on protocol handler whose session is off");
+    }
+}
+
+void ATcpProtocolHandler::disconnected()
+{
+  DEBUG("ProtocolHandler disconnected...");
+}
+
+bool ATcpProtocolHandler::request(std::size_t size)
+{
+  auto session = session_.lock();
+
+  if (session)
+    {
+      session->request(size);
+      return true;
+    }
+  WARN("request() called but the session has been destroyed already");
+  return false;
+}
+
+void ATcpProtocolHandler::setSession(std::shared_ptr<TcpSession> session)
+{
+  session_ = session;
 }

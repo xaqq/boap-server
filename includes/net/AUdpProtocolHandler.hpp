@@ -19,6 +19,10 @@ namespace Net
   public:
     AUdpProtocolHandler(UdpServer &s, boost::asio::ip::udp::endpoint e);
     AUdpProtocolHandler(const AUdpProtocolHandler& orig) = delete;
+    
+    /**
+     * The UDP handler is destroyed when it is considered to have timeout.
+     */
     virtual ~AUdpProtocolHandler();
     
     virtual void bytesAvailable(ByteArray && bytes) = 0;

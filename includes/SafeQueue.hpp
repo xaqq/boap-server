@@ -22,7 +22,7 @@ public:
 
   virtual ~SafeQueue() { };
 private:
-  std::mutex mutex_;
+  mutable std::mutex mutex_;
   std::queue<T> queue_;
   std::condition_variable cv_;
 
@@ -63,6 +63,14 @@ public:
     std::lock_guard<std::mutex> guard(mutex_);
     queue_.push(std::move(object));
   }
+
+  bool empty() const
+  {
+    std::lock_guard<std::mutex> guard(mutex_);
+    return queue_.empty();
+  }
+
+
 
 };
 

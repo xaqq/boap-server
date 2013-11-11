@@ -8,35 +8,67 @@
 #ifndef ATCPPROTOCOLHANDLER_HPP
 #define	ATCPPROTOCOLHANDLER_HPP
 
-#include "net/ITcpProtocolHandler.hpp"
-#include "net/TcpSession.hpp"
+class APacket;
+#include <memory>
+#include "ByteArray.hpp"
 namespace Net
 {
+  class TcpSession;
 
-  class ATcpProtocolHandler : public ITcpProtocolHandler
+  class ATcpProtocolHandler
   {
   public:
-    ATcpProtocolHandler(TcpSession &session);
+    ATcpProtocolHandler();
+
     ATcpProtocolHandler(const ATcpProtocolHandler& orig) = delete;
     virtual ~ATcpProtocolHandler();
 
     virtual void bytesAvailable(ByteArray && bytes) = 0;
-    virtual void pushPacket(std::shared_ptr<APacket> p);
-    virtual void start() = 0;
-    virtual void stop() = 0;
-    
-    virtual void disconnect();
-    
+    virtual bool pushPacket(std::shared_ptr<APacket> p);
+
     /**
-     * ProtocolHandler must provide a way to retrieve session.
-     * This will be implemented in the TcpDefaultProtocolHandler.
+     * This method is called by the session when it starts.
+     * 
+     * Protocol handling begins here; You can start requesting data.
      */
+    virtual void start() = 0;
+
+    /**
+     * Use this method to disconnect the protocol handler. This method is thread-safe and any
+     * reimplementation should be too.
+     * 
+     *  The default implementation will schedule the stopping of the associated session gracefully.
+     */
+    virtual void disconnect();
+
+    /**
+     * This method is called by the associated session if something went wrong. 
+     * The handler is no longer usable.
+     * 
+     * You can use this method to notify an associated client object that the handler is now off.
+     * 
+     * This code runs in the TCP thread.
+     */
+    virtual void disconnected();
+    
   protected:
-    virtual TcpSession &session() final;
-    virtual const TcpSession &session() const final;
+    /**
+     * Call this function is you protocol handler to request data. When the data you requested
+     * becomes available, the bytesAvailable() method will be called.
+     * 
+     * @return true is the read is scheduled, false otherwise.
+     */
+    bool request(std::size_t bytes);
 
   private:
-    TcpSession &session_;
+    friend class TcpSession;
+    
+    /**
+     * Use to set the session shared_ptr; This is done when the TcpSession starts, because it
+     * can't be done from the session constructor;
+     */
+    void setSession(std::shared_ptr<TcpSession> session);
+    std::weak_ptr<TcpSession> session_;
   };
 }
 #endif	/* ATCPPROTOCOLHANDLER_HPP */

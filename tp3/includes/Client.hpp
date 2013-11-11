@@ -10,22 +10,14 @@
 
 #include <memory>
 #include "AClient.hpp"
-namespace Net
-{
-class ITcpProtocolHandler;
-}
-class Client : public AClient, public std::enable_shared_from_this<AClient>
+
+class Client : public AClient
 {
 public:
   Client();
   Client(const Client& orig) = delete;
   virtual ~Client();
-  virtual void pushPacket(std::shared_ptr<APacket> p);
   
-  virtual void disconnect();
-  
-  std::weak_ptr<Net::ITcpProtocolHandler> tcpHandler_;
-
 };
 
 #endif	/* CLIENT_HPP */

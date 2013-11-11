@@ -1,5 +1,4 @@
 #include "BoapFactory.hpp"
-#include "net/DefaultTcpProtocolHandler.hpp"
 #include "net/TcpSession.hpp"
 #include "net/UdpServer.hpp"
 #include "TcpProtocolHandler.hpp"
@@ -7,10 +6,14 @@
 #include "Client.hpp"
 #include "APacketHandler.hpp"
 #include "HelloPacketHandler.hpp"
+#include "net/IUdpProtocolHandler.hpp"
+#include "TcpProtocolHandler.hpp"
+#include "net/ATcpProtocolHandler.hpp"
 
-std::shared_ptr<Net::ITcpProtocolHandler> BoapFactory::createTcpProtocolHandler(Net::TcpSession &session)
+
+std::shared_ptr<Net::ATcpProtocolHandler> BoapFactory::createTcpProtocolHandler()
 {
-  return std::shared_ptr<Net::ITcpProtocolHandler> (new Net::TcpProtocolHandler(session));
+  return std::shared_ptr<Net::ATcpProtocolHandler> (new Net::TcpProtocolHandler());
 }
 
 std::shared_ptr<Net::IUdpProtocolHandler> BoapFactory::createUdpProtocolHandler(Net::UdpServer &s,  boost::asio::ip::udp::endpoint e)

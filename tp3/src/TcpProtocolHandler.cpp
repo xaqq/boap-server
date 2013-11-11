@@ -12,19 +12,18 @@
 
 using namespace Net;
 
-TcpProtocolHandler::TcpProtocolHandler(TcpSession & s) :
-ATcpProtocolHandler(s),
+TcpProtocolHandler::TcpProtocolHandler() :
 bytesReceived_(0) { }
 
 void TcpProtocolHandler::start()
 {
   INFO("Starting TP3 protocol handler ! Request an asynchronous client creation;");
-  client_ = std::static_pointer_cast<Client>(BoapFactory::createClient());
-  
-  client_->tcpHandler_ = shared_from_this();
-  
+  client_ = std::static_pointer_cast<Client > (BoapFactory::createClient());
+
+  client_->tcpHandler(shared_from_this());
+
   Server::instance().addClient(client_);
-  session().request(sizeof (opcode_));
+  request(sizeof (opcode_));
   handler_ = std::bind(&TcpProtocolHandler::readOpcode, this, std::placeholders::_1);
 }
 
@@ -41,7 +40,7 @@ void TcpProtocolHandler::readOpcode(ByteArray && bytes)
 
   DEBUG("RECEIVED OPCODE:" << opcode_);
   handler_ = std::bind(&TcpProtocolHandler::readSize, this, std::placeholders::_1);
-  session().request(sizeof (packetSize_));
+  request(sizeof (packetSize_));
 }
 
 void TcpProtocolHandler::readSize(ByteArray && bytes)
@@ -54,7 +53,7 @@ void TcpProtocolHandler::readSize(ByteArray && bytes)
     {
       WARN("Packet too big ! (" << packetSize_ << ")");
       handler_ = std::bind(&TcpProtocolHandler::readOpcode, this, std::placeholders::_1);
-      session().request(sizeof (opcode_));
+      request(sizeof (opcode_));
       return;
     }
 
@@ -65,7 +64,7 @@ void TcpProtocolHandler::readSize(ByteArray && bytes)
     }
 
   handler_ = std::bind(&TcpProtocolHandler::readBody, this, std::placeholders::_1);
-  session().request(packetSize_);
+  request(packetSize_);
 }
 
 void TcpProtocolHandler::readBody(ByteArray && bytes)
@@ -79,10 +78,16 @@ void TcpProtocolHandler::readBody(ByteArray && bytes)
 
 
   handler_ = std::bind(&TcpProtocolHandler::readOpcode, this, std::placeholders::_1);
-  session().request(sizeof (opcode_));
+  request(sizeof (opcode_));
 }
 
 void TcpProtocolHandler::bytesAvailable(ByteArray && bytes)
 {
   handler_(std::move(bytes));
+}
+
+void TcpProtocolHandler::disconnected()
+{
+  DEBUG("Custom protocolhandler disconnected, signaling client that it was disconnected.");
+  Scheduler::instance()->runInServerThread(std::bind(&AClient::disconnected, client_));
 }

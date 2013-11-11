@@ -4,7 +4,6 @@ project (boapd)
 add_definitions("-g -W -Wall -std=c++11")
 add_subdirectory("logger/logger")
 add_subdirectory("tp3")
-add_subdirectory("default-impl")
 
 #link_directories("logger/logger")
 set(SOURCES src/main.cpp
@@ -26,4 +25,4 @@ include_directories(${Boost_INCLUDE_DIRS} "includes" "logger/logger/includes")
 
 
 add_executable(boapd ${SOURCES})
-target_link_libraries( boapd ${Boost_LIBRARIES} Logger tp3 default-impl)
+target_link_libraries( boapd ${Boost_LIBRARIES} Logger tp3)

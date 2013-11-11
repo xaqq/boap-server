@@ -4,6 +4,7 @@
 #include "net/TcpServer.hpp"
 #include "net/UdpServer.hpp"
 #include "Log.hpp"
+#include "LogMgr.hpp"
 #include "Server.hpp"
 #include "Scheduler.hpp"
 
@@ -22,11 +23,34 @@ void start_gameserver(Server *server)
   server->run();
 }
 
+void logConfig()
+{
+  using namespace Log;
+  std::shared_ptr<ALogger> stdoutLogger(new StdoutLogger(new SimpleFormatter()));
+  std::shared_ptr<ALogger> stderrLogger(new StderrLogger(new DefaultFormatter()));
+
+  std::shared_ptr<IFilter> stdoutFilter(new DefaultFilter({LogLevel::DEBUG, LogLevel::INFO}));
+  std::shared_ptr<IFilter> stderrFilter(new DefaultFilter({LogLevel::WARN, LogLevel::ERROR}));
+
+  stdoutLogger->registerFilter(stdoutFilter);
+  stderrLogger->registerFilter(stderrFilter);
+  LogMgr::registerLogger("stdout", stdoutLogger);
+  LogMgr::registerLogger("stderr", stderrLogger);
+
+  /* Linux syslog facility */
+#ifdef __gnu_linux__
+  std::shared_ptr<ALogger> syslogLogger(new SyslogLogger(new DefaultFormatter()));
+  std::shared_ptr<IFilter> syslogFilter(new DefaultFilter(LogLevel::ERROR));
+  syslogLogger->registerFilter(syslogFilter);
+  LogMgr::registerLogger("syslog", syslogLogger);
+#endif
+}
+
 int main(int, char**)
 {
   try
     {
-      Log::defaultConfig();
+      logConfig();
       Scheduler *sched = Scheduler::instance();
       Server &server = Server::instance();
 
