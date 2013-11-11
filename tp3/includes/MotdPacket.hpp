@@ -1,22 +1,22 @@
 /* 
- * File:   HelloPacket.hpp
+ * File:   MotdPacket.hpp
  * Author: xaqq
  *
- * Created on November 4, 2013, 8:45 PM
+ * Created on November 7, 2013, 12:05 AM
  */
 
-#ifndef HELLOPACKET_HPP
-#define	HELLOPACKET_HPP
+#ifndef MOTDPACKET_HPP
+#define	MOTDPACKET_HPP
 
 #include "APacket.hpp"
 
 class APacketHandler;
-class HelloPacket : public APacket
+class MotdPacket : public APacket
 {
 public:
-  HelloPacket(std::shared_ptr<AClient> source);
-  HelloPacket(const HelloPacket& orig) = delete;
-  virtual ~HelloPacket();
+  MotdPacket(std::shared_ptr<AClient> source);
+  MotdPacket(const MotdPacket& orig) = delete;
+  virtual ~MotdPacket();
   
    /**
    * This function MUST be implemented in all APacket's subclasses; This is
@@ -29,10 +29,11 @@ public:
   
   virtual void unserialize(ByteArray &&data);
   virtual ByteArray serialize() const;
-  
-private:
 
+
+  std::string motd_;
+  
 };
 
-#endif	/* HELLOPACKET_HPP */
+#endif	/* MOTDPACKET_HPP */
 

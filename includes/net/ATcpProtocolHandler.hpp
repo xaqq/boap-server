@@ -21,8 +21,12 @@ namespace Net
     virtual ~ATcpProtocolHandler();
 
     virtual void bytesAvailable(ByteArray && bytes) = 0;
+    virtual void pushPacket(std::shared_ptr<APacket> p);
     virtual void start() = 0;
     virtual void stop() = 0;
+    
+    virtual void disconnect();
+    
     /**
      * ProtocolHandler must provide a way to retrieve session.
      * This will be implemented in the TcpDefaultProtocolHandler.

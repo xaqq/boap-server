@@ -7,6 +7,7 @@
 #pragma once
 
 #include <memory>
+#include "ByteArray.hpp"
 class AClient;
 class APacketHandler;
 class APacket
@@ -26,6 +27,14 @@ public:
    * @param handler
    */
   virtual bool acceptHandler(APacketHandler *handler);
+
+  virtual void unserialize(ByteArray &&data) = 0;
+  virtual ByteArray serialize() const = 0 ;
+  
+  enum {
+                        CMSG_HELLO      = 0x00000001,
+                        SMSG_MOTD       =  0x10000001
+ };
   
 protected:  
   std::shared_ptr<AClient> source_;

@@ -1,5 +1,6 @@
 #include "net/TcpSession.hpp"
 #include "net/DefaultTcpProtocolHandler.hpp"
+#include "APacket.hpp"
 #include <iostream>
 #include "Log.hpp"
 

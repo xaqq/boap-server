@@ -5,9 +5,10 @@
 #include "Log.hpp"
 #include "Scheduler.hpp"
 #include "BoapFactory.hpp"
-#include "AClient.hpp"
+#include "Client.hpp"
 #include "APacket.hpp"
 #include "HelloPacket.hpp"
+#include "PacketFactory.hpp"
 
 using namespace Net;
 
@@ -18,9 +19,10 @@ bytesReceived_(0) { }
 void TcpProtocolHandler::start()
 {
   INFO("Starting TP3 protocol handler ! Request an asynchronous client creation;");
-  client_ = BoapFactory::createClient();
-
-
+  client_ = std::static_pointer_cast<Client>(BoapFactory::createClient());
+  
+  client_->tcpHandler_ = shared_from_this();
+  
   Server::instance().addClient(client_);
   session().request(sizeof (opcode_));
   handler_ = std::bind(&TcpProtocolHandler::readOpcode, this, std::placeholders::_1);
@@ -55,7 +57,7 @@ void TcpProtocolHandler::readSize(ByteArray && bytes)
       session().request(sizeof (opcode_));
       return;
     }
-  
+
   if (packetSize_ == 0)
     {
       readBody(ByteArray(0));
@@ -72,13 +74,9 @@ void TcpProtocolHandler::readBody(ByteArray && bytes)
 
   INFO("Received Body");
 
+  std::shared_ptr< APacket > packet = PacketFactory::buildPacket(client_, opcode_, std::move(bytes));
+  Server::instance().pushPacket(packet);
 
-  if (opcode_ == 1)
-    {
-      INFO("HELLOPACKET CREATED");
-      std::shared_ptr< APacket > packet(new HelloPacket(client_));
-      Server::instance().pushPacket(packet);
-    }
 
   handler_ = std::bind(&TcpProtocolHandler::readOpcode, this, std::placeholders::_1);
   session().request(sizeof (opcode_));

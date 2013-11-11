@@ -97,3 +97,9 @@ void TcpSession::stop()
   protocolHandler_->stop();
   socket_.close();
 }
+
+void TcpSession::quit()
+{
+  socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
+  socket_.close();
+}

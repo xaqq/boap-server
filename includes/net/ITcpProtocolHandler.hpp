@@ -5,6 +5,7 @@
 
 #pragma once
 
+class APacket;
 namespace Net
 {
   using boost::asio::ip::tcp;
@@ -15,9 +16,9 @@ namespace Net
   {
   public:
 
-    ITcpProtocolHandler(TcpSession &) {};
+    ITcpProtocolHandler(TcpSession &) { };
 
-    virtual ~ITcpProtocolHandler() {};
+    virtual ~ITcpProtocolHandler() { };
     /**
      * This method is called by the socket when the data you requested are available;
      * You SHOULD call session_.request(std::size_t) to request more data, otherwise
@@ -28,6 +29,10 @@ namespace Net
     virtual void bytesAvailable(ByteArray && bytes) = 0;
     virtual void start() = 0;
     virtual void stop() = 0;
+    virtual void pushPacket(std::shared_ptr<APacket> p) = 0;
+
+    virtual void disconnect() = 0;
+
     /**
      * ProtocolHandler must provide a way to retrieve session.
      * This will be implemented in the TcpDefaultProtocolHandler.

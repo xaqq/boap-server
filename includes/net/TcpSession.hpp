@@ -26,6 +26,13 @@ namespace Net
      */
     void stop();
     
+    
+    /**
+     * Call to disconnect the socket
+     * @param bytes
+     */
+    void quit();
+    
     /**
      * Called by ProtocolHandler implemented to request some data.
      * When thoses are available, the socket will notify the ProtocolHandler.

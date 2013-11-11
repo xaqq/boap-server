@@ -15,6 +15,8 @@ set (SOURCES
   "src/Client.cpp"
   "src/HelloPacketHandler.cpp"
   "src/HelloPacket.cpp"
+  "src/MotdPacket.cpp"
+  "src/PacketFactory.cpp"
 )
 
 add_library(tp3 SHARED ${SOURCES})
