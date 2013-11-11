@@ -58,7 +58,7 @@ public:
     queue_.push(object);
   }
 
-  void push(T && object)
+  void push(T &&object)
   {
     std::lock_guard<std::mutex> guard(mutex_);
     queue_.push(std::move(object));

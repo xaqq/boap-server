@@ -9,6 +9,7 @@
 #define	UDPPROTOCOLHANDLER_HPP
 #include <map>
 #include "net/AUdpProtocolHandler.hpp"
+class Client;
 namespace Net
 {
   class UdpServer;
@@ -19,7 +20,10 @@ namespace Net
     UdpProtocolHandler(UdpServer &, boost::asio::ip::udp::endpoint e);
     virtual ~UdpProtocolHandler();
 
-    virtual void bytesAvailable(ByteArray && bytes);
+    virtual void bytesAvailable(ByteArray bytes);
+
+  private:
+    std::shared_ptr<Client> client_;
   };
 }
 #endif	/* UDPPROTOCOLHANDLER_HPP */

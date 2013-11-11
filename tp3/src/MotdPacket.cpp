@@ -26,7 +26,7 @@ bool MotdPacket::acceptHandler(APacketHandler* handler)
   return true;
 }
 
-void MotdPacket::unserialize(ByteArray && data) { }
+void MotdPacket::unserialize(ByteArray) { }
 
 ByteArray MotdPacket::serialize() const
 {

@@ -15,7 +15,7 @@ server_(s) { }
 
 AUdpProtocolHandler::~AUdpProtocolHandler() { }
 
-void AUdpProtocolHandler::write(ByteArray && bytes)
+void AUdpProtocolHandler::write(ByteArray bytes)
 {
   server_.write(std::move(bytes), endpoint_);
   lastActivity_ = time(NULL);

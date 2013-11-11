@@ -27,7 +27,7 @@ public:
    */
   virtual bool acceptHandler(APacketHandler *handler);
   
-  virtual void unserialize(ByteArray &&data);
+  virtual void unserialize(ByteArray data) override;;
   virtual ByteArray serialize() const;
   
 private:

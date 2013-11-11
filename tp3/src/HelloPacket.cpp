@@ -22,7 +22,7 @@ bool HelloPacket::acceptHandler(APacketHandler* handler)
   return true;
 } 
 
-void HelloPacket::unserialize(ByteArray &&data)
+void HelloPacket::unserialize(ByteArray data)
 {
   assert(data.size() == 0);
 }

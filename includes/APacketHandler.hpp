@@ -10,6 +10,7 @@
 
 class APacket;
 class HelloPacket;
+class UdpAuthPacket;
 
 class APacketHandler
 {
@@ -21,7 +22,12 @@ public:
 
   virtual bool handle(APacket *p);
 
-  virtual bool handle(HelloPacket *p)
+  virtual bool handle(HelloPacket *)
+  {
+    return true;
+  }
+
+  virtual bool handle(UdpAuthPacket *)
   {
     return true;
   }

@@ -8,6 +8,7 @@
 #include "AClient.hpp"
 #include "Log.hpp"
 #include "Server.hpp"
+#include "net/AUdpProtocolHandler.hpp"
 
 AClient::AClient() { }
 
@@ -15,12 +16,13 @@ AClient::~AClient() { }
 
 void AClient::disconnect()
 {
-  std::shared_ptr<Net::ATcpProtocolHandler> handler;
+  std::shared_ptr<Net::ATcpProtocolHandler> tcpHandler;
 
-  if (handler = tcpHandler_.lock())
+  if (tcpHandler = tcpHandler_.lock())
     {
-      handler->disconnect();
+      tcpHandler->disconnect();
     }
+
   Server::instance().removeClient(shared_from_this());
 }
 
@@ -43,6 +45,16 @@ void AClient::tcpHandler(std::shared_ptr<Net::ATcpProtocolHandler> handler)
 std::shared_ptr<Net::ATcpProtocolHandler> AClient::tcpHandler()
 {
   return tcpHandler_.lock();
+}
+
+void AClient::udpHandler(std::shared_ptr<Net::AUdpProtocolHandler> handler)
+{
+  udpHandler_ = handler;
+}
+
+std::shared_ptr<Net::AUdpProtocolHandler> AClient::udpHandler()
+{
+  return udpHandler_.lock();
 }
 
 void AClient::pushPacket(std::shared_ptr<APacket> p)

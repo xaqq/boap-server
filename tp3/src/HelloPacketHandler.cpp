@@ -28,9 +28,12 @@ bool HelloPacketHandler::handle(HelloPacket *p)
   p->source()->pushPacket(ptr);
   p->source()->pushPacket(ptr);
   p->source()->disconnect();
+  
+  return true;
 }
 
-bool HelloPacketHandler::handle(APacket *p)
+bool HelloPacketHandler::handle(APacket *)
 {
   INFO("Handling APacket from HelloPacketHandler");
+  return true;
 }

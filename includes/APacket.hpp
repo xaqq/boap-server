@@ -28,7 +28,7 @@ public:
    */
   virtual bool acceptHandler(APacketHandler *handler);
 
-  virtual void unserialize(ByteArray &&data) = 0;
+  virtual void unserialize(ByteArray data) = 0;
   virtual ByteArray serialize() const = 0 ;
   
   enum {

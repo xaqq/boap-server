@@ -6,7 +6,7 @@
  */
 
 #include <unistd.h>
-
+#include <thread>
 #include "Server.hpp"
 #include "Log.hpp"
 #include "AClient.hpp"
@@ -57,10 +57,12 @@ void Server::run()
 {
   while (isRunning_)
     {
-      INFO("Server is running. Stats: " << clients_.size() << " clients.");
+     // INFO("Server is running. Stats: " << clients_.size() << " clients.");
       flush_operations();
       handle_packets();
-      sleep(3);
+      
+      std::chrono::milliseconds dura(20);
+      std::this_thread::sleep_for(dura);
     }
 }
 

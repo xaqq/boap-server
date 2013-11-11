@@ -8,6 +8,7 @@
 #ifndef CLIENT_HPP
 #define	CLIENT_HPP
 
+#include <string>
 #include <memory>
 #include "AClient.hpp"
 
@@ -17,7 +18,12 @@ public:
   Client();
   Client(const Client& orig) = delete;
   virtual ~Client();
+
   
+  const std::string &udpAuthCode() const;
+
+private:
+  std::string udpAuthCode_;
 };
 
 #endif	/* CLIENT_HPP */

@@ -47,7 +47,7 @@ namespace Net
      * This method is thread safe;
      * @param b the data
      */
-    bool post(ByteArray && b);
+    bool post(ByteArray b);
 
   private:
     /**

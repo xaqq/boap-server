@@ -12,10 +12,12 @@
 #include <memory>
 #include "AUdpProtocolHandler.hpp"
 #include "ByteArray.hpp"
+#include "SafeQueue.hpp"
 #include "Network.hpp"
 
 namespace Net
 {
+
   class UdpServer : public std::enable_shared_from_this<UdpServer>
   {
   public:
@@ -32,33 +34,59 @@ namespace Net
      * Schedule read on socket
      */
     void start_receive();
-    
-    void write(ByteArray &&data, boost::asio::ip::udp::endpoint);
+
+    void write(ByteArray data, boost::asio::ip::udp::endpoint);
 
     boost::asio::io_service &ioService();
   private:
-    std::map<boost::asio::ip::udp::endpoint, std::shared_ptr<AUdpProtocolHandler>> handlers_;
+    std::map<boost::asio::ip::udp::endpoint, std::shared_ptr<AUdpProtocolHandler >> handlers_;
 
     /**
      * Cleanup handler for inactive endpoint;
      */
     void cleanup();
-    
+
     void do_write();
+
     enum
     {
       PACKET_MAX_SIZE = 4096,
       INACTIVE_DELAY = 10
     };
-    bool writing_;
-    boost::asio::ip::udp::socket socket_;
-    boost::asio::ip::udp::endpoint remoteEndpoint_;
-    ByteArray buffer_;
-    // need thread safe queue
-    std::queue<std::pair<boost::asio::ip::udp::endpoint, ByteArray>> packetQueue_;
 
+    /**
+     * Boolean flag for the server to know wether or not it is writing.
+     */
+    bool writing_;
+
+    /**
+     * The boost socket
+     */
+    boost::asio::ip::udp::socket socket_;
+
+    /**
+     * The boost endpoint
+     */
+    boost::asio::ip::udp::endpoint remoteEndpoint_;
+
+    /**
+     * The read buffer
+     */
+    ByteArray buffer_;
+
+    /**
+     * The outgoing packet queue
+     */
+    SafeQueue<std::pair<boost::asio::ip::udp::endpoint, ByteArray >> packetQueue_;
+
+    /**
+     * Timer to call the cleanup method
+     */
     boost::asio::deadline_timer cleanupTimer_;
-    
+
+    /**
+     * Functor to create a new protocol handler
+     */
     UdpHandlerFactory handlerFactory_;
 
   };

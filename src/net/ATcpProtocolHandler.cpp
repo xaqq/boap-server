@@ -24,7 +24,7 @@ bool ATcpProtocolHandler::pushPacket(std::shared_ptr<APacket> p)
   auto session = session_.lock();
 
   if (session)
-    return session->post(p->serialize());
+    return session->post(std::move(p->serialize()));
   return false;
 }
 

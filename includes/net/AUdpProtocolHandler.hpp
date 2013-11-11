@@ -27,7 +27,7 @@ namespace Net
      */
     virtual ~AUdpProtocolHandler();
     
-    virtual void bytesAvailable(ByteArray && bytes) = 0;
+    virtual void bytesAvailable(ByteArray bytes) = 0;
     
     virtual boost::asio::ip::udp::endpoint &endpoint();
     virtual const boost::asio::ip::udp::endpoint &endpoint() const;
@@ -39,7 +39,7 @@ namespace Net
      * Call this function to write data to a endpoint; ByteArray will be passed
      * to the UDP server; Helper method
      */
-    void write(ByteArray && bytes);
+    void write(ByteArray bytes);
     UdpServer &server_;
     boost::asio::ip::udp::endpoint endpoint_;
     time_t lastActivity_;

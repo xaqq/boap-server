@@ -10,6 +10,7 @@
 #include "APacket.hpp"
 #include "net/ATcpProtocolHandler.hpp"
 #include "Server.hpp"
+#include "UdpAuthHandler.hpp"
 
 Client::Client()
 {
@@ -19,4 +20,9 @@ Client::Client()
 Client::~Client()
 {
   DEBUG("Client destroyed");
+}
+
+const std::string &Client::udpAuthCode() const
+{
+  return udpAuthCode_;
 }

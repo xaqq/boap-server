@@ -73,7 +73,7 @@ void UdpServer::cleanup()
     }
 }
 
-void UdpServer::write(ByteArray && data, boost::asio::ip::udp::endpoint e)
+void UdpServer::write(ByteArray data, boost::asio::ip::udp::endpoint e)
 {
   packetQueue_.push(std::make_pair(e, std::move(data)));
   socket_.get_io_service().post(std::bind(&UdpServer::do_write, this));
@@ -84,9 +84,9 @@ void UdpServer::do_write()
   if (writing_ || packetQueue_.empty())
     return;
   writing_ = true;
-  auto bytePtr = std::make_shared<ByteArray > (std::move(packetQueue_.front().second));
-  boost::asio::ip::udp::endpoint e = packetQueue_.front().first;
-  packetQueue_.pop();
+  auto pair = packetQueue_.pop();
+  auto bytePtr = std::make_shared<ByteArray > (std::move(pair.second));
+  boost::asio::ip::udp::endpoint e = pair.first;
 
   socket_.async_send_to(boost::asio::buffer(*bytePtr), e,
                         [this, bytePtr, e](boost::system::error_code ec, std::size_t)

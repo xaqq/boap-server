@@ -98,7 +98,7 @@ void TcpSession::do_read()
   });
 }
 
-bool TcpSession::post(ByteArray && bytes)
+bool TcpSession::post(ByteArray bytes)
 {
   if (stopping_)
     {

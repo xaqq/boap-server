@@ -22,7 +22,7 @@ namespace Net
     
     virtual void start();
     
-    virtual void bytesAvailable(ByteArray &&bytes) override;
+    virtual void bytesAvailable(ByteArray bytes) override;
   private:
 
   };

@@ -15,7 +15,9 @@ set (SOURCES
   "src/BoapFactory.cpp"
   "src/Client.cpp"
   "src/HelloPacketHandler.cpp"
+  "src/UdpAuthHandler.cpp"
   "src/HelloPacket.cpp"
+  "src/UdpAuthPacket.cpp"
   "src/MotdPacket.cpp"
   "src/PacketFactory.cpp"
 )

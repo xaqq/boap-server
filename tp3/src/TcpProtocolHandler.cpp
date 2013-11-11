@@ -33,7 +33,7 @@ void TcpProtocolHandler::stop()
   Server::instance().removeClient(client_);
 }
 
-void TcpProtocolHandler::readOpcode(ByteArray && bytes)
+void TcpProtocolHandler::readOpcode(ByteArray bytes)
 {
   assert(bytes.size() == sizeof (opcode_));
   memcpy(&opcode_, &bytes[0], sizeof (opcode_));
@@ -43,7 +43,7 @@ void TcpProtocolHandler::readOpcode(ByteArray && bytes)
   request(sizeof (packetSize_));
 }
 
-void TcpProtocolHandler::readSize(ByteArray && bytes)
+void TcpProtocolHandler::readSize(ByteArray bytes)
 {
   assert(bytes.size() == sizeof (packetSize_));
   memcpy(&packetSize_, &bytes[0], sizeof (packetSize_));
@@ -67,7 +67,7 @@ void TcpProtocolHandler::readSize(ByteArray && bytes)
   request(packetSize_);
 }
 
-void TcpProtocolHandler::readBody(ByteArray && bytes)
+void TcpProtocolHandler::readBody(ByteArray bytes)
 {
   assert(bytes.size() == packetSize_);
 
@@ -81,7 +81,7 @@ void TcpProtocolHandler::readBody(ByteArray && bytes)
   request(sizeof (opcode_));
 }
 
-void TcpProtocolHandler::bytesAvailable(ByteArray && bytes)
+void TcpProtocolHandler::bytesAvailable(ByteArray bytes)
 {
   handler_(std::move(bytes));
 }

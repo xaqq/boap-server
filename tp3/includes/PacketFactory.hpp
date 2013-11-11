@@ -21,7 +21,7 @@ public:
   virtual ~PacketFactory();
 
   static std::shared_ptr<APacket> buildPacket(std::shared_ptr<AClient> source,
-                                              std::size_t opcode, ByteArray && data);
+                                              std::size_t opcode, ByteArray data);
 
 private:
 };

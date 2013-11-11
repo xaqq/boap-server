@@ -24,7 +24,7 @@ namespace Net
 
     virtual ~TcpProtocolHandler() { };
 
-    void bytesAvailable(ByteArray && bytes);
+    void bytesAvailable(ByteArray bytes) override;
     void start();
     void stop();
 
@@ -36,9 +36,9 @@ namespace Net
     std::size_t packetSize_;
     std::size_t bytesReceived_;
 
-    void readOpcode(ByteArray && bytes);
-    void readSize(ByteArray && bytes);
-    void readBody(ByteArray && bytes);
+    void readOpcode(ByteArray bytes);
+    void readSize(ByteArray bytes);
+    void readBody(ByteArray bytes);
 
     /**
      * Internal handler called by bytesAvailable.
