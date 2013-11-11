@@ -39,3 +39,13 @@ const std::string &UdpAuthPacket::authCode() const
 {
   return authCode_;
 }
+
+std::shared_ptr<AUdpProtocolHandler> UdpAuthPacket::handler()
+{
+  return handler_;
+}
+
+void UdpAuthPacket::handler(std::shared_ptr<AUdpProtocolHandler> h)
+{
+  handler_ = h;
+}

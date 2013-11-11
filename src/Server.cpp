@@ -57,10 +57,10 @@ void Server::run()
 {
   while (isRunning_)
     {
-     // INFO("Server is running. Stats: " << clients_.size() << " clients.");
+      // INFO("Server is running. Stats: " << clients_.size() << " clients.");
       flush_operations();
       handle_packets();
-      
+
       std::chrono::milliseconds dura(20);
       std::this_thread::sleep_for(dura);
     }
@@ -87,4 +87,9 @@ void Server::stop()
 {
   INFO("Stopping server");
   isRunning_ = false;
+}
+
+const ClientList &Server::clients() const
+{
+  return clients_;
 }

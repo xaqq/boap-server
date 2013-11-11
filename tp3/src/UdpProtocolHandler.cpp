@@ -32,5 +32,6 @@ void UdpProtocolHandler::bytesAvailable(ByteArray bytes)
   /* If client isn't set, we suppose this is a authentication packet */
   std::shared_ptr<APacket>  authPacket (new UdpAuthPacket(nullptr));
   authPacket->unserialize(std::move(bytes));
+  authPacket->handler(shared_from_this());
   Server::instance().pushPacket(authPacket);
 }
