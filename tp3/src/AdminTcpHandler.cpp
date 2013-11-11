@@ -15,7 +15,14 @@ AdminTcpHandler::AdminTcpHandler(const AdminTcpHandler& orig) { }
 
 AdminTcpHandler::~AdminTcpHandler() { }
 
+
+void AdminTcpHandler::start()
+{
+  request(0);
+}
+
 void AdminTcpHandler::bytesAvailable(ByteArray &&bytes)
 {
-  DEBUG("AdminProtocolhandler has " << bytes.size() << "bytes available");
+  DEBUG("AdminProtocolhandler has " << bytes.size() << "bytes available.");
+  request(0);
 }

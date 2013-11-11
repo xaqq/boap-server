@@ -9,6 +9,12 @@
 #include "net/AUdpProtocolHandler.hpp"
 #include "TcpProtocolHandler.hpp"
 #include "net/ATcpProtocolHandler.hpp"
+#include "AdminTcpHandler.hpp"
+
+std::shared_ptr<Net::ATcpProtocolHandler> BoapFactory::createTcpAdminProtocolHandler()
+{
+  return std::shared_ptr<Net::ATcpProtocolHandler> (new Net::AdminTcpHandler());
+}
 
 
 std::shared_ptr<Net::ATcpProtocolHandler> BoapFactory::createTcpProtocolHandler()

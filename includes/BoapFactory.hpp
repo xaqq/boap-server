@@ -35,6 +35,7 @@ public:
   virtual ~BoapFactory();
 
   static std::shared_ptr<Net::ATcpProtocolHandler> createTcpProtocolHandler();
+  static std::shared_ptr<Net::ATcpProtocolHandler> createTcpAdminProtocolHandler();
   static std::shared_ptr<Net::AUdpProtocolHandler> createUdpProtocolHandler(Net::UdpServer &, boost::asio::ip::udp::endpoint e);
   static std::shared_ptr<AClient> createClient();
   static std::list<std::shared_ptr<APacketHandler >> createPacketHandlers();
