@@ -10,12 +10,11 @@
 #include <boost/asio.hpp>
 #include <queue>
 #include <memory>
-#include "IUdpProtocolHandler.hpp"
-
+#include "AUdpProtocolHandler.hpp"
+#include "ByteArray.hpp"
 
 namespace Net
 {
-
   class UdpServer : public std::enable_shared_from_this<UdpServer>
   {
   public:
@@ -37,7 +36,7 @@ namespace Net
 
     boost::asio::io_service &ioService();
   private:
-    std::map<boost::asio::ip::udp::endpoint, std::shared_ptr<IUdpProtocolHandler>> handlers_;
+    std::map<boost::asio::ip::udp::endpoint, std::shared_ptr<AUdpProtocolHandler>> handlers_;
 
     /**
      * Cleanup handler for inactive endpoint;

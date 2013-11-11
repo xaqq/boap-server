@@ -10,7 +10,6 @@
 using namespace Net;
 
 AUdpProtocolHandler::AUdpProtocolHandler(UdpServer &s, boost::asio::ip::udp::endpoint e) :
-IUdpProtocolHandler(s, e),
 endpoint_(e),
 server_(s) { }
 

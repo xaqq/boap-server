@@ -14,7 +14,7 @@ class APacketHandler;
 class AClient;
 namespace Net
 {
-  class  IUdpProtocolHandler;
+  class AUdpProtocolHandler;
   class ATcpProtocolHandler;
   class UdpServer;
 };
@@ -35,7 +35,7 @@ public:
   virtual ~BoapFactory();
 
   static std::shared_ptr<Net::ATcpProtocolHandler> createTcpProtocolHandler();
-  static std::shared_ptr<Net::IUdpProtocolHandler> createUdpProtocolHandler(Net::UdpServer &, boost::asio::ip::udp::endpoint e);
+  static std::shared_ptr<Net::AUdpProtocolHandler> createUdpProtocolHandler(Net::UdpServer &, boost::asio::ip::udp::endpoint e);
   static std::shared_ptr<AClient> createClient();
   static std::list<std::shared_ptr<APacketHandler >> createPacketHandlers();
 

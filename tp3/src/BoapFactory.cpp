@@ -6,7 +6,7 @@
 #include "Client.hpp"
 #include "APacketHandler.hpp"
 #include "HelloPacketHandler.hpp"
-#include "net/IUdpProtocolHandler.hpp"
+#include "net/AUdpProtocolHandler.hpp"
 #include "TcpProtocolHandler.hpp"
 #include "net/ATcpProtocolHandler.hpp"
 
@@ -16,9 +16,9 @@ std::shared_ptr<Net::ATcpProtocolHandler> BoapFactory::createTcpProtocolHandler(
   return std::shared_ptr<Net::ATcpProtocolHandler> (new Net::TcpProtocolHandler());
 }
 
-std::shared_ptr<Net::IUdpProtocolHandler> BoapFactory::createUdpProtocolHandler(Net::UdpServer &s,  boost::asio::ip::udp::endpoint e)
+std::shared_ptr<Net::AUdpProtocolHandler> BoapFactory::createUdpProtocolHandler(Net::UdpServer &s,  boost::asio::ip::udp::endpoint e)
 {
-  return std::shared_ptr<Net::IUdpProtocolHandler> (new Net::UdpProtocolHandler(s, e));
+  return std::shared_ptr<Net::AUdpProtocolHandler> (new Net::UdpProtocolHandler(s, e));
 }
 
 std::shared_ptr<AClient> BoapFactory::createClient()

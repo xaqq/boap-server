@@ -8,13 +8,15 @@
 #ifndef AUDPPROTOCOLHANDLER_HPP
 #define	AUDPPROTOCOLHANDLER_HPP
 
-#include "IUdpProtocolHandler.hpp"
+#include <memory>
+#include <boost/asio.hpp>
+#include "ByteArray.hpp"
 
 namespace Net
 {
   class UdpServer;
 
-  class AUdpProtocolHandler : public IUdpProtocolHandler
+  class AUdpProtocolHandler : public std::enable_shared_from_this<AUdpProtocolHandler>
   {
   public:
     AUdpProtocolHandler(UdpServer &s, boost::asio::ip::udp::endpoint e);
