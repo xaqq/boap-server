@@ -32,8 +32,10 @@ Server::~Server() { }
 void Server::flush_operations()
 {
   std::function<void () > f;
+  std::size_t size = operationQueue_.size();
+  std::size_t i = 0;
 
-  while (operationQueue_.tryPop(f))
+  while (i++ < size && operationQueue_.tryPop(f))
     {
       f();
     }

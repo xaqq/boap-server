@@ -11,8 +11,10 @@
 #include <functional>
 #include "net/Network.hpp"
 #include "sql/SqlHandler.hpp"
+#include <future>
 
 class Server;
+class ISqlResult;
 namespace sql
 {
   class Connection;
@@ -44,6 +46,8 @@ public:
   void runInUdpThread(std::function<void() > f);
   void runInServerThread(std::function<void() > f);
   void runInSqlThread(std::function<void (sql::Connection *) > f);
+
+  SqlFutureResult runFutureInSql(std::function<SqlTaskReturnType (sql::Connection *) > f);
 
   void setUdp(Net::UdpServer* udp);
   void setTcp(Net::TcpServer* tcp);

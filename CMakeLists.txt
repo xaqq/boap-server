@@ -14,6 +14,7 @@ set(SOURCES src/main.cpp
             src/net/UdpServer.cpp
             src/world/World.cpp
 src/sql/SqlHandler.cpp
+src/sql/EntityTemplate.cpp
 src/world/GameEntity.cpp
             src/Clock.cpp
             src/Server.cpp

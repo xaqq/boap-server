@@ -70,6 +70,11 @@ public:
     return queue_.empty();
   }
 
+  std::size_t size() const
+  {
+    std::lock_guard<std::mutex> guard(mutex_);
+    return queue_.size();
+  }
 
 
 };

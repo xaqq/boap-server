@@ -7,6 +7,8 @@
 
 #include "Scheduler.hpp"
 #include "Server.hpp"
+#include "Log.hpp"
+#include <future>
 
 Scheduler *Scheduler::instance_ = nullptr;
 
@@ -59,4 +61,12 @@ void Scheduler::runInSqlThread(std::function<void (sql::Connection*) > f)
 void Scheduler::setSql(SqlHandler *h)
 {
   sql_ = h;
+}
+
+SqlFutureResult Scheduler::runFutureInSql(std::function<SqlTaskReturnType(sql::Connection *) > f)
+{
+  SqlPackagedTask task(f);
+  SqlFutureResult future = task.get_future();
+  sql_->pushRequestFuture(std::move(task));
+  return future;
 }

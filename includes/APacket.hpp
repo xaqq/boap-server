@@ -33,6 +33,7 @@ public:
   
   enum {
                         CMSG_HELLO      = 0x00000001,
+                        CMSG_AUTH       = 0x00000002,
                         SMSG_MOTD       =  0x10000001
  };
   

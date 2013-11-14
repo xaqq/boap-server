@@ -67,7 +67,7 @@ int main(int, char**)
       Scheduler *sched = Scheduler::instance();
       SqlHandler sql; 
       Server &server = Server::instance();
-
+      sched->setSql(&sql);
       sched->setServer(&server);
 
       boost::asio::io_service tcp_io_service;

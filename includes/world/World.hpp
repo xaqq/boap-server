@@ -8,6 +8,11 @@
 #ifndef WORLD_HPP
 #define	WORLD_HPP
 
+#include <future>
+#include <memory>
+#include "sql/SqlHandler.hpp"
+
+class ISqlResult;
 
 class  btBroadphaseInterface;
 class  btDefaultCollisionConfiguration;
@@ -24,6 +29,7 @@ public:
   void spawn();
   void update();
 private: 
+  SqlFutureResult future_;
   btBroadphaseInterface* broadphase_;
   btDefaultCollisionConfiguration* collisionConfiguration_;
   btCollisionDispatcher* dispatcher_;

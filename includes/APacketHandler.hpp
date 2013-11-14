@@ -11,7 +11,7 @@
 class APacket;
 class HelloPacket;
 class UdpAuthPacket;
-
+class CMSGAuthPacket;
 class APacketHandler
 {
 public:
@@ -31,6 +31,12 @@ public:
   {
     return true;
   }
+
+  virtual bool handle(CMSGAuthPacket *)
+  {
+    return true;
+  }
+
 private:
 
 };

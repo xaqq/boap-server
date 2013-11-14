@@ -9,12 +9,14 @@
 #define	ENTITYTEMPLATE_HPP
 
 #include <memory>
+#include <cppconn/connection.h>
+#include "sql/SqlHandler.hpp"
 
 class EntityTemplate
 {
 public:
   
-  static std::shared_ptr<EntityTemplate> loadTemplate(std::size_t id);
+  static SqlTaskReturnType loadTemplate(sql::Connection *c, std::size_t id);
   
   std::size_t id_;
   std::string name_;

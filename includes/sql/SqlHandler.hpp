@@ -13,6 +13,16 @@
 #include <cppconn/driver.h>
 #include <cppconn/connection.h>
 #include "SafeQueue.hpp"
+#include <future>
+
+
+class ISqlResult;
+typedef std::shared_ptr<ISqlResult> SqlTaskReturnType;
+typedef std::packaged_task<SqlTaskReturnType(sql::Connection *)> SqlPackagedTask;
+/**
+ * Typedef for a future; a ISqlResult is returned by all sql future;
+ */
+typedef std::future<SqlTaskReturnType> SqlFutureResult;
 
 /**
  * SQL Handlers, should run in its own thread.
@@ -36,6 +46,7 @@ public:
    * Push a callable that will be execute in the sql thread;
    */
   void pushRequest(std::function<void (sql::Connection *)>);
+  void pushRequestFuture(SqlPackagedTask f);
   
 private:
   std::atomic_bool run_;
@@ -48,6 +59,7 @@ private:
    * It provide the connection object;
    */
   SafeQueue<std::function<void (sql::Connection *) >> requests_;
+  SafeQueue<SqlPackagedTask> requestsFuture_;
 };
 
 #endif	/* SQLHANDLER_HPP */

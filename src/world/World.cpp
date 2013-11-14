@@ -8,6 +8,11 @@
 #include "world/World.hpp"
 #include <bullet/btBulletDynamicsCommon.h>
 #include "AClient.hpp"
+#include "Log.hpp"
+#include "sql/EntityTemplate.hpp"
+#include "Scheduler.hpp"
+#include "sql/ISqlResult.hpp"
+#include <future>
 
 World::World()
 {
@@ -18,8 +23,7 @@ World::World()
   collisionWorld_ = new btCollisionWorld(dispatcher_, broadphase_, collisionConfiguration_);
 }
 
-World::World(const World& orig) {
- }
+World::World(const World& orig) { }
 
 World::~World()
 {
@@ -30,6 +34,45 @@ World::~World()
   delete broadphase_;
 }
 
-void World::spawn() { }
+void World::spawn()
+{
+  INFO("ici");
 
-void World::update() { }
+  future_ = Scheduler::instance()->runFutureInSql([](sql::Connection * sql)
+  {
+                                                  return EntityTemplate::loadTemplate(sql, 1);
+
+  });
+
+}
+
+void World::update()
+{
+
+  if (future_.valid())
+    {
+      std::future_status status;
+      status = future_.wait_for(std::chrono::milliseconds(10));
+      if (status == std::future_status::deferred)
+        {
+          WARN("DEFFERED");
+        }
+      else if (status == std::future_status::timeout)
+        {
+          WARN("TIMEOUT");
+        }
+      else if (status == std::future_status::ready)
+        {
+          INFO("READY !!");
+        }
+      if (status != std::future_status::ready)
+        return;
+      SqlTaskReturnType result = future_.get();
+      if (!result->error())
+        {
+          EntityTemplate *tpl = reinterpret_cast<EntityTemplate *> (result.get()->result());
+          DEBUG("FUTURE!: " << tpl->name_);
+          delete tpl;
+        }
+    }
+}

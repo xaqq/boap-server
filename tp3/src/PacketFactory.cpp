@@ -10,6 +10,8 @@
 #include "APacket.hpp"
 #include "HelloPacket.hpp"
 #include "Log.hpp"
+#include "CMSGAuthPacket.hpp"
+
 PacketFactory::PacketFactory() { }
 
 PacketFactory::~PacketFactory() { }
@@ -22,12 +24,16 @@ std::shared_ptr<APacket> PacketFactory::buildPacket(std::shared_ptr<AClient> sou
   switch (opcode)
     {
     case APacket::CMSG_HELLO:
-      p = std::make_shared<HelloPacket>(source);
+      p = std::make_shared<HelloPacket > (source);
       p->unserialize(std::move(data));
       break;
+
+    case APacket::CMSG_AUTH:
+      p = std::make_shared<CMSGAuthPacket > (source);
+      p->unserialize(std::move(data));
     default:
       WARN("Opcode not found when building packet");
       break;
     }
-  return p;  
+  return p;
 }

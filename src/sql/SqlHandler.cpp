@@ -11,6 +11,7 @@
 #include <cppconn/exception.h>
 #include <mysql/mysql.h>
 #include <thread>
+#include <future>
 
 SqlHandler::SqlHandler() : run_(true) { }
 
@@ -51,6 +52,21 @@ void SqlHandler::run()
               ERROR("SQL Exception:" << e.what() << " (MySQL error code: " << e.getErrorCode() << ", SQLState: " << e.getSQLState() << " )");
             }
         }
+
+      SqlPackagedTask pt;
+      while (requestsFuture_.tryPop(pt))
+        {
+          try
+            {
+              INFO("HERE;");
+              pt(connection_.get());
+              INFO("PAS HERE;");
+            }
+          catch (sql::SQLException &e)
+            {
+              ERROR("SQL Exception:" << e.what() << " (MySQL error code: " << e.getErrorCode() << ", SQLState: " << e.getSQLState() << " )");
+            }
+        }
       std::chrono::milliseconds dura(20);
       std::this_thread::sleep_for(dura);
     }
@@ -62,8 +78,12 @@ void SqlHandler::stop()
   run_ = false;
 }
 
-void SqlHandler::pushRequest(std::function<void (sql::Connection *)> f)
+void SqlHandler::pushRequest(std::function<void (sql::Connection *) > f)
 {
   requests_.push(f);
 }
-  
+
+void SqlHandler::pushRequestFuture(SqlPackagedTask f)
+{
+  requestsFuture_.push(std::move(f));
+}

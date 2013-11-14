@@ -20,6 +20,9 @@ set (SOURCES
   "src/UdpAuthPacket.cpp"
   "src/MotdPacket.cpp"
   "src/PacketFactory.cpp"
+  "src/CMSGAuthPacket.cpp"
+   "src/AuthPacketHandler.cpp"
+"src/AuthTask.cpp"
 )
 
 add_library(tp3 SHARED ${SOURCES})
