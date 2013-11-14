@@ -31,9 +31,10 @@ std::shared_ptr<APacket> PacketFactory::buildPacket(std::shared_ptr<AClient> sou
     case APacket::CMSG_AUTH:
       p = std::make_shared<CMSGAuthPacket > (source);
       p->unserialize(std::move(data));
+      break;
     default:
       WARN("Opcode not found when building packet");
-      break;
+      return nullptr;
     }
   return p;
 }

@@ -11,6 +11,7 @@
 
 #include <memory>
 #include "sql/SqlHandler.hpp"
+#include "CMSGAuthPacket.hpp"
 
 /***
  * Auth task, spawned by the AuthPacketHandler;
@@ -21,8 +22,8 @@
 class AuthTask : public std::enable_shared_from_this<AuthTask>
 {
 public:
-  AuthTask();
-  AuthTask(const AuthTask& orig);
+  AuthTask(CMSGAuthPacket packet);
+  AuthTask(const AuthTask& orig) = delete;
   virtual ~AuthTask();
 
   /**
@@ -34,6 +35,11 @@ public:
    * second state
    */
   bool waitForResult();
+  
+  /** 
+   * third state
+   */
+  bool resultAvailable();
   
   SqlTaskReturnType runSqlCode(sql::Connection *);
 
@@ -51,7 +57,8 @@ private:
    * Sql result
    */
   SqlFutureResult future_;
-  
+  CMSGAuthPacket packet_;
+  bool *sqlResult_;
   
 
 };

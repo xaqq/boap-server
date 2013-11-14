@@ -9,8 +9,15 @@
 #include "Log.hpp"
 #include "APacketHandler.hpp"
 #include <string>
+#include <algorithm>
 
 CMSGAuthPacket::CMSGAuthPacket(std::shared_ptr<AClient> source) : APacket(source) { }
+
+CMSGAuthPacket::CMSGAuthPacket(const CMSGAuthPacket& orig) : APacket(orig)
+{
+  username_ = orig.username_;
+  password_ = orig.password_;
+}
 
 CMSGAuthPacket::~CMSGAuthPacket() { }
 
@@ -25,22 +32,22 @@ bool CMSGAuthPacket::acceptHandler(APacketHandler* handler)
 
 void CMSGAuthPacket::unserialize(ByteArray data)
 {
-//  auto search = std::find(data.begin(), data.end(), '\0');
-//  if (search == data.end())
-//    {
-//      WARN("INVALID PACKET");
-//      return;
-//    }
-//std::string str(data.begin(), search);
-//username_ = std::move(str);
-//++search;
-//if (search == data.end())
-//  {
-//    WARN("Invalid packet");
-//    return;
-//  }
-//std::string str2(search, data.end());
-//  password_ = std::move(str2);
+  ByteArray::iterator search = std::find(data.begin(), data.end(), '\0');
+  if (search == data.end())
+    {
+      WARN("INVALID PACKET");
+      return;
+    }
+  std::string str(data.begin(), search);
+  username_ = std::move(str);
+  ++search;
+  if (search == data.end())
+    {
+      WARN("Invalid packet");
+      return;
+    }
+  std::string str2(search, data.end());
+  password_ = std::move(str2);
 }
 
 ByteArray CMSGAuthPacket::serialize() const

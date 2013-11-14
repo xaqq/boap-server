@@ -50,6 +50,10 @@ void Server::handle_packets()
       DEBUG("FOUND PACKET");
       for (auto handler : packetHandlers_)
         {
+          if (!packet)
+            {
+              WARN("No Packet !");
+            }
           if (!packet->acceptHandler(handler.get()))
             {
               INFO("Handler dropped packet");

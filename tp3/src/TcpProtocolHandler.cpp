@@ -75,7 +75,8 @@ void TcpProtocolHandler::readBody(ByteArray bytes)
   INFO("Received Body");
 
   std::shared_ptr< APacket > packet = PacketFactory::buildPacket(client_, opcode_, std::move(bytes));
-  Server::instance().pushPacket(packet);
+  if (packet)
+    Server::instance().pushPacket(packet);
 
 
   handler_ = std::bind(&TcpProtocolHandler::readOpcode, this, std::placeholders::_1);

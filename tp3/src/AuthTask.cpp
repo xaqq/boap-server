@@ -15,18 +15,19 @@
 #include <cppconn/exception.h>
 #include "Log.hpp"
 #include "Scheduler.hpp"
+#include "MotdPacket.hpp"
+#include "AClient.hpp"
 #include "AuthPacketHandler.hpp"
 
-AuthTask::AuthTask()
+AuthTask::AuthTask(CMSGAuthPacket packet) : packet_(packet), sqlResult_(nullptr)
 {
   internalHandler_ = std::bind(&AuthTask::start, this);
 }
 
-AuthTask::AuthTask(const AuthTask& orig) { }
-
 AuthTask::~AuthTask()
 {
   DEBUG("AuthTask destroyed");
+  delete sqlResult_;
 }
 
 void AuthTask::operator()(void)
@@ -42,37 +43,59 @@ bool AuthTask::start()
   return true;
 }
 
-SqlTaskReturnType AuthTask::runSqlCode(sql::Connection *c)
+bool AuthTask::resultAvailable()
 {
-  sleep(3);
+  MotdPacket *packet = new MotdPacket(nullptr);
+
+  DEBUG(*sqlResult_);
+  std::shared_ptr<APacket> ptr(packet);
+  // notify user auth went ok;
+  if (packet_.source())
+    {
+      if (*sqlResult_)
+        packet->motd_ = "GG AUTH";
+      else
+        packet->motd_ = "FAIL AUTH";
+      packet_.source()->pushPacket(ptr);
+      packet_.source()->disconnect();
+    }
+  return false;
+}
+
+SqlTaskReturnType AuthTask::runSqlCode(sql::Connection * c)
+{
   INFO("ICI");
   sql::PreparedStatement *pstmt;
   sql::ResultSet *res;
+  SqlTaskReturnType ret(new ISqlResult());
+  bool *authSucces = new bool(false);
   try
     {
       pstmt = c->prepareStatement("SELECT COUNT(id) as isAuthValid FROM users WHERE username = (?) AND password = (?)");
-      pstmt->setString(1, "toto");
-      pstmt->setString(2, "toto");
+      pstmt->setString(1, packet_.username_);
+      pstmt->setString(2, packet_.password_);
       res = pstmt->executeQuery();
       while (res->next())
         {
           INFO("SQL REPLIES: " << res->getInt("isAuthValid"));
+          if (res->getInt("isAuthValid"))
+            *authSucces = true;
         }
     }
   catch (sql::SQLException &e)
     {
+      delete res;
+      delete pstmt;
+      delete authSucces;
       ERROR("SQL Exception:" << e.what() << " (MySQL error code: " << e.getErrorCode() << ", SQLState: " << e.getSQLState() << " )");
       return nullptr;
     }
-  ISqlResult *ptr = new ISqlResult();
-  ptr->error_ = false;
-  //  ptr->result_ = e;
+  ret->error_ = false;
+  ret->result_ = authSucces;
 
   delete res;
   delete pstmt;
-  // std::shared_ptr<ISqlResult> temp(ptr);
-  //DEBUG("BOAP:" << temp.get());
-  return SqlTaskReturnType(ptr);
+  return ret;
 }
 
 bool AuthTask::waitForResult()
@@ -80,21 +103,28 @@ bool AuthTask::waitForResult()
   if (future_.valid())
     {
       std::future_status status;
-      status = future_.wait_for(std::chrono::milliseconds(0));
+      status = future_.wait_for(std::chrono::milliseconds(10));
       if (status != std::future_status::ready)
         return true;
       SqlTaskReturnType result = future_.get();
-      INFO("Future Auth !!");
-      if (result && !result->error())
+      if (!result)
         {
-          //          EntityTemplate *tpl = reinterpret_cast<EntityTemplate *> (result.get()->result());
-          //         DEBUG("FUTURE!: " << tpl->name_);
-          //          delete tpl;
-        }
-      else
-        {
+          WARN("No result at all (callable returned null)");
           return false;
         }
+      else if (result->error())
+        {
+          WARN("Error when processing query");
+          return false;
+        }
+      else if (!result->result())
+        {
+          WARN("Custom data are null");
+          return false;
+        }
+      internalHandler_ = std::bind(&AuthTask::resultAvailable, this);
+      sqlResult_ = static_cast<bool *> (result->result());
+      return true;
     }
   return true;
 }

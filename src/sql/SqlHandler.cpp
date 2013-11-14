@@ -58,9 +58,7 @@ void SqlHandler::run()
         {
           try
             {
-              INFO("HERE;");
               pt(connection_.get());
-              INFO("PAS HERE;");
             }
           catch (sql::SQLException &e)
             {

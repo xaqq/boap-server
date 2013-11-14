@@ -23,8 +23,8 @@ bool AuthPacketHandler::handle(CMSGAuthPacket *p)
 {
   INFO("Handling auth");
   
-  auto lama = std::make_shared<AuthTask>();
-  Scheduler::instance()->runInServerThread(std::bind(&AuthTask::operator (), lama));
+  auto task = std::make_shared<AuthTask>(*p);
+  Scheduler::instance()->runInServerThread(std::bind(&AuthTask::operator (), task));
   
   return true;
 }

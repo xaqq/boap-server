@@ -9,7 +9,7 @@ class CMSGAuthPacket : public APacket
 {
 public:
   CMSGAuthPacket(std::shared_ptr<AClient> source);
-  CMSGAuthPacket(const CMSGAuthPacket& orig) = delete;
+  CMSGAuthPacket(const CMSGAuthPacket& orig);
   virtual ~CMSGAuthPacket();
   
    /**
@@ -28,7 +28,7 @@ public:
   virtual void unserialize(ByteArray data) override;;
   virtual ByteArray serialize() const;
 
-private:
+public:
   std::string username_;
   std::string password_;
 };

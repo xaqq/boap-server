@@ -8,6 +8,7 @@
 #pragma once
 #include "net/ATcpProtocolHandler.hpp"
 #include <memory>
+#include <cstdint>
 
 class Client;
 namespace Net
@@ -31,8 +32,8 @@ namespace Net
 
   private:
     std::shared_ptr<Client> client_;
-    std::size_t opcode_;
-    std::size_t packetSize_;
+    std::uint16_t opcode_;
+    std::uint16_t packetSize_;
     std::size_t bytesReceived_;
 
     void readOpcode(ByteArray bytes);

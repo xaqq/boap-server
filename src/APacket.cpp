@@ -10,7 +10,10 @@
 
 APacket::APacket(std::shared_ptr<AClient> source) : source_(source) { }
 
-APacket::APacket(const APacket& orig) { }
+APacket::APacket(const APacket& orig)
+{
+  source_ = orig.source_;
+}
 
 APacket::~APacket() { }
 
