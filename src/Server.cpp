@@ -48,7 +48,11 @@ void Server::handle_packets()
       DEBUG("FOUND PACKET");
       for (auto handler : packetHandlers_)
         {
-          packet->acceptHandler(handler.get());
+          if (!packet->acceptHandler(handler.get()))
+            {
+              INFO("Handler dropped packet");
+              break;
+            }
         }
     }
 }
@@ -60,7 +64,7 @@ void Server::run()
       // INFO("Server is running. Stats: " << clients_.size() << " clients.");
       flush_operations();
       handle_packets();
-
+      world_.update();
       std::chrono::milliseconds dura(20);
       std::this_thread::sleep_for(dura);
     }
@@ -89,7 +93,17 @@ void Server::stop()
   isRunning_ = false;
 }
 
-const ClientList &Server::clients() const
+const Server::ClientList &Server::clients() const
 {
   return clients_;
+}
+
+World &Server::world()
+{
+  return world_;
+}
+
+const World &Server::world() const
+{
+  return world_;
 }

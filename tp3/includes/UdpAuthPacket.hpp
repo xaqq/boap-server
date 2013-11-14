@@ -10,6 +10,7 @@
 
 #include <string>
 #include "APacket.hpp"
+#include "net/AUdpProtocolHandler.hpp"
 
 class APacketHandler;
 
@@ -33,15 +34,15 @@ public:
   virtual ByteArray serialize() const;
 
   const std::string &authCode() const;
-  std::shared_ptr<AUdpProtocolHandler> handler();
-  void handler(std::shared_ptr<AUdpProtocolHandler>);
+  std::shared_ptr<Net::AUdpProtocolHandler> handler();
+  void handler(std::shared_ptr<Net::AUdpProtocolHandler>);
 
 private:
   std::string authCode_;
   /**
    * The handler from which the packet originates
    */
-  std::shared_ptr<AUdpProtocolHandler> handler;
+  std::shared_ptr<Net::AUdpProtocolHandler> handler_;
 
 };
 

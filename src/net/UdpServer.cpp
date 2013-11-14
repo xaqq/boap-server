@@ -47,6 +47,7 @@ void UdpServer::start_receive()
                              INFO("Unkown UDP endpoint; Will instanciate protocol handler");
                              handlers_[remoteEndpoint_] = handlerFactory_(*this, remoteEndpoint_);
       }
+                             buffer_.resize(bytes);
                              handlers_[remoteEndpoint_]->bytesAvailable(std::move(buffer_));
                              handlers_[remoteEndpoint_]->lastActivity(time(NULL));
                              buffer_.resize(PACKET_MAX_SIZE);

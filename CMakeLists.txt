@@ -12,6 +12,10 @@ set(SOURCES src/main.cpp
 	    src/net/TcpServer.cpp
 	    src/net/TcpSession.cpp
             src/net/UdpServer.cpp
+            src/world/World.cpp
+src/sql/SqlHandler.cpp
+src/world/GameEntity.cpp
+            src/Clock.cpp
             src/Server.cpp
             src/AClient.cpp
             src/Scheduler.cpp
@@ -21,8 +25,8 @@ set(SOURCES src/main.cpp
 )
 
 find_package(Boost COMPONENTS system REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS} "includes" "logger/logger/includes")
+include_directories(${Boost_INCLUDE_DIRS} "includes" "logger/logger/includes" "/usr/include/bullet")
 
 
 add_executable(boapd ${SOURCES})
-target_link_libraries( boapd ${Boost_LIBRARIES} Logger tp3)
+target_link_libraries( boapd ${Boost_LIBRARIES} mysqlcppconn Logger tp3 BulletDynamics)

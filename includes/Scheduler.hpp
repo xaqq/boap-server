@@ -9,10 +9,14 @@
 #define	SCHEDULER_HPP
 
 #include <functional>
+#include "net/Network.hpp"
+#include "sql/SqlHandler.hpp"
 
-#include "net/TcpServer.hpp"
-#include "net/UdpServer.hpp"
-#include "Server.hpp"
+class Server;
+namespace sql
+{
+  class Connection;
+};
 
 /**
  * Scheduler helper;
@@ -29,30 +33,22 @@ private:
   Net::TcpServer *tcp_;
   Net::UdpServer *udp_;
   Server *server_;
+  SqlHandler *sql_;
 
 public:
   virtual ~Scheduler();
 
   static Scheduler *instance();
 
-  void runInTcpThread(std::function<void()> f)
-  {
-    tcp_->ioService().post(f);
-  }
-  
-  void runInUdpThread(std::function<void()> f)
-  {
-    udp_->ioService().post(f);
-  }
-  
-  void runInServerThread(std::function<void()> f)
-  {
-    server_->post(f);
-  }
+  void runInTcpThread(std::function<void() > f);
+  void runInUdpThread(std::function<void() > f);
+  void runInServerThread(std::function<void() > f);
+  void runInSqlThread(std::function<void (sql::Connection *) > f);
 
   void setUdp(Net::UdpServer* udp);
   void setTcp(Net::TcpServer* tcp);
   void setServer(Server* srv);
+  void setSql(SqlHandler *h);
 
 };
 

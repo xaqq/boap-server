@@ -9,6 +9,7 @@
 #include "Server.hpp"
 #include "Scheduler.hpp"
 #include "BoapFactory.hpp"
+#include "sql/SqlHandler.hpp"
 
 void start_tcp(boost::asio::io_service *tcp_io_service)
 {
@@ -23,6 +24,11 @@ void start_udp(boost::asio::io_service *udp_io_service)
 void start_gameserver(Server *server)
 {
   server->run();
+}
+
+void start_sql(SqlHandler *h)
+{
+  h->run();
 }
 
 void logConfig()
@@ -59,6 +65,7 @@ int main(int, char**)
     {
       logConfig();
       Scheduler *sched = Scheduler::instance();
+      SqlHandler sql; 
       Server &server = Server::instance();
 
       sched->setServer(&server);
@@ -80,7 +87,9 @@ int main(int, char**)
       signals.async_wait(std::bind(&Net::TcpServer::stop, &tcpServer));
       signals.async_wait(std::bind(&Net::UdpServer::stop, &udpServer));
       signals.async_wait(std::bind(&Server::stop, &server));
+      signals.async_wait(std::bind(&SqlHandler::stop, &sql));
 
+      std::thread sqlThread(start_sql, &sql);
       std::thread tcpThread(start_tcp, &tcp_io_service);
       std::thread udpThread(start_udp, &udp_io_service);
       std::thread gameServerThread(start_gameserver, &server);
@@ -88,6 +97,7 @@ int main(int, char**)
       tcpThread.join();
       udpThread.join();
       gameServerThread.join();
+      sqlThread.join();
       delete &server;
       delete sched;
     }

@@ -7,7 +7,6 @@
 
 #pragma once
 #include "net/ATcpProtocolHandler.hpp"
-
 #include <memory>
 
 class Client;

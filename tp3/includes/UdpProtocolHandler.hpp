@@ -22,6 +22,8 @@ namespace Net
 
     virtual void bytesAvailable(ByteArray bytes);
 
+    void client(std::shared_ptr<Client>);
+    std::shared_ptr<Client> client();
   private:
     std::shared_ptr<Client> client_;
   };

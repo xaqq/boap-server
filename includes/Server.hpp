@@ -13,6 +13,7 @@
 #include <list>
 #include "SafeQueue.hpp"
 #include "APacket.hpp"
+#include "world/World.hpp"
 
 class APacket;
 class AClient;
@@ -83,6 +84,9 @@ public:
     packets_.push(p);
   }
   
+  World &world();
+  const World &world() const;
+  
 private:
   Server();
   
@@ -102,6 +106,7 @@ private:
   void handle_packets();
   
   SafeQueue<std::function<void () >> operationQueue_;
+  World world_;
 };
 
 #endif	/* SERVER_HPP */

@@ -6,6 +6,7 @@
  */
 
 #include "Scheduler.hpp"
+#include "Server.hpp"
 
 Scheduler *Scheduler::instance_ = nullptr;
 
@@ -35,3 +36,27 @@ Scheduler *Scheduler::instance()
   return instance_;
 }
 
+void Scheduler::runInTcpThread(std::function<void() > f)
+{
+  tcp_->ioService().post(f);
+}
+
+void Scheduler::runInUdpThread(std::function<void() > f)
+{
+  udp_->ioService().post(f);
+}
+
+void Scheduler::runInServerThread(std::function<void() > f)
+{
+  server_->post(f);
+}
+
+void Scheduler::runInSqlThread(std::function<void (sql::Connection*) > f)
+{
+  sql_->pushRequest(f);
+}
+
+void Scheduler::setSql(SqlHandler *h)
+{
+  sql_ = h;
+}

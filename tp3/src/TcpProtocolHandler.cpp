@@ -9,6 +9,7 @@
 #include "APacket.hpp"
 #include "HelloPacket.hpp"
 #include "PacketFactory.hpp"
+#include "Server.hpp"
 
 using namespace Net;
 

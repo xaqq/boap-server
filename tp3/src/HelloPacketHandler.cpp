@@ -10,6 +10,7 @@
 #include "Log.hpp"
 #include "Client.hpp"
 #include "MotdPacket.hpp"
+#include "Server.hpp"
 
 HelloPacketHandler::HelloPacketHandler() { }
 
@@ -25,10 +26,7 @@ bool HelloPacketHandler::handle(HelloPacket *p)
   std::shared_ptr<APacket> ptr(packet);
   
   p->source()->pushPacket(ptr);
-  p->source()->pushPacket(ptr);
-  p->source()->pushPacket(ptr);
-  p->source()->disconnect();
-  
+  Server::instance().world().spawn();
   return true;
 }
 

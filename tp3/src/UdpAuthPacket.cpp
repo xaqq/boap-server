@@ -40,12 +40,12 @@ const std::string &UdpAuthPacket::authCode() const
   return authCode_;
 }
 
-std::shared_ptr<AUdpProtocolHandler> UdpAuthPacket::handler()
+std::shared_ptr<Net::AUdpProtocolHandler> UdpAuthPacket::handler()
 {
   return handler_;
 }
 
-void UdpAuthPacket::handler(std::shared_ptr<AUdpProtocolHandler> h)
+void UdpAuthPacket::handler(std::shared_ptr<Net::AUdpProtocolHandler> h)
 {
   handler_ = h;
 }

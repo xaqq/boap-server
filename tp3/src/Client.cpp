@@ -15,6 +15,7 @@
 Client::Client()
 {
   DEBUG("Client constructed");
+  udpAuthCode_ = "bla";
 }
 
 Client::~Client()

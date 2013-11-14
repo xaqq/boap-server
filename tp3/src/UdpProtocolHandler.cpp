@@ -11,6 +11,9 @@
 #include "Scheduler.hpp"
 #include "UdpAuthHandler.hpp"
 #include <thread>
+#include "Server.hpp"
+#include "Client.hpp"
+
 using namespace Net;
 
 UdpProtocolHandler::UdpProtocolHandler(UdpServer &s, boost::asio::ip::udp::endpoint e) :
@@ -19,19 +22,32 @@ AUdpProtocolHandler(s, e) { }
 UdpProtocolHandler::~UdpProtocolHandler()
 {
   INFO("UDPProtocolhandler destroyed");
+  if (client_)
+    client_->timeout();
 }
 
 void UdpProtocolHandler::bytesAvailable(ByteArray bytes)
 {
-  
+
   if (client_)
     {
       INFO("Received udp message for client;");
       return;
     }
   /* If client isn't set, we suppose this is a authentication packet */
-  std::shared_ptr<APacket>  authPacket (new UdpAuthPacket(nullptr));
+  UdpAuthPacket *authPacket = new UdpAuthPacket(nullptr);
   authPacket->unserialize(std::move(bytes));
   authPacket->handler(shared_from_this());
-  Server::instance().pushPacket(authPacket);
+  std::shared_ptr<APacket> authPacketPtr(authPacket);
+  Server::instance().pushPacket(authPacketPtr);
+}
+
+void UdpProtocolHandler::client(std::shared_ptr<Client> c)
+{
+  client_ = c;
+}
+
+std::shared_ptr<Client> UdpProtocolHandler::client()
+{
+  return client_;
 }
