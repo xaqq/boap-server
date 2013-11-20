@@ -1,13 +1,19 @@
 #pragma once
 
+#include <vector>
+#include <array>
 #include <list>
 #include <memory>
+#include <boost/uuid/uuid.hpp>
 #include <bullet/btBulletDynamicsCommon.h>
+#include "Clock.hpp"
+#include "world/WorldFacade.hpp"
+
 
 class GameEntity
 {
 public:
-  GameEntity(std::shared_ptr<btCollisionShape> shape);
+  GameEntity(WorldFacade &world, std::shared_ptr<btCollisionShape> shape);
 
   /**
    * Set the absolute position. This change is not propagated to
@@ -20,6 +26,8 @@ public:
    * children.
    */
   void setPosition(btScalar x, btScalar y, btScalar z);
+  
+  const btVector3 &position() const;
 
   /**
    * Set the absolute rotation of the entity. This change is not propagated to
@@ -50,7 +58,12 @@ public:
   const btTransform &transform() const;
   void transform(const btTransform &t);
   btCollisionObject *object();
-  void move(float dist);
+  
+  /**
+   * Rotate the entity so that it looks towards the location
+   * TODO
+   */
+  void lookAt(float x, float y, float z);
 
   /**
    * Add a child to this entity; The entity 3d object must be already added
@@ -58,9 +71,29 @@ public:
    */
   void addChild(std::shared_ptr<GameEntity> e);
 
-public:
-  std::list<std::shared_ptr<GameEntity>> children_;
-  std::shared_ptr<btCollisionShape>	shape_;
-  std::shared_ptr<btCollisionObject>	object_;
-  btTransform				transform_;
+  virtual void update(Milliseconds diff);
+
+  /**
+   * Return the list of triangle that represent the geometry of this entity.
+   */
+  std::vector<std::array<btVector3, 3 >> getTrianglesForMe();
+  
+  /**
+   * Return the list of triangle that represent this entity and its children.
+   */
+  std::vector<std::array<btVector3, 3 >> getTriangles();;
+
+protected:
+  /**
+   * A Reference to the world.
+   */
+  WorldFacade &world_;
+  
+private:
+  std::list<std::shared_ptr<GameEntity >> children_;
+  std::shared_ptr<btCollisionShape> shape_;
+  std::shared_ptr<btCollisionObject> object_;
+  btTransform transform_;
+  std::shared_ptr<GameEntity> parent_;
+  boost::uuids::uuid uuid_;
 };

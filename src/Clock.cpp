@@ -1,3 +1,4 @@
+#include "Log.hpp"
 #include "Clock.hpp"
 
 Milliseconds deltaTime(bool reset)

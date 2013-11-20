@@ -15,6 +15,9 @@ class ISqlResult
 {
 public:
 
+  ISqlResult(bool error = true) : error_(error),
+  result_(nullptr) { }
+
   virtual ~ISqlResult() { }
 
   /**

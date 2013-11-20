@@ -14,9 +14,8 @@
 #include <cppconn/connection.h>
 #include "SafeQueue.hpp"
 #include <future>
+#include "sql/ISqlResult.hpp"
 
-
-class ISqlResult;
 typedef std::shared_ptr<ISqlResult> SqlTaskReturnType;
 typedef std::packaged_task<SqlTaskReturnType(sql::Connection *)> SqlPackagedTask;
 /**
@@ -49,6 +48,8 @@ public:
   void pushRequestFuture(SqlPackagedTask f);
   
 private:
+  bool connect();
+  
   std::atomic_bool run_;
   sql::Driver *driver_;
   std::shared_ptr<sql::Connection> connection_;

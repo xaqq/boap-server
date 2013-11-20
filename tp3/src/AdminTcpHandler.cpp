@@ -11,7 +11,7 @@
 using namespace Net;
 AdminTcpHandler::AdminTcpHandler() { }
 
-AdminTcpHandler::AdminTcpHandler(const AdminTcpHandler& orig) { }
+AdminTcpHandler::AdminTcpHandler(const AdminTcpHandler&) { }
 
 AdminTcpHandler::~AdminTcpHandler() { }
 

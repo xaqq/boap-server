@@ -22,24 +22,35 @@ SqlHandler::~SqlHandler()
   DEBUG("SqlHandler destroyed");
 }
 
-void SqlHandler::run()
+bool SqlHandler::connect()
 {
   try
     {
-      /* Create a connection */
-      driver_ = get_driver_instance();
       connection_ = std::shared_ptr<sql::Connection > (driver_->connect("tcp://127.0.0.1:3306", "root", "root"));
       /* Connect to the MySQL test database */
-
       connection_->setSchema("boapd");
+      return true;
     }
   catch (sql::SQLException &e)
     {
-      ERROR("SQL Exception:" << e.what() << " (MySQL error code: " << e.getErrorCode() << ", SQLState: " << e.getSQLState() << " )");
+      ERROR("SQL Exception (When connecting to the database): " << e.what() << " (MySQL error code: " << e.getErrorCode() << ", SQLState: " << e.getSQLState() << " )");
+      connection_.reset();
     }
+  return false;
+}
+
+void SqlHandler::run()
+{
+  driver_ = get_driver_instance();
+  connect();
   while (run_)
     {
       std::function<void (sql::Connection *) > f;
+
+      if (!connection_)
+        {
+          connect();
+        }
 
       while (requests_.tryPop(f))
         {

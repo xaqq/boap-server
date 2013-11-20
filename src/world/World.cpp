@@ -5,25 +5,43 @@
  * Created on November 14, 2013, 5:25 AM
  */
 
+#include <iostream>
+#include <fstream>
+#include <algorithm>
 #include "world/World.hpp"
 #include <bullet/btBulletDynamicsCommon.h>
 #include "AClient.hpp"
 #include "Log.hpp"
 #include "sql/EntityTemplate.hpp"
+#include <functional>
+#include <string>
 #include "Scheduler.hpp"
 #include "sql/ISqlResult.hpp"
+#include "world/GameEntity.hpp"
+#include <boost/uuid/uuid_io.hpp>
+#include "world/RecastConverter.hpp"
+#include "world/NavMeshBuilder.hpp"
+#include "world/PathFindHelper.hpp"
+#include "world/MovableEntity.hpp"
+#include "DetourTileCache.h"
+#include <boost/lexical_cast.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
 #include <future>
 
-World::World()
+World::World() :
+entityFactory_(*this),
+ready_(false),
+uuid_(boost::uuids::random_generator()()),
+navMeshBuilder_(nullptr)
 {
   broadphase_ = new btDbvtBroadphase();
   collisionConfiguration_ = new btDefaultCollisionConfiguration();
   dispatcher_ = new btCollisionDispatcher(collisionConfiguration_);
   solver_ = new btSequentialImpulseConstraintSolver();
   collisionWorld_ = new btCollisionWorld(dispatcher_, broadphase_, collisionConfiguration_);
-}
 
-World::World(const World& orig) { }
+}
 
 World::~World()
 {
@@ -32,23 +50,74 @@ World::~World()
   delete dispatcher_;
   delete collisionConfiguration_;
   delete broadphase_;
+  delete navMeshBuilder_;
 }
 
-void World::spawn()
+std::shared_ptr<GameEntity> World::spawn(int entityId)
 {
-  INFO("ici");
+  auto e = entityFactory_.instanciate(entityId, btVector3(0, 0, 0));
+  if (!e)
+    return nullptr;
+  collisionWorld_->addCollisionObject(e->object());
+  entities_.push_back(e);
+  return e;
+}
 
-  future_ = Scheduler::instance()->runFutureInSql([](sql::Connection * sql)
-  {
-                                                  return EntityTemplate::loadTemplate(sql, 1);
+bool World::initNavhMesh()
+{
+  std::stringstream ss;
+  std::ofstream geometryFile;
+  RecastConverter converter;
 
-  });
+  ss << "/tmp/world." << uuid_ << ".geometry";
 
+  for (auto e : entities_)
+    converter.addEntity(e.get());
+
+  geometryFile.open(ss.str().c_str(), std::ios::trunc);
+  geometryFile << converter.genDataDump();
+  geometryFile.close();
+
+  navMeshBuilder_ = new NavMeshBuilder(ss.str().c_str());
+  // looks like this can SEGV if there is no floor or something
+  return navMeshBuilder_->build();
+}
+
+bool World::init()
+{
+  INFO("Initializing world " << uuid_);
+
+  auto floor = spawn(1);
+  floor->rotate(90, 0, 0);
+
+  std::shared_ptr<MovableEntity> e2 = std::dynamic_pointer_cast<MovableEntity > (spawn(2));
+  if (e2)
+    e2->setDestination(5, 5, 5);
+
+  if (initNavhMesh())
+    {
+      for (auto o : observers_)
+        {
+          o->onNavMeshQueryChange(navMeshBuilder_->m_navQuery);
+        }
+    }
+  else
+    {
+      WARN("Cannot initialize nav mesh");
+    }
+
+  return true;
 }
 
 void World::update()
 {
-
+  if (!ready_)
+    {
+      if (entityFactory_.isReady())
+        ready_ = init();
+      else
+        return;
+    }
   if (future_.valid())
     {
       std::future_status status;
@@ -75,4 +144,19 @@ void World::update()
           delete tpl;
         }
     }
+  for (auto e : entities_)
+    {
+      e->update(deltaTime());
+    }
+  deltaTime(true);
+}
+
+void World::registerOberserver(IWorldObserver *o)
+{
+  observers_.push_back(o);
+}
+
+void World::unregisterObserver(IWorldObserver *o)
+{
+  observers_.remove(o);
 }

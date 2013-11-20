@@ -66,8 +66,12 @@ int main(int, char**)
       logConfig();
       Scheduler *sched = Scheduler::instance();
       SqlHandler sql; 
-      Server &server = Server::instance();
       sched->setSql(&sql);
+      
+      // fire-up sql asap; it will be required by server initialisation code
+      std::thread sqlThread(start_sql, &sql);
+      
+      Server &server = Server::instance();
       sched->setServer(&server);
 
       boost::asio::io_service tcp_io_service;
@@ -89,7 +93,6 @@ int main(int, char**)
       signals.async_wait(std::bind(&Server::stop, &server));
       signals.async_wait(std::bind(&SqlHandler::stop, &sql));
 
-      std::thread sqlThread(start_sql, &sql);
       std::thread tcpThread(start_tcp, &tcp_io_service);
       std::thread udpThread(start_udp, &udp_io_service);
       std::thread gameServerThread(start_gameserver, &server);

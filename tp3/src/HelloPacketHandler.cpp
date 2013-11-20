@@ -26,7 +26,7 @@ bool HelloPacketHandler::handle(HelloPacket *p)
   std::shared_ptr<APacket> ptr(packet);
   
   p->source()->pushPacket(ptr);
-  Server::instance().world().spawn();
+//  Server::instance().world().spawn();
   return true;
 }
 

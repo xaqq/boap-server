@@ -6,7 +6,10 @@ set (CMAKE_CXX_FLAGS "-std=c++11 -W -Wall -g")
 
 include_directories ("${PROJECT_SOURCE_DIR}/includes" "${PROJECT_SOURCE_DIR}/../includes"
 "${PROJECT_SOURCE_DIR}/../logger/logger/includes"
-"${PROJECT_SOURCE_DIR}/../default-impl/includes")
+"${PROJECT_SOURCE_DIR}/../default-impl/includes"
+"${PROJECT_SOURCE_DIR}/../Recast/Include"
+"${PROJECT_SOURCE_DIR}/../Detour/Include"
+"/usr/include/bullet")
 
 set (SOURCES
   "src/TcpProtocolHandler.cpp"

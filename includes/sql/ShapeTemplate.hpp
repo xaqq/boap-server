@@ -1,18 +1,17 @@
 /* 
- * File:   EntityTemplate.hpp
+ * File:   ShapeTemplate.hpp
  * Author: xaqq
  *
  * Created on November 14, 2013, 5:54 AM
  */
 
-#ifndef ENTITYTEMPLATE_HPP
-#define	ENTITYTEMPLATE_HPP
+#pragma once
 
 #include <memory>
 #include <cppconn/connection.h>
 #include "sql/SqlHandler.hpp"
 
-class EntityTemplate
+class ShapeTemplate
 {
 public:
   
@@ -26,9 +25,6 @@ public:
   
   std::size_t id_;
   std::string name_;
-  std::string scriptName_;
-  std::size_t shape_id;
+  btVector3 params_;
 };
-
-#endif	/* ENTITYTEMPLATE_HPP */
 

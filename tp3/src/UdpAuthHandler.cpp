@@ -14,7 +14,7 @@
 
 UdpAuthHandler::UdpAuthHandler() { }
 
-UdpAuthHandler::UdpAuthHandler(const UdpAuthHandler& orig) { }
+UdpAuthHandler::UdpAuthHandler(const UdpAuthHandler&) { }
 
 UdpAuthHandler::~UdpAuthHandler() { }
 

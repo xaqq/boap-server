@@ -20,13 +20,14 @@ namespace Net
 
   private:
     void do_accept();
-    boost::asio::ip::tcp::acceptor acceptor_;
-    boost::asio::ip::tcp::socket socket_;
     
     /**
      * Functor that create a new ATcpProtocolHandler. It is passed to the TcpSession which use
      * it internally.
      */
     TcpHandlerFactory handlerFactory_;
+    boost::asio::ip::tcp::acceptor acceptor_;
+    boost::asio::ip::tcp::socket socket_;
+
   };
 };
