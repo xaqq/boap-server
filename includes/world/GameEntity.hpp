@@ -59,6 +59,9 @@ public:
   void transform(const btTransform &t);
   btCollisionObject *object();
   
+  bool affectNavMesh() const;
+  void affectNavMesh(bool v);
+  
   /**
    * Rotate the entity so that it looks towards the location
    * TODO
@@ -88,6 +91,11 @@ protected:
    * A Reference to the world.
    */
   WorldFacade &world_;
+    
+  /**
+   * Should this entity be used for building nav-mesh ?
+   */
+  bool affectNavMesh_;
   
 private:
   std::list<std::shared_ptr<GameEntity >> children_;
@@ -96,4 +104,5 @@ private:
   btTransform transform_;
   std::shared_ptr<GameEntity> parent_;
   boost::uuids::uuid uuid_;
+
 };

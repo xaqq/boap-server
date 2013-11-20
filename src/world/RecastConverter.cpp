@@ -3,7 +3,6 @@
 #include "world/RecastConverter.hpp"
 #include "world/GameEntity.hpp"
 
-
 void RecastConverter::addEntity(GameEntity *e)
 {
   entities_.push_back(e);
@@ -12,22 +11,24 @@ void RecastConverter::addEntity(GameEntity *e)
 std::string RecastConverter::genDataDump()
 {
   std::stringstream ss;
-  int		    idx;
+  int idx;
 
   for (auto e : entities_)
     {
+      if (!e->affectNavMesh())
+        continue;
       auto triangles = e->getTriangles();
       for (auto triangle : triangles)
-	{
-	  std::array<int, 3> verticesIdx;
-	  for (int i = 0; i < 3; ++i)
-	    {
-	      vertices_.push_back(triangle[i]);
-	      idx = vertices_.size();
-	      verticesIdx[i] = idx;
-	    }
-	  trianglesVerticesIndex_.push_back(verticesIdx);
-	}
+        {
+          std::array<int, 3 > verticesIdx;
+          for (int i = 0; i < 3; ++i)
+            {
+              vertices_.push_back(triangle[i]);
+              idx = vertices_.size();
+              verticesIdx[i] = idx;
+            }
+          trianglesVerticesIndex_.push_back(verticesIdx);
+        }
     }
 
   for (auto vertice : vertices_)

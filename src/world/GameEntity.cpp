@@ -8,8 +8,9 @@
 extern btCollisionWorld *world;
 
 GameEntity::GameEntity(WorldFacade &world, std::shared_ptr<btCollisionShape> shape)
-: 
+:
 world_(world),
+affectNavMesh_(true),
 shape_(shape)
 {
   //  uuid_ = boost::uuids::random_generator()();
@@ -46,6 +47,16 @@ void GameEntity::rotate(const btQuaternion &rotation)
       tmp.setOrigin(pos);
       child->transform(tmp);
     }
+}
+
+bool GameEntity::affectNavMesh() const
+{
+  return affectNavMesh_;
+}
+
+void GameEntity::affectNavMesh(bool v)
+{
+  affectNavMesh_ = v;
 }
 
 void GameEntity::rotate(btScalar x, btScalar y, btScalar z)
@@ -207,5 +218,5 @@ const btVector3 &GameEntity::position() const
 void GameEntity::lookAt(float x, float y, float z)
 {
   btVector3 dir = btVector3(x, y, z) - transform_.getOrigin();
-  
+
 }

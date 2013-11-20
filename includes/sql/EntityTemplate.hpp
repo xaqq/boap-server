@@ -28,6 +28,7 @@ public:
   std::string name_;
   std::string scriptName_;
   std::size_t shape_id;
+  bool affectNavMesh_;
 };
 
 #endif	/* ENTITYTEMPLATE_HPP */

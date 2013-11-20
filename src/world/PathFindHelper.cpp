@@ -102,8 +102,9 @@ btVector3 PathFindHelper::nextCorner()
           };
         }
       findPath(entity_.position(), entity_.destination());
-      return btVector3(nextCorner_[0], nextCorner_[1], nextCorner_[2]);
+      isCacheValid_ = true;
     }
+  return btVector3(nextCorner_[0], nextCorner_[1], nextCorner_[2]);  
 }
 
 void PathFindHelper::updatePosition(const btVector3 & pos)

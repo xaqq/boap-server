@@ -17,7 +17,7 @@ namespace Net
   {
   public:
     AdminTcpHandler();
-    AdminTcpHandler(const AdminTcpHandler& orig);
+    AdminTcpHandler(const AdminTcpHandler&) = delete;
     virtual ~AdminTcpHandler();
     
     virtual void start();

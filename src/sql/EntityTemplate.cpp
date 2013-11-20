@@ -13,7 +13,7 @@ SqlTaskReturnType EntityTemplate::loadTemplate(sql::Connection *c, std::size_t i
   sql::PreparedStatement *pstmt;
   sql::ResultSet *res;
 
-  pstmt = c->prepareStatement("SELECT id, name, script_name, shape_id FROM entity_template WHERE id = (?)");
+  pstmt = c->prepareStatement("SELECT id, name, script_name, shape_id, affect_nav_mesh FROM entity_template WHERE id = (?)");
   pstmt->setInt(1, id);
 
   res = pstmt->executeQuery();
@@ -24,6 +24,7 @@ SqlTaskReturnType EntityTemplate::loadTemplate(sql::Connection *c, std::size_t i
       e->name_ = res->getString("name");
       e->scriptName_ = res->getString("script_name");
       e->shape_id = res->getInt('shape_id');
+      e->affectNavMesh_ = res->getBoolean("affect_nav_mesh");
       INFO("SQL REPLIES: " << res->getString("name") << " with id " << res->getInt("id") << " with scriptName " << res->getString("script_name"));
     }
   ISqlResult *ptr = new ISqlResult();
@@ -39,21 +40,22 @@ SqlTaskReturnType EntityTemplate::loadTemplate(sql::Connection *c, std::size_t i
 
 SqlTaskReturnType EntityTemplate::loadAllTemplate(sql::Connection *c)
 {
-  std::shared_ptr<ISqlResult> ptr (new ISqlResult());
-  std::list<EntityTemplate> *entities = new std::list<EntityTemplate>();
+  std::shared_ptr<ISqlResult> ptr(new ISqlResult());
+  std::list<EntityTemplate> *entities = new std::list<EntityTemplate > ();
   try
     {
-      std::shared_ptr<sql::PreparedStatement> pstmt(c->prepareStatement("SELECT id, name, script_name, shape_id FROM entity_template"));
+      std::shared_ptr<sql::PreparedStatement> pstmt(c->prepareStatement("SELECT id, name, script_name, shape_id, affect_nav_mesh FROM entity_template"));
       std::shared_ptr<sql::ResultSet> res;
 
-      res = std::shared_ptr<sql::ResultSet>(pstmt->executeQuery());
+      res = std::shared_ptr<sql::ResultSet > (pstmt->executeQuery());
       while (res->next())
         {
           EntityTemplate e;
           e.id_ = res->getInt("id");
           e.name_ = res->getString("name");
           e.scriptName_ = res->getString("script_name");
-          e.shape_id = res->getInt("shape_id");;
+          e.shape_id = res->getInt("shape_id");
+          e.affectNavMesh_ = res->getBoolean("affect_nav_mesh");
           entities->push_back(std::move(e));
           INFO("SQL REPLIES: " << res->getString("name") << " with id " << res->getInt("id") << " with scriptName " << res->getString("script_name"));
         }

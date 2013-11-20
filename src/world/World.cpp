@@ -40,7 +40,6 @@ navMeshBuilder_(nullptr)
   dispatcher_ = new btCollisionDispatcher(collisionConfiguration_);
   solver_ = new btSequentialImpulseConstraintSolver();
   collisionWorld_ = new btCollisionWorld(dispatcher_, broadphase_, collisionConfiguration_);
-
 }
 
 World::~World()
@@ -72,7 +71,13 @@ bool World::initNavhMesh()
   ss << "/tmp/world." << uuid_ << ".geometry";
 
   for (auto e : entities_)
-    converter.addEntity(e.get());
+    {
+      if (e->affectNavMesh())
+        {
+          DEBUG("add !");
+          converter.addEntity(e.get());
+        }
+    }
 
   geometryFile.open(ss.str().c_str(), std::ios::trunc);
   geometryFile << converter.genDataDump();
@@ -90,9 +95,12 @@ bool World::init()
   auto floor = spawn(1);
   floor->rotate(90, 0, 0);
 
-  std::shared_ptr<MovableEntity> e2 = std::dynamic_pointer_cast<MovableEntity > (spawn(2));
-  if (e2)
-    e2->setDestination(5, 5, 5);
+  for (int i = 0; i < 30; i++)
+    {
+      std::shared_ptr<MovableEntity> e2 = std::dynamic_pointer_cast<MovableEntity > (spawn(2));
+      if (e2)
+        e2->setDestination(5, 5, 5);
+    }
 
   if (initNavhMesh())
     {

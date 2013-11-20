@@ -128,10 +128,16 @@ std::shared_ptr<GameEntity> EntityFactory::instanciate(std::size_t id, const btV
 
 std::shared_ptr<GameEntity> EntityFactory::buildEntityGameEntity(const EntityTemplate & tpl)
 {
-  return std::shared_ptr<GameEntity > (new GameEntity(world_, shapes_[tpl.shape_id]));
+  std::shared_ptr<GameEntity > e(new GameEntity(world_, shapes_[tpl.shape_id]));
+  e->affectNavMesh(tpl.affectNavMesh_);
+  DEBUG("OMGLAMA!" << e->affectNavMesh());
+  return e;
 }
 
 std::shared_ptr<GameEntity> EntityFactory::buildMovableEntity(const EntityTemplate &tpl)
 {
-  return std::shared_ptr<GameEntity >(new MovableEntity(world_, shapes_[tpl.shape_id]));
+  std::shared_ptr<GameEntity > e(new MovableEntity(world_, shapes_[tpl.shape_id]));
+  e->affectNavMesh(tpl.affectNavMesh_);
+  DEBUG("OMG!" << e->affectNavMesh());
+  return e;
 }
