@@ -27,3 +27,8 @@ const std::string &Client::udpAuthCode() const
 {
   return udpAuthCode_;
 }
+
+void Client::udpAuthCode(std::string code)
+{
+  udpAuthCode_ = std::move(code);
+}

@@ -26,7 +26,6 @@ bool UdpAuthHandler::handle(UdpAuthPacket *p)
   for (auto abstractClientPtr : Server::instance().clients())
     {
       auto clientPtr = std::dynamic_pointer_cast<Client > (abstractClientPtr);
-
       if (clientPtr && clientPtr->udpHandler() == nullptr &&
           clientPtr->udpAuthCode() == p->authCode())
         {

@@ -71,7 +71,7 @@ void Server::run()
       flush_operations();
       handle_packets();
       world_.update();
-      std::chrono::milliseconds dura(1000);
+      std::chrono::milliseconds dura(20);
       std::this_thread::sleep_for(dura);
     }
 }

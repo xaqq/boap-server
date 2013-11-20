@@ -12,6 +12,7 @@ add_subdirectory("DetourCrowd")
 
 #link_directories("logger/logger")
 set(SOURCES src/main.cpp
+src/ByteArray.cpp
             src/net/ATcpProtocolHandler.cpp
             src/net/AUdpProtocolHandler.cpp
 	    src/net/TcpServer.cpp

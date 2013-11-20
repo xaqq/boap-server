@@ -3,13 +3,14 @@ project (tp3)
 
 # Compiler flags
 set (CMAKE_CXX_FLAGS "-std=c++11 -W -Wall -g")
-
+find_package(Boost COMPONENTS system REQUIRED)
 include_directories ("${PROJECT_SOURCE_DIR}/includes" "${PROJECT_SOURCE_DIR}/../includes"
 "${PROJECT_SOURCE_DIR}/../logger/logger/includes"
 "${PROJECT_SOURCE_DIR}/../default-impl/includes"
 "${PROJECT_SOURCE_DIR}/../Recast/Include"
 "${PROJECT_SOURCE_DIR}/../Detour/Include"
-"/usr/include/bullet")
+"/usr/include/bullet"
+${Boost_INCLUDE_DIRS} )
 
 set (SOURCES
   "src/TcpProtocolHandler.cpp"
@@ -26,6 +27,9 @@ set (SOURCES
   "src/CMSGAuthPacket.cpp"
    "src/AuthPacketHandler.cpp"
 "src/AuthTask.cpp"
+"src/SMSGUdpCode.cpp"
 )
 
+target_link_libraries(${Boost_LIBRARIES})
 add_library(tp3 SHARED ${SOURCES})
+

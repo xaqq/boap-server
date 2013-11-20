@@ -13,11 +13,18 @@
 #include <functional>
 #include "sql/ISqlResult.hpp"
 #include <cppconn/exception.h>
+#include <boost/uuid/uuid.hpp>
 #include "Log.hpp"
 #include "Scheduler.hpp"
 #include "MotdPacket.hpp"
 #include "AClient.hpp"
+#include "Client.hpp"
 #include "AuthPacketHandler.hpp"
+#include "SMSGUdpCode.hpp"
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/lexical_cast.hpp>
 
 AuthTask::AuthTask(CMSGAuthPacket packet) : packet_(packet), sqlResult_(nullptr)
 {
@@ -45,19 +52,26 @@ bool AuthTask::start()
 
 bool AuthTask::resultAvailable()
 {
-  MotdPacket *packet = new MotdPacket(nullptr);
+  std::shared_ptr<Client> client = std::dynamic_pointer_cast<Client > (packet_.source());
 
-  DEBUG(*sqlResult_);
-  std::shared_ptr<APacket> ptr(packet);
-  // notify user auth went ok;
-  if (packet_.source())
+  DEBUG("Auth Task completed");
+  if (client)
     {
-      if (*sqlResult_)
-        packet->motd_ = "GG AUTH";
+      if (*sqlResult_) // auth ok
+        {
+          std::shared_ptr<SMSGUdpCode> packet(new SMSGUdpCode(packet_.source()));
+
+          boost::uuids::uuid u;
+          u = boost::uuids::random_generator()();
+          client->udpAuthCode(boost::lexical_cast<std::string > (u));
+
+          packet->authCode_ = client->udpAuthCode();
+          client->pushPacket(packet);
+        }
       else
-        packet->motd_ = "FAIL AUTH";
-      packet_.source()->pushPacket(ptr);
-      packet_.source()->disconnect();
+        {
+          client->disconnect();
+        }
     }
   return false;
 }

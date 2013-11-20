@@ -32,9 +32,11 @@ public:
   virtual ByteArray serialize() const = 0 ;
   
   enum {
-                        CMSG_HELLO      = 0x00000001,
-                        CMSG_AUTH       = 0x00000002,
-                        SMSG_MOTD       =  0x10000001
+                        CMSG_HELLO      = 0x0001,
+                        CMSG_AUTH       = 0x0002,
+                        SMSG_MOTD       =  0x1001,
+                        SMSG_UDP_CODE = 0x1002
+                                
  };
   
 protected:  

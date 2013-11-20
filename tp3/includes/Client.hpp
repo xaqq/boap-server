@@ -19,7 +19,7 @@ public:
   Client(const Client& orig) = delete;
   virtual ~Client();
 
-  
+  void udpAuthCode(std::string code);
   const std::string &udpAuthCode() const;
 
 private:

@@ -154,7 +154,7 @@ void World::update()
     }
   for (auto e : entities_)
     {
-      e->update(deltaTime());
+     // e->update(deltaTime());
     }
   deltaTime(true);
 }

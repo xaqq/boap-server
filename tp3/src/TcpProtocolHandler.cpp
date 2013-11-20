@@ -72,7 +72,7 @@ void TcpProtocolHandler::readBody(ByteArray bytes)
 {
   assert(bytes.size() == packetSize_);
 
-  INFO("Received Body");
+  INFO("Received Body (opcode = " << opcode_ << ")");
 
   std::shared_ptr< APacket > packet = PacketFactory::buildPacket(client_, opcode_, std::move(bytes));
   if (packet)
