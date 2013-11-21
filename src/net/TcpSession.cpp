@@ -83,7 +83,7 @@ void TcpSession::do_read()
 
   boost::asio::async_read(socket_, boost::asio::buffer(*bytePtr),
                           [this, self, bytePtr]
-                          (boost::system::error_code ec, std::size_t length)
+                          (boost::system::error_code ec, std::size_t /*length*/)
   {
                           reading_ = false;
                           if (!ec)

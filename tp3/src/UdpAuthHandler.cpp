@@ -14,8 +14,6 @@
 
 UdpAuthHandler::UdpAuthHandler() { }
 
-UdpAuthHandler::UdpAuthHandler(const UdpAuthHandler&) { }
-
 UdpAuthHandler::~UdpAuthHandler() { }
 
 bool UdpAuthHandler::handle(UdpAuthPacket *p)

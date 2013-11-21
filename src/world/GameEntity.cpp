@@ -88,7 +88,7 @@ void GameEntity::setPosition(btScalar x, btScalar y, btScalar z)
   setPosition(btVector3(x, y, z));
 }
 
-bool GameEntity::collideWith(std::shared_ptr<GameEntity> e) {
+bool GameEntity::collideWith(std::shared_ptr<GameEntity>) {
   //  ContactEntityPair c;
   //  world->contactPairTest(object(), e->object(), c);
   //  return c.result();
@@ -142,7 +142,7 @@ std::vector<std::array<btVector3, 3 >> GameEntity::getTrianglesForMe()
                 {
                   if (i != j && i != k && k != j)
                     {
-                      res.push_back(Triangle{vertex[i], vertex[j], vertex[k]});
+                      res.push_back(Triangle{{vertex[i], vertex[j], vertex[k]}});
                     }
                 }
             }
@@ -173,7 +173,7 @@ std::vector<std::array<btVector3, 3 >> GameEntity::getTrianglesForMe()
                 {
                   if (i != j && i != k && k != j)
                     {
-                      res.push_back(Triangle{vertex[i], vertex[j], vertex[k]});
+                      res.push_back(Triangle{{vertex[i], vertex[j], vertex[k]}});
                     }
                 }
             }

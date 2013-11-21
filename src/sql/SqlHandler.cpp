@@ -15,8 +15,6 @@
 
 SqlHandler::SqlHandler() : run_(true) { }
 
-SqlHandler::SqlHandler(const SqlHandler& orig) { }
-
 SqlHandler::~SqlHandler()
 {
   DEBUG("SqlHandler destroyed");

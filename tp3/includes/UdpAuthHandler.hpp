@@ -15,7 +15,7 @@ class UdpAuthHandler : public APacketHandler
 {
 public:
   UdpAuthHandler();
-  UdpAuthHandler(const UdpAuthHandler& orig);
+  UdpAuthHandler(const UdpAuthHandler&) = delete;
   virtual ~UdpAuthHandler();
   
   virtual bool handle(UdpAuthPacket *p);

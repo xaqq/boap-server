@@ -17,7 +17,7 @@
 #include "sql/ISqlResult.hpp"
 
 typedef std::shared_ptr<ISqlResult> SqlTaskReturnType;
-typedef std::packaged_task<SqlTaskReturnType(sql::Connection *)> SqlPackagedTask;
+typedef std::packaged_task<SqlTaskReturnType(sql::Connection *) > SqlPackagedTask;
 /**
  * Typedef for a future; a ISqlResult is returned by all sql future;
  */
@@ -30,7 +30,7 @@ class SqlHandler
 {
 public:
   SqlHandler();
-  SqlHandler(const SqlHandler& orig);
+  SqlHandler(const SqlHandler& orig) = delete;
   virtual ~SqlHandler();
 
   /** Infinite loop */
@@ -40,16 +40,16 @@ public:
    * Thread safe, will stop the run infinite loop
    */
   void stop();
-  
+
   /**
    * Push a callable that will be execute in the sql thread;
    */
   void pushRequest(std::function<void (sql::Connection *)>);
   void pushRequestFuture(SqlPackagedTask f);
-  
+
 private:
   bool connect();
-  
+
   std::atomic_bool run_;
   sql::Driver *driver_;
   std::shared_ptr<sql::Connection> connection_;
