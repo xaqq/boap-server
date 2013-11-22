@@ -5,6 +5,7 @@
 #include <map>
 #include "APacket.hpp"
 #include "ByteArray.hpp"
+#include "ProtobufDef.hpp"
 
 class APacketHandler;
 
@@ -20,15 +21,7 @@ public:
 
   virtual void unserialize(ByteArray data) override;
 
-  /**
-   * Binary layout: 
-   *  unsigned short <-- nbGame
-   * uuid \0 gameName \0 unsigned short <-- nbPlayerInGame
-   */
   virtual ByteArray serialize() const;
 
-  std::map < std::string /*uuid*/, std::pair<std::string /*name*/, std::uint16_t >> games_;
-
-private:
-  ByteArray buildContent() const;
+  SMSGGameListData data_;
 };

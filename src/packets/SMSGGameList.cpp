@@ -19,27 +19,15 @@ void SMSGGameList::unserialize(ByteArray data) { }
 ByteArray SMSGGameList::serialize() const
 {
   ByteArray b;
-  ByteArray content;
+  std::string msg;
 
   b << SMSG_GAME_LIST;
-  content = buildContent();
-  b << content.size();
-  b.insert(b.end(), content.begin(), content.end());
-
-  return b;
-}
-
-ByteArray SMSGGameList::buildContent() const
-{
-  ByteArray b;
-  b << games_.size();
-  for (auto & gameInfo : games_)
+  if (!data_.SerializeToString(&msg))
     {
-      b << gameInfo.first; // uuid
-      b << static_cast<unsigned char>('\0');
-      b << gameInfo.second.first; // game name
-      b << static_cast<unsigned char>('\0');
-      b << gameInfo.second.second; // nb player
+      WARN("Cannot serialize: " << data_.DebugString());
+      return ByteArray(0);
     }
+  b << msg.length();
+  b.insert(b.end(), msg.begin(), msg.end());
   return b;
 }

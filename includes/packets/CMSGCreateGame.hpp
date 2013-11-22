@@ -3,6 +3,7 @@
 #include <string>  
 #include "APacket.hpp"
 #include "ByteArray.hpp"
+#include "ProtobufDef.hpp"
 
 class APacketHandler;
 
@@ -25,13 +26,9 @@ public:
    */
   virtual bool acceptHandler(APacketHandler *handler);
   
-  /**
-   * Binary layout: gameName
-   * @param data
-   */
   virtual void unserialize(ByteArray data) override;;
   virtual ByteArray serialize() const;
 
 public:
-  std::string gameName_;
+  CMSGCreateGameData data_;  
 };

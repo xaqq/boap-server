@@ -1,0 +1,4 @@
+message CMSGCreateGameData
+{
+ required string gameName = 1;
+}

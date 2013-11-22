@@ -11,6 +11,7 @@
 #include "world/Game.hpp"
 #include "packets/SMSGCreateGame.hpp"
 #include "Client.hpp"
+#include "ProtobufDef.hpp"
 
 CreateGameHandler::CreateGameHandler() { }
 
@@ -18,7 +19,7 @@ CreateGameHandler::~CreateGameHandler() { }
 
 bool CreateGameHandler::handle(CMSGCreateGame *p)
 {
-  auto client = std::dynamic_pointer_cast<Client>(p->source());
+  auto client = std::dynamic_pointer_cast<Client > (p->source());
   if (!client)
     {
       WARN("NO SOURCE TO CREATE GAME");
@@ -28,28 +29,34 @@ bool CreateGameHandler::handle(CMSGCreateGame *p)
 
   if (!client->authenticated())
     {
-      response->success_ = false;
-      response->errMsg_ = "You are not authenticated so you cannot create a new game.";
+      response->data_.set_success(false);
+      response->data_.set_errormsg("You are not authenticated so you cannot create a new game.");
       client->pushPacket(response);
       return true;
     }
-  
+
+  if (p->data_.gamename() == "")
+    {
+      response->data_.set_success(false);
+      response->data_.set_errormsg("Name cannot be empty;");
+    }
+
   for (auto game : Server::instance().games())
     {
-      if (game->name() == p->gameName_)
+      if (game->name() == p->data_.gamename())
         {
           WARN("Game with is name already exists, not creating");
-          response->success_ = false;
-          response->errMsg_ = "Name already taken.";
+          response->data_.set_success(false);
+          response->data_.set_errormsg("Name already taken.");
           p->source()->pushPacket(response);
           return true;
         }
     }
 
   std::shared_ptr<Game> g(new Game());
-  g->name(p->gameName_);
-  response->success_ = true;
-  response->gameUuid_ = g->uuid();
+  g->name(p->data_.gamename());
+  response->data_.set_success(true);
+  response->data_.set_gameuuid(g->uuid());
   p->source()->pushPacket(response);
   Server::instance().addGame(g);
   return true;

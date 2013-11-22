@@ -8,7 +8,7 @@ CMSGCreateGame::CMSGCreateGame(std::shared_ptr<AClient> source) : APacket(source
 
 CMSGCreateGame::CMSGCreateGame(const CMSGCreateGame& orig) : APacket(orig)
 {
-  gameName_ = orig.gameName_;
+  data_ = orig.data_;
 }
 
 CMSGCreateGame::~CMSGCreateGame() { }
@@ -18,15 +18,15 @@ bool CMSGCreateGame::acceptHandler(APacketHandler* handler)
   bool ret = true;
   ret &= APacket::acceptHandler(handler);
   ret &= handler->handle(this);
-  
+
   return true;
-} 
+}
 
 void CMSGCreateGame::unserialize(ByteArray data)
 {
-   std::string name(data.begin(), data.end());
-   
-   gameName_ = std::move(name);
+  bool ret = data_.ParseFromArray(&data[0], data.size());
+  if (!ret)
+    WARN("Fail to unserialize:" << data_.DebugString());
 }
 
 ByteArray CMSGCreateGame::serialize() const

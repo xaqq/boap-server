@@ -10,6 +10,9 @@
 
 #include "build/CMSGAuth.pb.h"
 #include "build/SMSGAuth.pb.h"
+#include "build/CMSGCreateGame.pb.h"
+#include "build/SMSGCreateGame.pb.h"
+#include "build/SMSGGameList.pb.h"
 
 #endif	/* PROTOBUFDEF_HPP */
 

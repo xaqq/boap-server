@@ -1,0 +1,6 @@
+message SMSGCreateGameData
+{
+ required bool success = 1;
+optional string errorMsg = 2;
+optional string gameUuid = 3;
+}

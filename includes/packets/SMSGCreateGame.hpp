@@ -8,6 +8,7 @@
 #ifndef SMSGCREATEGAME_HPP
 #define	SMSGCREATEGAME_HPP
 
+#include "ProtobufDef.hpp"
 #include "APacket.hpp"
 
 /**
@@ -22,29 +23,9 @@ public:
 
 
   virtual void unserialize(ByteArray data);
-
-  /**
-   * Binary representation:
-   *   [1|0] <-- ascii char
-   *   [gameUuid|errMsg]    <-- string
-   * @return 
-   */
   virtual ByteArray serialize() const;
-  
-  bool success_;
-  
-  /**
-   * Only set if success is false
-   */
-  std::string errMsg_;
-  
-  /**
-   * The string representation of the new game's uuid.
-   */
-  std::string gameUuid_;
 
-  private:
-    int  binaryLength() const;;
+  SMSGCreateGameData data_;
   
 };
 

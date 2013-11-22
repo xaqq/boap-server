@@ -1,0 +1,11 @@
+message SMSGGameListData
+{
+ required int32 count = 1;
+message GameListEntry
+{
+required string gamename = 1;
+required string uuid = 2;
+required int32 countPlayers = 3;
+}
+ repeated GameListEntry entry = 2;
+}
