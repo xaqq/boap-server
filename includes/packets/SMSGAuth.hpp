@@ -1,6 +1,8 @@
 #pragma once
+#include <string>
 #include "APacket.hpp"
 #include "AuthTask.hpp"
+#include "ProtobufDef.hpp"
 
 /**
  * Packet sent by server after a game creation request
@@ -9,7 +11,7 @@ class SMSGAuth : public APacket
 {
 public:
   SMSGAuth(std::shared_ptr<AClient> source);
-  SMSGAuth(std::shared_ptr<AClient> source, AuthTask::AuthResult res);
+  SMSGAuth(std::shared_ptr<AClient> source, SMSGAuthData::AuthResult res);
   SMSGAuth(const SMSGAuth& orig);
   virtual ~SMSGAuth();
 
@@ -24,8 +26,8 @@ public:
    */
   virtual ByteArray serialize() const;
   
-  ByteArray buildContent(int &size) const;
-  AuthTask::AuthResult result_;
+  std::string getMsg() const;
+  SMSGAuthData data_;
   
   
 };

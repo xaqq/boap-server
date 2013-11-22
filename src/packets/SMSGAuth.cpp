@@ -7,58 +7,62 @@
 
 #include <string>
 #include "packets/SMSGAuth.hpp"
+#include "Log.hpp"
 #include "AClient.hpp"
 
 SMSGAuth::SMSGAuth(std::shared_ptr<AClient> source) : APacket(source) { }
 
-SMSGAuth::SMSGAuth(std::shared_ptr<AClient> source, AuthTask::AuthResult res) : APacket(source),
-result_(res) { }
+SMSGAuth::SMSGAuth(std::shared_ptr<AClient> source, SMSGAuthData::AuthResult res) : APacket(source)
+{
+  data_.set_result(res);
+}
 
 SMSGAuth::SMSGAuth(const SMSGAuth &o) : APacket(o.source_)
 {
-  result_ = o.result_;
+  data_ = o.data_;
 }
 
 SMSGAuth::~SMSGAuth() { }
 
 void SMSGAuth::unserialize(ByteArray) { }
 
-ByteArray SMSGAuth::buildContent(int &size) const
+std::string SMSGAuth::getMsg() const
 {
-  ByteArray res;
   std::string msg;
 
-  switch (result_)
+  switch (data_.result())
     {
-    case AuthTask::AuthResult::OK:
+    case SMSGAuthData::OK:
       msg = "Auth is successfull";
       break;
-    case AuthTask::AuthResult::INTERNAL_ERROR:
+    case SMSGAuthData::INTERNAL_ERROR:
       msg = "An Internal error occurred, preventing the login";
       break;
-    case AuthTask::AuthResult::WRONG_PASSWORD:
+    case SMSGAuthData::WRONG_PASSWORD:
       msg = "Password is invalid";
       break;
-    case AuthTask::AuthResult::UNKNOWN_USER:
+    case SMSGAuthData::UNKNOWN_USER:
       msg = "Unknown user";
       break;
     }
-  size = sizeof (AuthTask::AuthResult) + msg.length();
-  assert(sizeof (unsigned char) == sizeof (AuthTask::AuthResult));
-  res << static_cast<unsigned char> (result_);
-  res << msg;
-  return res;
+  return msg;
 }
 
 ByteArray SMSGAuth::serialize() const
 {
   ByteArray b;
-  ByteArray content;
-  int size = 0;
-  content = buildContent(size);
-
+  std::string msg;
+  SMSGAuthData out = data_;
+  
+  out.set_message(getMsg());
+  if (!out.SerializeToString(&msg))
+    {
+      WARN("Cannot serialize: " << out.DebugString());
+      return ByteArray(0);
+    }
+  
   b << APacket::SMSG_AUTH;
-  b << size;
-  b.insert(b.end(), content.begin(), content.end());
+  b << msg.length();
+  b.insert(b.end(), msg.begin(), msg.end());
   return b;
 }

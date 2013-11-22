@@ -52,7 +52,7 @@ bool AuthTask::resultAvailable()
     {
       std::shared_ptr<SMSGAuth> authPacket(new SMSGAuth(packet_.source(), result_));
       client->pushPacket(authPacket);
-      if (result_ == AuthResult::OK)
+      if (result_ == SMSGAuthData::OK)
         {
           std::shared_ptr<SMSGUdpCode> udpCodePacket(new SMSGUdpCode(packet_.source()));
 
@@ -87,13 +87,13 @@ SqlTaskReturnType AuthTask::runSqlCode(sql::Connection * c)
       while (res->next())
         {
           if (res->getString("password") == packet_.data_.password())
-            result_ = AuthResult::OK;
+            result_ = SMSGAuthData::OK;
           else
-            result_ = AuthResult::WRONG_PASSWORD;
+            result_ = SMSGAuthData::WRONG_PASSWORD;
           count++;
         }
       if (count == 0)
-        result_ = AuthResult::UNKNOWN_USER;
+        result_ = SMSGAuthData::UNKNOWN_USER;
       resultWrapper->error_ = false;
       resultWrapper->result_ = nullptr; // no custom data because they are embeded in class
 
@@ -126,7 +126,7 @@ bool AuthTask::waitForResult()
       else if (result->error())
         {
           WARN("Error when processing query");
-          packet_.source()->pushPacket(std::shared_ptr<APacket>(new SMSGAuth(packet_.source(), AuthResult::INTERNAL_ERROR)));
+          packet_.source()->pushPacket(std::shared_ptr<APacket>(new SMSGAuth(packet_.source(), SMSGAuthData::INTERNAL_ERROR)));
           return false;
         }
       return resultAvailable();

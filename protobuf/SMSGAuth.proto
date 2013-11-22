@@ -1,0 +1,13 @@
+message SMSGAuthData
+{
+ enum AuthResult
+{
+OK = 0;
+WRONG_PASSWORD = 1;
+UNKNOWN_USER = 2;
+INTERNAL_ERROR = 3;
+}
+
+ required AuthResult result = 1;
+ optional string message = 2;
+}

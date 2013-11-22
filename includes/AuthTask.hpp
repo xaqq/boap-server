@@ -47,14 +47,6 @@ public:
    * If the internal handler returns false the task will stop registering itself.
    */
   void operator()(void);
-
-  enum class AuthResult : unsigned char
-  {
-    OK = '0',
-    WRONG_PASSWORD = '1',
-    UNKNOWN_USER = '2',
-    INTERNAL_ERROR = '3', // sql error or other
-  };
   
 private:
   /**
@@ -69,7 +61,7 @@ private:
   /**
    * Authentification result; This is set by the sql code;
    */
-  AuthResult result_;
+  SMSGAuthData::AuthResult result_;
   
 
 };
