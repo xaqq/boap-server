@@ -90,9 +90,17 @@ public:
    * Return the list of triangle that represent this entity and its children.
    */
   std::vector<std::array<btVector3, 3 >> getTriangles();
-  ;
+
+  /**
+   * @return true if is a player, false otherwise
+   */
+  virtual bool isPlayer() const
+  {
+    return false;
+  };
 
 protected:
+
   /**
    * A Reference to the world.
    */

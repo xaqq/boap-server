@@ -2,6 +2,7 @@
 #include "Log.hpp"
 #include <boost/uuid/random_generator.hpp>
 #include "world/GameEntity.hpp"
+#include "world/Game.hpp"
 
 #include <BulletCollision/CollisionShapes/btBox2dShape.h>
 

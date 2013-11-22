@@ -1,5 +1,6 @@
 #include <string.h>
 #include <ctype.h>
+#include "Log.hpp"
 #include "ByteArray.hpp"
 
 ByteArray &operator<<(ByteArray &ba, const std::string &str)

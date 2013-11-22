@@ -33,6 +33,7 @@ set (SOURCES
 "src/SMSGAuth.cpp"
 "src/CMSGGameList.cpp"
 "src/SMSGGameList.cpp"
+"src/GameListHandler.cpp"
 "src/CreateGameHandler.cpp"
 )
 

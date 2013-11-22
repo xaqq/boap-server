@@ -40,7 +40,7 @@ std::shared_ptr<APacket> PacketFactory::buildPacket(std::shared_ptr<AClient> sou
       break;
 
     case APacket::CMSG_GAME_LIST:
-      p = std::make_shared<CMSGGameList > (source);
+     p = std::shared_ptr<CMSGGameList > (new CMSGGameList(source));
       p->unserialize(std::move(data));
       break;
     default:

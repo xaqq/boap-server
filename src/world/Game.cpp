@@ -47,6 +47,7 @@ void Game::run()
 
 const std::string &Game::uuid() const
 {
+  std::lock_guard<std::mutex> guard(mutex_);
   return uuid_.toString();
 }
 
@@ -54,4 +55,17 @@ void Game::stop()
 {
   DEBUG("Game " << uuid() << "stop");
   isRunning_ = false;
+}
+
+int Game::countPlayers() const
+{
+  std::lock_guard<std::mutex> guard(mutex_);
+  
+  int count = 0;
+  for (auto &e : entities_)
+    {
+      if (e->isPlayer())
+        count++;
+    }
+  return count;
 }

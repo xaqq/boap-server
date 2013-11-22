@@ -13,6 +13,7 @@
 #include "UdpAuthHandler.hpp"
 #include "AuthPacketHandler.hpp"
 #include "CreateGameHandler.hpp"
+#include "GameListHandler.hpp"
 
 std::shared_ptr<Net::ATcpProtocolHandler> BoapFactory::createTcpAdminProtocolHandler()
 {
@@ -42,6 +43,7 @@ std::list<std::shared_ptr<APacketHandler >> BoapFactory::createPacketHandlers()
   list.push_back(std::shared_ptr<APacketHandler > (new UdpAuthHandler()));
   list.push_back(std::shared_ptr<APacketHandler > (new AuthPacketHandler()));
   list.push_back(std::shared_ptr<APacketHandler > (new CreateGameHandler()));
+  list.push_back(std::shared_ptr<APacketHandler > (new GameListHandler()));
 
   return list;
 }

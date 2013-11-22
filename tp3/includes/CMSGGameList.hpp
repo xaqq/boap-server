@@ -5,11 +5,14 @@ class CMSGGameList : public APacket
 {
 public:
 
-  CMSGGameList  (std::shared_ptr<class AClient> src) : APacket(src) { }
+  CMSGGameList(std::shared_ptr<AClient>);
 
-  ~CMSGGameList  () { }
-  CMSGGameList  (const CMSGGameList &);
+  virtual ~CMSGGameList() { }
+  CMSGGameList(const CMSGGameList &);
+
+  bool acceptHandler(APacketHandler* handler);
+
   void unserialize(ByteArray data);
-  ByteArray serialize();
+  ByteArray serialize()const;
 private:
 };

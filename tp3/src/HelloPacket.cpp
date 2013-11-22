@@ -24,7 +24,6 @@ bool HelloPacket::acceptHandler(APacketHandler* handler)
 
 void HelloPacket::unserialize(ByteArray data)
 {
-  assert(data.size() == 0);
 }
 
 ByteArray HelloPacket::serialize() const
