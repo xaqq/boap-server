@@ -6,11 +6,11 @@
  */
 
 #include <boost/asio.hpp>
-#include "UdpProtocolHandler.hpp"
+#include <thread>
+#include "net/UdpProtocolHandler.hpp"
+#include "packets/CMSGUdpAuth.hpp"
 #include "Log.hpp"
 #include "Scheduler.hpp"
-#include "UdpAuthHandler.hpp"
-#include <thread>
 #include "Server.hpp"
 #include "Client.hpp"
 
@@ -35,7 +35,7 @@ void UdpProtocolHandler::bytesAvailable(ByteArray bytes)
       return;
     }
   /* If client isn't set, we suppose this is a authentication packet */
-  UdpAuthPacket *authPacket = new UdpAuthPacket(nullptr);
+  CMSGUdpAuth *authPacket = new CMSGUdpAuth(nullptr);
   authPacket->unserialize(std::move(bytes));
   authPacket->handler(shared_from_this());
   std::shared_ptr<APacket> authPacketPtr(authPacket);

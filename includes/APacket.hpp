@@ -8,6 +8,7 @@
 
 #include <memory>
 #include "ByteArray.hpp"
+#include "handlers/APacketHandler.hpp"
 class AClient;
 class APacketHandler;
 
@@ -38,11 +39,13 @@ public:
     CMSG_AUTH = 0x0010,
     CMSG_CREATE_GAME = 0x0011,
     CMSG_GAME_LIST = 0x0012,
+    CMSG_JOIN_GAME = 0x0013,
     SMSG_MOTD = 0x1001,
     SMSG_UDP_CODE = 0x1002,
     SMSG_AUTH = 0x1010,
     SMSG_CREATE_GAME = 0x1011,
-    SMSG_GAME_LIST = 0x1012
+    SMSG_GAME_LIST = 0x1012,
+    SMSG_JOIN_GAME = 0x1013
   };
 
 protected:

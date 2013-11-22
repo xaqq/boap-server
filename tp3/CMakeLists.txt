@@ -34,6 +34,7 @@ set (SOURCES
 "src/CMSGGameList.cpp"
 "src/SMSGGameList.cpp"
 "src/GameListHandler.cpp"
+"src/CMSGJoinGame.cpp"
 "src/CreateGameHandler.cpp"
 )
 

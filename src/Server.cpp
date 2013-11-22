@@ -49,7 +49,6 @@ void Server::handle_packets()
 
   while (packets_.tryPop(packet))
     {
-      DEBUG("FOUND PACKET");
       for (auto & handler : packetHandlers_)
         {
           if (!packet)

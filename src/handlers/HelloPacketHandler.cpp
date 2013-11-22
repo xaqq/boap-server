@@ -5,7 +5,7 @@
  * Created on November 4, 2013, 8:44 PM
  */
 
-#include "HelloPacketHandler.hpp"
+#include "packets/HelloPacketHandler.hpp"
 #include "HelloPacket.hpp"
 #include "Log.hpp"
 #include "Client.hpp"

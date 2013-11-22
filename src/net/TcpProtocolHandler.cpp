@@ -1,14 +1,14 @@
-#include "net/TcpSession.hpp"
-#include "TcpProtocolHandler.hpp"
 #include <iostream>
 #include <functional>
+
+#include "net/TcpSession.hpp"
+#include "net/TcpProtocolHandler.hpp"
 #include "Log.hpp"
 #include "Scheduler.hpp"
 #include "BoapFactory.hpp"
 #include "Client.hpp"
 #include "APacket.hpp"
-#include "HelloPacket.hpp"
-#include "PacketFactory.hpp"
+#include "packets/PacketFactory.hpp"
 #include "Server.hpp"
 
 using namespace Net;
@@ -39,7 +39,6 @@ void TcpProtocolHandler::readOpcode(ByteArray bytes)
   assert(bytes.size() == sizeof (opcode_));
   memcpy(&opcode_, &bytes[0], sizeof (opcode_));
 
-  DEBUG("RECEIVED OPCODE:" << opcode_);
   handler_ = std::bind(&TcpProtocolHandler::readSize, this, std::placeholders::_1);
   request(sizeof (packetSize_));
 }
@@ -48,7 +47,6 @@ void TcpProtocolHandler::readSize(ByteArray bytes)
 {
   assert(bytes.size() == sizeof (packetSize_));
   memcpy(&packetSize_, &bytes[0], sizeof (packetSize_));
-  DEBUG("RECEIVED SIZE: " << packetSize_);
 
   if (packetSize_ > 1024)
     {
@@ -71,8 +69,6 @@ void TcpProtocolHandler::readSize(ByteArray bytes)
 void TcpProtocolHandler::readBody(ByteArray bytes)
 {
   assert(bytes.size() == packetSize_);
-
-  INFO("Received Body (opcode = " << opcode_ << ")");
 
   std::shared_ptr< APacket > packet = PacketFactory::buildPacket(client_, opcode_, std::move(bytes));
   if (packet)

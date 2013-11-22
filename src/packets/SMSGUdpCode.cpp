@@ -6,7 +6,7 @@
  */
 
 #include "SMSGUdpCode.hpp"
-#include "APacketHandler.hpp"
+
 
 SMSGUdpCode::SMSGUdpCode(std::shared_ptr<AClient> source) : APacket(source) { }
 

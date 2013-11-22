@@ -6,8 +6,8 @@
  */
 
 #include <assert.h>
-#include "HelloPacket.hpp"
-#include "APacketHandler.hpp"
+#include "packets/HelloPacket.hpp"
+
 
 HelloPacket::HelloPacket(std::shared_ptr<AClient> source) : APacket(source) { }
 

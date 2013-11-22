@@ -5,13 +5,10 @@
  * Created on November 4, 2013, 8:44 PM
  */
 
-#include "AuthPacketHandler.hpp"
-#include "HelloPacket.hpp"
+#include "handlers/AuthPacketHandler.hpp"
 #include "Log.hpp"
-#include "Client.hpp"
-#include "MotdPacket.hpp"
 #include "Server.hpp"
-#include "CMSGAuthPacket.hpp"
+#include "packets/CMSGAuthPacket.hpp"
 #include "AuthTask.hpp"
 #include "Scheduler.hpp"
 
@@ -21,7 +18,6 @@ AuthPacketHandler::~AuthPacketHandler() { }
 
 bool AuthPacketHandler::handle(CMSGAuthPacket *p)
 {
-  INFO("Handling auth");
   
   auto task = std::make_shared<AuthTask>(*p);
   Scheduler::instance()->runInServerThread(std::bind(&AuthTask::operator (), task));

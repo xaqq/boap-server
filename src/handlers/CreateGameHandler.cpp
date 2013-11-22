@@ -6,11 +6,10 @@
  */
 
 #include "Log.hpp"
-#include "CreateGameHandler.hpp"
+#include "handlers/CreateGameHandler.hpp"
 #include "Server.hpp"
 #include "world/Game.hpp"
-#include "SMSGCreateGame.hpp"
-#include "AClient.hpp"
+#include "packets/SMSGCreateGame.hpp"
 #include "Client.hpp"
 
 CreateGameHandler::CreateGameHandler() { }

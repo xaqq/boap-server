@@ -1,10 +1,8 @@
-
-#include "CMSGCreateGame.hpp"
-#include <assert.h>
-#include "Log.hpp"
-#include "APacketHandler.hpp"
 #include <string>
 #include <algorithm>
+#include "packets/CMSGCreateGame.hpp"
+#include "handlers/APacketHandler.hpp"
+#include "Log.hpp"
 
 CMSGCreateGame::CMSGCreateGame(std::shared_ptr<AClient> source) : APacket(source) { }
 

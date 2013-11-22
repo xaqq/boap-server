@@ -8,8 +8,8 @@
 #ifndef UDPAUTHHANDLER_HPP
 #define	UDPAUTHHANDLER_HPP
 
-#include "APacketHandler.hpp"
-#include "UdpAuthPacket.hpp"
+#include "handlers/APacketHandler.hpp"
+#include "packets/CMSGUdpAuth.hpp"
 
 class UdpAuthHandler : public APacketHandler
 {
@@ -18,7 +18,7 @@ public:
   UdpAuthHandler(const UdpAuthHandler&) = delete;
   virtual ~UdpAuthHandler();
   
-  virtual bool handle(UdpAuthPacket *p);
+  virtual bool handle(CMSGUdpAuth *p);
 private:
 
 };

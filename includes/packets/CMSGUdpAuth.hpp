@@ -1,12 +1,4 @@
-/* 
- * File:   UdpAuthPacket.hpp
- * Author: xaqq
- *
- * Created on November 11, 2013, 3:35 PM
- */
-
-#ifndef UDPAUTHPACKET_HPP
-#define	UDPAUTHPACKET_HPP
+#pragma once
 
 #include <string>
 #include "APacket.hpp"
@@ -14,12 +6,12 @@
 
 class APacketHandler;
 
-class UdpAuthPacket : public APacket
+class CMSGUdpAuth : public APacket
 {
 public:
-  UdpAuthPacket(std::shared_ptr<AClient> source);
-  UdpAuthPacket(const UdpAuthPacket& orig) = delete;
-  virtual ~UdpAuthPacket();
+  CMSGUdpAuth(std::shared_ptr<AClient> source);
+  CMSGUdpAuth(const CMSGUdpAuth& orig) = delete;
+  virtual ~CMSGUdpAuth();
 
   /**
    * This function MUST be implemented in all APacket's subclasses; This is
@@ -45,6 +37,3 @@ private:
   std::shared_ptr<Net::AUdpProtocolHandler> handler_;
 
 };
-
-#endif	/* UDPAUTHPACKET_HPP */
-

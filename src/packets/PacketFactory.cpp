@@ -5,14 +5,15 @@
  * Created on November 5, 2013, 10:42 AM
  */
 
-#include "PacketFactory.hpp"
+#include "packets/PacketFactory.hpp"
 #include "ByteArray.hpp"
 #include "APacket.hpp"
-#include "HelloPacket.hpp"
+
+#include "packets/HelloPacket.hpp"
 #include "Log.hpp"
-#include "CMSGAuthPacket.hpp"
-#include "CMSGCreateGame.hpp"
-#include "CMSGGameList.hpp"
+#include "packets/CMSGAuthPacket.hpp"
+#include "packets/CMSGCreateGame.hpp"
+#include "packets/CMSGGameList.hpp"
 
 PacketFactory::PacketFactory() { }
 
@@ -30,6 +31,7 @@ std::shared_ptr<APacket> PacketFactory::buildPacket(std::shared_ptr<AClient> sou
       break;
 
     case APacket::CMSG_AUTH:
+
       p = std::make_shared<CMSGAuthPacket > (source);
       p->unserialize(std::move(data));
       break;
@@ -40,9 +42,10 @@ std::shared_ptr<APacket> PacketFactory::buildPacket(std::shared_ptr<AClient> sou
       break;
 
     case APacket::CMSG_GAME_LIST:
-     p = std::shared_ptr<CMSGGameList > (new CMSGGameList(source));
+      p = std::shared_ptr<CMSGGameList > (new CMSGGameList(source));
       p->unserialize(std::move(data));
       break;
+
     default:
       INFO("Opcode not found when building packet (" << opcode << ")");
       return nullptr;

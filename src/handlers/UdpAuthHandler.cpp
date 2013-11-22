@@ -1,22 +1,16 @@
-/* 
- * File:   UdpAuthHandler.cpp
- * Author: xaqq
- * 
- * Created on November 11, 2013, 3:39 PM
- */
-
+#include "handlers/UdpAuthHandler.hpp"
 #include "Log.hpp"
-#include "UdpAuthHandler.hpp"
+
 #include "Server.hpp"
 #include "Client.hpp"
 #include "Scheduler.hpp"
-#include "UdpProtocolHandler.hpp"
+#include "net/UdpProtocolHandler.hpp"
 
 UdpAuthHandler::UdpAuthHandler() { }
 
 UdpAuthHandler::~UdpAuthHandler() { }
 
-bool UdpAuthHandler::handle(UdpAuthPacket *p)
+bool UdpAuthHandler::handle(CMSGUdpAuth *p)
 {
   DEBUG("Udp auth try; code is {" << p->authCode() << "}");
   // this packet has no source

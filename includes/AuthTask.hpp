@@ -11,7 +11,7 @@
 
 #include <memory>
 #include "sql/SqlHandler.hpp"
-#include "CMSGAuthPacket.hpp"
+#include "packets/CMSGAuthPacket.hpp"
 
 /***
  * Auth task, spawned by the AuthPacketHandler;

@@ -8,8 +8,8 @@
 #ifndef HELLOPACKETHANDLER_HPP
 #define	HELLOPACKETHANDLER_HPP
 
-#include "APacketHandler.hpp"
-#include "HelloPacket.hpp"
+
+#include "packets/HelloPacket.hpp"
 
 class HelloPacketHandler : public APacketHandler
 {

@@ -4,12 +4,13 @@
  * 
  * Created on November 4, 2013, 8:45 PM
  */
-#include "CMSGAuthPacket.hpp"
+#include "packets/CMSGAuthPacket.hpp"
 #include <assert.h>
 #include "Log.hpp"
-#include "APacketHandler.hpp"
+#include "handlers/APacketHandler.hpp"
 #include <string>
 #include <algorithm>
+//#include "protobuf/ProtobufDef.hpp"
 
 CMSGAuthPacket::CMSGAuthPacket(std::shared_ptr<AClient> source) : APacket(source) { }
 
@@ -32,6 +33,17 @@ bool CMSGAuthPacket::acceptHandler(APacketHandler* handler)
 
 void CMSGAuthPacket::unserialize(ByteArray data)
 {
+//  
+//  CMSGAuthData data;
+//  
+//  bool ret = buf.ParseFromArray(&data[0], data.size());
+//  
+//  if (ret)
+//    INFO("COOL " << buf.username());
+//  else
+//    INFO("PAS COOL");
+//  
+  
   ByteArray::iterator search = std::find(data.begin(), data.end(), '\0');
   if (search == data.end())
     {

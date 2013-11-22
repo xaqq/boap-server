@@ -1,6 +1,6 @@
-#include "CMSGGameList.hpp"
+#include "packets/CMSGGameList.hpp"
 #include "AClient.hpp"
-#include "APacketHandler.hpp"
+
 
 CMSGGameList::CMSGGameList(std::shared_ptr<AClient> src) : APacket(src) { }
 

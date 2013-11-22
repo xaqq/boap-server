@@ -1,19 +1,17 @@
 #include "BoapFactory.hpp"
-#include "net/TcpSession.hpp"
-#include "net/UdpServer.hpp"
-#include "TcpProtocolHandler.hpp"
-#include "UdpProtocolHandler.hpp"
+
+#include "net/TcpProtocolHandler.hpp"
+#include "net/UdpProtocolHandler.hpp"
+#include "net/AdminTcpHandler.hpp"
+
+#include "handlers/APacketHandler.hpp"
+#include "handlers/UdpAuthHandler.hpp"
+#include "handlers/AuthPacketHandler.hpp"
+#include "handlers/CreateGameHandler.hpp"
+#include "handlers/GameListHandler.hpp"
+#include "handlers/HelloPacketHandler.hpp"
+
 #include "Client.hpp"
-#include "APacketHandler.hpp"
-#include "HelloPacketHandler.hpp"
-#include "net/AUdpProtocolHandler.hpp"
-#include "TcpProtocolHandler.hpp"
-#include "net/ATcpProtocolHandler.hpp"
-#include "AdminTcpHandler.hpp"
-#include "UdpAuthHandler.hpp"
-#include "AuthPacketHandler.hpp"
-#include "CreateGameHandler.hpp"
-#include "GameListHandler.hpp"
 
 std::shared_ptr<Net::ATcpProtocolHandler> BoapFactory::createTcpAdminProtocolHandler()
 {

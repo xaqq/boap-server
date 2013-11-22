@@ -63,7 +63,6 @@ void AClient::pushPacket(std::shared_ptr<APacket> p)
 
   if (handler = tcpHandler_.lock())
     {
-      DEBUG("PUSHING PACKET TO HANDLER");
       handler->pushPacket(p);
     }
 }

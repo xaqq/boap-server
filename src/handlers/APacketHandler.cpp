@@ -5,7 +5,7 @@
  * Created on November 4, 2013, 8:19 PM
  */
 
-#include "APacketHandler.hpp"
+#include "handlers/APacketHandler.hpp"
 #include "Log.hpp"
 
 APacketHandler::APacketHandler() { }

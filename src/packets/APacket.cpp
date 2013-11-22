@@ -6,7 +6,7 @@
  */
 
 #include "APacket.hpp"
-#include "APacketHandler.hpp"
+#include "handlers/APacketHandler.hpp"
 
 APacket::APacket(std::shared_ptr<AClient> source) : source_(source) { }
 
