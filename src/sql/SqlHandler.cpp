@@ -45,11 +45,8 @@ void SqlHandler::run()
     {
       std::function<void (sql::Connection *) > f;
 
-      if (!connection_)
-        {
-          connect();
-        }
-
+      // hackfix but works for now;
+      connect();
       while (requests_.tryPop(f))
         {
           try
