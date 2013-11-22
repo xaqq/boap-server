@@ -20,6 +20,7 @@ public:
   virtual ~Client();
 
 private:
+  bool authenticated_;
   std::string username_;
   std::string udpAuthCode_;
 
@@ -36,6 +37,16 @@ public:
   void username(const std::string &username)
   {
     username_ = username;
+  }
+
+  bool authenticated() const
+  {
+    return authenticated_;
+  }
+
+  void authenticated(bool v)
+  {
+    authenticated_ = v;
   }
 
 };

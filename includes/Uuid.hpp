@@ -8,6 +8,7 @@
 #ifndef UUID_HPP
 #define	UUID_HPP
 
+#include <string>
 #include <mutex>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -32,7 +33,13 @@ public:
 
   const boost::uuids::uuid & operator()()const;
 
+  const std::string &toString() const;
+
 private:
+  /**
+   * Textual representation; set once in the constructor;
+   */
+  std::string text_;
 
   /**
    * Static mutex because boost::mt19937 may not be thread safe;

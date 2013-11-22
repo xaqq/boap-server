@@ -11,6 +11,8 @@
 #include <atomic>
 #include <memory>
 #include <list>
+#include <thread>
+#include <map>
 #include "SafeQueue.hpp"
 #include "APacket.hpp"
 #include "world/World.hpp"
@@ -22,13 +24,15 @@ class APacketHandler;
 class Server
 {
 public:
-  
-  
+
+  typedef std::map<std::shared_ptr<AClient>, class Game *> ClientGameMap;
+  typedef std::map<std::shared_ptr<Game>, std::thread> GameThreadMap;
+  typedef std::list<std::shared_ptr<Game >> GameList;
   typedef std::list<std::shared_ptr<AClient >> ClientList;
   typedef SafeQueue<std::shared_ptr<APacket >> PacketList;
   typedef std::list<std::shared_ptr<APacketHandler >> PacketHandlerList;
 
-  
+
   Server(const Server& orig) = delete;
   virtual ~Server();
 
@@ -58,13 +62,13 @@ public:
    */
   void removeClient(std::shared_ptr<AClient> c);
 
-  
+
   /**
    * This returns the list of client known by the server. This is intended for use by packet handler
    * @return  list of client
    */
   const ClientList &clients() const;
-  
+
   /**
    * Use to schedule a call of f() in the server's thread.
    * This method is thread safe.
@@ -83,13 +87,18 @@ public:
   {
     packets_.push(p);
   }
-  
-  World &world();
-  const World &world() const;
+
+  /**
+   * Add a game and start a thread for it.
+   * Making the game name is unique the role of the CreateGameHandler class.
+   */
+  void addGame(std::shared_ptr<Game> g);
+
+  const GameList &games() const;
   
 private:
   Server();
-  
+
   static Server *instance_;
 
   std::atomic_bool isRunning_;
@@ -103,10 +112,25 @@ private:
    */
   void flush_operations();
 
+  /**
+   * Invoke packet handler;
+   */
   void handle_packets();
-  
+
   SafeQueue<std::function<void () >> operationQueue_;
-  World world_;
+
+
+  /**
+   * Map between client and game
+   */
+
+  ClientGameMap clientGame_;
+
+  GameList gameList_;
+
+  GameThreadMap gameThread_;
+
+  //  World world_;
 };
 
 #endif	/* SERVER_HPP */

@@ -13,6 +13,7 @@ add_subdirectory("DetourCrowd")
 #link_directories("logger/logger")
 set(SOURCES 
 src/main.cpp
+src/world/Game.cpp
 src/Uuid.cpp
 src/ByteArray.cpp
             src/net/ATcpProtocolHandler.cpp

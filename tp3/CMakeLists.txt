@@ -28,6 +28,9 @@ set (SOURCES
    "src/AuthPacketHandler.cpp"
 "src/AuthTask.cpp"
 "src/SMSGUdpCode.cpp"
+"src/CMSGCreateGame.cpp"
+"src/SMSGCreateGame.cpp"
+"src/CreateGameHandler.cpp"
 )
 
 target_link_libraries(${Boost_LIBRARIES})

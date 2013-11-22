@@ -10,15 +10,16 @@
 #include "ByteArray.hpp"
 class AClient;
 class APacketHandler;
+
 class APacket
 {
 public:
   APacket(std::shared_ptr<AClient> source);
   APacket(const APacket& orig);
   virtual ~APacket();
-  
+
   std::shared_ptr<AClient> source();
-  
+
   /**
    * This function MUST be implemented in all APacket's subclasses; This is
    * required because this allows for double dispatch to happen.
@@ -29,17 +30,19 @@ public:
   virtual bool acceptHandler(APacketHandler *handler);
 
   virtual void unserialize(ByteArray data) = 0;
-  virtual ByteArray serialize() const = 0 ;
-  
-  enum {
-                        CMSG_HELLO      = 0x0001,
-                        CMSG_AUTH       = 0x0002,
-                        SMSG_MOTD       =  0x1001,
-                        SMSG_UDP_CODE = 0x1002
-                                
- };
-  
-protected:  
+  virtual ByteArray serialize() const = 0;
+
+  enum
+  {
+    CMSG_HELLO = 0x0001,
+    CMSG_AUTH = 0x0002,
+    CMSG_CREATE_GAME = 0x0003,
+    SMSG_MOTD = 0x1001,
+    SMSG_UDP_CODE = 0x1002,
+    SMSG_CREATE_GAME = 0x1003
+  };
+
+protected:
   std::shared_ptr<AClient> source_;
 
 };

@@ -12,7 +12,7 @@
 #include "Server.hpp"
 #include "UdpAuthHandler.hpp"
 
-Client::Client()
+Client::Client() : authenticated_(false)
 {
   DEBUG("Client constructed");
   udpAuthCode_ = "bla";

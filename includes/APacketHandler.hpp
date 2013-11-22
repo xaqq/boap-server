@@ -12,6 +12,7 @@ class APacket;
 class HelloPacket;
 class UdpAuthPacket;
 class CMSGAuthPacket;
+
 class APacketHandler
 {
 public:
@@ -33,6 +34,11 @@ public:
   }
 
   virtual bool handle(CMSGAuthPacket *)
+  {
+    return true;
+  }
+
+  virtual bool handle(class CMSGCreateGame *)
   {
     return true;
   }

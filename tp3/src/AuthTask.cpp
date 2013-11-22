@@ -21,10 +21,7 @@
 #include "Client.hpp"
 #include "AuthPacketHandler.hpp"
 #include "SMSGUdpCode.hpp"
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/lexical_cast.hpp>
+#include "Uuid.hpp"
 
 AuthTask::AuthTask(CMSGAuthPacket packet) : packet_(packet), sqlResult_(nullptr)
 {
@@ -61,11 +58,12 @@ bool AuthTask::resultAvailable()
         {
           std::shared_ptr<SMSGUdpCode> packet(new SMSGUdpCode(packet_.source()));
 
-          boost::uuids::uuid u;
-          u = boost::uuids::random_generator()();
-          client->udpAuthCode(boost::lexical_cast<std::string > (u));
-          client->username(packet_.username_);
+          Uuid u;
 
+          client->udpAuthCode(u.toString());
+          client->username(packet_.username_);
+          client->authenticated(true);
+          
           packet->authCode_ = client->udpAuthCode();
           client->pushPacket(packet);
         }

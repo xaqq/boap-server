@@ -5,6 +5,7 @@
  * Created on November 21, 2013, 10:46 PM
  */
 
+#include <sstream>
 #include "Uuid.hpp"
 #include "Clock.hpp"
 
@@ -15,6 +16,7 @@ std::mutex Uuid::mutex_;
 Uuid::Uuid()
 {
   std::lock_guard<std::mutex> lock(mutex_);
+  std::stringstream ss;
 
   if (!seeded_)
     {
@@ -23,6 +25,9 @@ Uuid::Uuid()
     }
   boost::uuids::basic_random_generator<boost::mt19937> gen(&random_);
   uuid_ = gen();
+
+  ss << uuid_;
+  text_ = ss.str();
 }
 
 Uuid::Uuid(const Uuid& orig)
@@ -45,4 +50,9 @@ boost::uuids::uuid &Uuid::operator()()
 const boost::uuids::uuid &Uuid::operator()() const
 {
   return uuid_;
+}
+
+const std::string &Uuid::toString() const
+{
+  return text_;
 }

@@ -14,6 +14,7 @@
 #include "BoapFactory.hpp"
 #include "Scheduler.hpp"
 #include "APacket.hpp"
+#include "world/Game.hpp"
 
 
 Server *Server::instance_ = nullptr;
@@ -49,7 +50,7 @@ void Server::handle_packets()
   while (packets_.tryPop(packet))
     {
       DEBUG("FOUND PACKET");
-      for (auto handler : packetHandlers_)
+      for (auto & handler : packetHandlers_)
         {
           if (!packet)
             {
@@ -66,9 +67,9 @@ void Server::handle_packets()
 
 void Server::run()
 {
-  int ticks_per_sec = 100;
+  int ticks_per_sec = 20;
   int ms_per_tick = 1000 / ticks_per_sec;
-  
+
   while (isRunning_)
     {
       Clock::time_point t;
@@ -77,18 +78,21 @@ void Server::run()
       // INFO("Server is running. Stats: " << clients_.size() << " clients.");
       flush_operations();
       handle_packets();
-      world_.update();
       Milliseconds diff = std::chrono::duration_cast<Milliseconds > (Clock::now() - t);
-      
+
       if (diff.count() > ms_per_tick)
         {
           WARN("Server can't keep up; this tick took " << diff.count() << " instead of maximum " << ms_per_tick);
         }
       else if (diff.count() < ms_per_tick)
         {
-          DEBUG("Sleeping for " << (Milliseconds(ms_per_tick) - diff).count());
           std::this_thread::sleep_for(Milliseconds(ms_per_tick) - diff);
         }
+    }
+  for (auto & gameThread : gameThread_)
+    {
+      gameThread.first->stop();
+      gameThread.second.join();
     }
 }
 
@@ -120,12 +124,18 @@ const Server::ClientList &Server::clients() const
   return clients_;
 }
 
-World &Server::world()
+void Server::addGame(std::shared_ptr<Game> g)
 {
-  return world_;
+
+  gameThread_[g] = std::thread([g]()
+  {
+                               g->run();
+  });
+  gameList_.push_back(g);
+
 }
 
-const World &Server::world() const
+const Server::GameList &Server::games() const
 {
-  return world_;
+  return gameList_;
 }
