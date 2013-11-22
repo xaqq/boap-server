@@ -43,6 +43,10 @@ public:
     return true;
   }
 
+  virtual bool handle(class CMSGGameList *)
+  {
+    return true;
+  }
 private:
 
 };

@@ -31,6 +31,8 @@ set (SOURCES
 "src/CMSGCreateGame.cpp"
 "src/SMSGCreateGame.cpp"
 "src/SMSGAuth.cpp"
+"src/CMSGGameList.cpp"
+"src/SMSGGameList.cpp"
 "src/CreateGameHandler.cpp"
 )
 

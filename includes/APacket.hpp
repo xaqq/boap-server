@@ -35,12 +35,14 @@ public:
   enum
   {
     CMSG_HELLO = 0x0001,
-    CMSG_AUTH = 0x0002,
-    CMSG_CREATE_GAME = 0x0003,
+    CMSG_AUTH = 0x0010,
+    CMSG_CREATE_GAME = 0x0011,
+    CMSG_GAME_LIST = 0x0012,
     SMSG_MOTD = 0x1001,
     SMSG_UDP_CODE = 0x1002,
-    SMSG_CREATE_GAME = 0x1003,
-    SMSG_AUTH = 0x1004
+    SMSG_AUTH = 0x1010,
+    SMSG_CREATE_GAME = 0x1011,
+    SMSG_GAME_LIST = 0x1012
   };
 
 protected:

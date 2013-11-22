@@ -12,6 +12,7 @@
 #include "Log.hpp"
 #include "CMSGAuthPacket.hpp"
 #include "CMSGCreateGame.hpp"
+#include "CMSGGameList.hpp"
 
 PacketFactory::PacketFactory() { }
 
@@ -38,6 +39,10 @@ std::shared_ptr<APacket> PacketFactory::buildPacket(std::shared_ptr<AClient> sou
       p->unserialize(std::move(data));
       break;
 
+    case APacket::CMSG_GAME_LIST:
+      p = std::make_shared<CMSGGameList > (source);
+      p->unserialize(std::move(data));
+      break;
     default:
       INFO("Opcode not found when building packet (" << opcode << ")");
       return nullptr;
