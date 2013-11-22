@@ -39,7 +39,8 @@ public:
     CMSG_CREATE_GAME = 0x0003,
     SMSG_MOTD = 0x1001,
     SMSG_UDP_CODE = 0x1002,
-    SMSG_CREATE_GAME = 0x1003
+    SMSG_CREATE_GAME = 0x1003,
+    SMSG_AUTH = 0x1004
   };
 
 protected:

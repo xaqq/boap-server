@@ -48,6 +48,14 @@ public:
    */
   void operator()(void);
 
+  enum class AuthResult : unsigned char
+  {
+    OK = '0',
+    WRONG_PASSWORD = '1',
+    UNKNOWN_USER = '2',
+    INTERNAL_ERROR = '3', // sql error or other
+  };
+  
 private:
   /**
    * Method pointer to handler.
@@ -58,7 +66,10 @@ private:
    */
   SqlFutureResult future_;
   CMSGAuthPacket packet_;
-  bool *sqlResult_;
+  /**
+   * Authentification result; This is set by the sql code;
+   */
+  AuthResult result_;
   
 
 };

@@ -30,6 +30,7 @@ set (SOURCES
 "src/SMSGUdpCode.cpp"
 "src/CMSGCreateGame.cpp"
 "src/SMSGCreateGame.cpp"
+"src/SMSGAuth.cpp"
 "src/CreateGameHandler.cpp"
 )
 

@@ -18,8 +18,9 @@ SqlTaskReturnType ShapeTemplate::loadTemplate(sql::Connection *c, std::size_t id
   std::list<EntityTemplate> *entities = new std::list<EntityTemplate > ();
   try
     {
-      std::shared_ptr<sql::PreparedStatement> pstmt(c->prepareStatement("SELECT id, name, param1, param2, param3 FROM shape"));
+      std::shared_ptr<sql::PreparedStatement> pstmt(c->prepareStatement("SELECT id, name, param1, param2, param3 FROM shape WHERE id = ?"));
       std::shared_ptr<sql::ResultSet> res;
+      pstmt->setInt(1, id);
 
       res = std::shared_ptr<sql::ResultSet > (pstmt->executeQuery());
       while (res->next())

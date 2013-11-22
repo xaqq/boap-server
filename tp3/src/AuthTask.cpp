@@ -22,8 +22,9 @@
 #include "AuthPacketHandler.hpp"
 #include "SMSGUdpCode.hpp"
 #include "Uuid.hpp"
+#include "SMSGAuth.hpp"
 
-AuthTask::AuthTask(CMSGAuthPacket packet) : packet_(packet), sqlResult_(nullptr)
+AuthTask::AuthTask(CMSGAuthPacket packet) : packet_(packet)
 {
   internalHandler_ = std::bind(&AuthTask::start, this);
 }
@@ -31,7 +32,6 @@ AuthTask::AuthTask(CMSGAuthPacket packet) : packet_(packet), sqlResult_(nullptr)
 AuthTask::~AuthTask()
 {
   DEBUG("AuthTask destroyed");
-  delete sqlResult_;
 }
 
 void AuthTask::operator()(void)
@@ -54,22 +54,19 @@ bool AuthTask::resultAvailable()
   DEBUG("Auth Task completed");
   if (client)
     {
-      if (*sqlResult_) // auth ok
+      std::shared_ptr<SMSGAuth> authPacket(new SMSGAuth(packet_.source(), result_));
+      client->pushPacket(authPacket);
+      if (result_ == AuthResult::OK)
         {
-          std::shared_ptr<SMSGUdpCode> packet(new SMSGUdpCode(packet_.source()));
+          std::shared_ptr<SMSGUdpCode> udpCodePacket(new SMSGUdpCode(packet_.source()));
 
           Uuid u;
-
           client->udpAuthCode(u.toString());
           client->username(packet_.username_);
           client->authenticated(true);
-          
-          packet->authCode_ = client->udpAuthCode();
-          client->pushPacket(packet);
-        }
-      else
-        {
-          client->disconnect();
+
+          udpCodePacket->authCode_ = client->udpAuthCode();
+          client->pushPacket(udpCodePacket);
         }
     }
   return false;
@@ -77,38 +74,43 @@ bool AuthTask::resultAvailable()
 
 SqlTaskReturnType AuthTask::runSqlCode(sql::Connection * c)
 {
-  INFO("ICI");
-  sql::PreparedStatement *pstmt;
-  sql::ResultSet *res;
-  SqlTaskReturnType ret(new ISqlResult());
-  bool *authSucces = new bool(false);
+
+  std::shared_ptr<ISqlResult> resultWrapper(new ISqlResult());
+
+  if (!c)
+    return resultWrapper;
+
   try
     {
-      pstmt = c->prepareStatement("SELECT COUNT(id) as isAuthValid FROM users WHERE username = (?) AND password = (?)");
+      int count = 0;
+      std::shared_ptr<sql::PreparedStatement> pstmt(c->prepareStatement("SELECT password FROM users WHERE username = (?)"));
+      std::shared_ptr<sql::ResultSet> res;
       pstmt->setString(1, packet_.username_);
-      pstmt->setString(2, packet_.password_);
-      res = pstmt->executeQuery();
+
+      res = std::shared_ptr<sql::ResultSet > (pstmt->executeQuery());
       while (res->next())
         {
-          INFO("SQL REPLIES: " << res->getInt("isAuthValid"));
-          if (res->getInt("isAuthValid"))
-            *authSucces = true;
+          if (res->getString("password") == packet_.password_)
+            result_ = AuthResult::OK;
+          else
+            result_ = AuthResult::WRONG_PASSWORD;
+          count++;
         }
+      if (count == 0)
+        result_ = AuthResult::UNKNOWN_USER;
+      resultWrapper->error_ = false;
+      resultWrapper->result_ = nullptr; // no custom data because they are embeded in class
+
+      return resultWrapper;
     }
   catch (sql::SQLException &e)
     {
-      delete res;
-      delete pstmt;
-      delete authSucces;
       ERROR("SQL Exception:" << e.what() << " (MySQL error code: " << e.getErrorCode() << ", SQLState: " << e.getSQLState() << " )");
-      return nullptr;
+      resultWrapper->error_ = true;
+      resultWrapper->result_ = nullptr;
+      return resultWrapper;
     }
-  ret->error_ = false;
-  ret->result_ = authSucces;
 
-  delete res;
-  delete pstmt;
-  return ret;
 }
 
 bool AuthTask::waitForResult()
@@ -128,16 +130,10 @@ bool AuthTask::waitForResult()
       else if (result->error())
         {
           WARN("Error when processing query");
+          packet_.source()->pushPacket(std::shared_ptr<APacket>(new SMSGAuth(packet_.source(), AuthResult::INTERNAL_ERROR)));
           return false;
         }
-      else if (!result->result())
-        {
-          WARN("Custom data are null");
-          return false;
-        }
-      internalHandler_ = std::bind(&AuthTask::resultAvailable, this);
-      sqlResult_ = static_cast<bool *> (result->result());
-      return true;
+      return resultAvailable();
     }
   return true;
 }

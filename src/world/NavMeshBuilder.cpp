@@ -40,7 +40,7 @@ NavMeshBuilder::NavMeshBuilder(const char *sourceFilePath)
   m_geom->loadMesh(m_ctx, sourceFilePath);
 }
 
-NavMeshBuilder::NavMeshBuilder(const NavMeshBuilder& orig) { }
+NavMeshBuilder::NavMeshBuilder(const NavMeshBuilder&) { }
 
 NavMeshBuilder::~NavMeshBuilder() {
   delete m_ctx;
