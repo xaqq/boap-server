@@ -29,6 +29,11 @@ public:
   
   virtual void onEntitySpawn(std::shared_ptr<class GameEntity>) {}
   
+  /**
+   * Called by the world before stopping. Object should use this method to unregister themselves
+   */
+  virtual void onWorldStop() {}
+  
 };
 
 #endif	/* IWORLDOBSERVER_HPP */

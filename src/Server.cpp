@@ -10,6 +10,7 @@
 #include "Server.hpp"
 #include "Log.hpp"
 #include "AClient.hpp"
+#include "Clock.hpp"
 #include "BoapFactory.hpp"
 #include "Scheduler.hpp"
 #include "APacket.hpp"
@@ -65,14 +66,29 @@ void Server::handle_packets()
 
 void Server::run()
 {
+  int ticks_per_sec = 100;
+  int ms_per_tick = 1000 / ticks_per_sec;
+  
   while (isRunning_)
     {
+      Clock::time_point t;
+      t = Clock::now();
+
       // INFO("Server is running. Stats: " << clients_.size() << " clients.");
       flush_operations();
       handle_packets();
       world_.update();
-      std::chrono::milliseconds dura(20);
-      std::this_thread::sleep_for(dura);
+      Milliseconds diff = std::chrono::duration_cast<Milliseconds > (Clock::now() - t);
+      
+      if (diff.count() > ms_per_tick)
+        {
+          WARN("Server can't keep up; this tick took " << diff.count() << " instead of maximum " << ms_per_tick);
+        }
+      else if (diff.count() < ms_per_tick)
+        {
+          DEBUG("Sleeping for " << (Milliseconds(ms_per_tick) - diff).count());
+          std::this_thread::sleep_for(Milliseconds(ms_per_tick) - diff);
+        }
     }
 }
 

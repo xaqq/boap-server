@@ -19,11 +19,25 @@ public:
   Client(const Client& orig) = delete;
   virtual ~Client();
 
+private:
+  std::string username_;
+  std::string udpAuthCode_;
+
+public:
+
   void udpAuthCode(std::string code);
   const std::string &udpAuthCode() const;
 
-private:
-  std::string udpAuthCode_;
+  const std::string &username() const
+  {
+    return username_;
+  }
+
+  void username(const std::string &username)
+  {
+    username_ = username;
+  }
+
 };
 
 #endif	/* CLIENT_HPP */

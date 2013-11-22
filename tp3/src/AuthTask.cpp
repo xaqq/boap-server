@@ -64,6 +64,7 @@ bool AuthTask::resultAvailable()
           boost::uuids::uuid u;
           u = boost::uuids::random_generator()();
           client->udpAuthCode(boost::lexical_cast<std::string > (u));
+          client->username(packet_.username_);
 
           packet->authCode_ = client->udpAuthCode();
           client->pushPacket(packet);

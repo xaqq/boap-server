@@ -8,12 +8,17 @@
 #include <bullet/btBulletDynamicsCommon.h>
 #include "Clock.hpp"
 #include "world/WorldFacade.hpp"
-
+#include "Uuid.hpp"
 
 class GameEntity
 {
 public:
   GameEntity(WorldFacade &world, std::shared_ptr<btCollisionShape> shape);
+
+  /**
+   * Perform clean: - remove itself from the collision world.
+   */
+  virtual ~GameEntity();
 
   /**
    * Set the absolute position. This change is not propagated to
@@ -26,7 +31,7 @@ public:
    * children.
    */
   void setPosition(btScalar x, btScalar y, btScalar z);
-  
+
   const btVector3 &position() const;
 
   /**
@@ -58,10 +63,10 @@ public:
   const btTransform &transform() const;
   void transform(const btTransform &t);
   btCollisionObject *object();
-  
+
   bool affectNavMesh() const;
   void affectNavMesh(bool v);
-  
+
   /**
    * Rotate the entity so that it looks towards the location
    * TODO
@@ -80,29 +85,30 @@ public:
    * Return the list of triangle that represent the geometry of this entity.
    */
   std::vector<std::array<btVector3, 3 >> getTrianglesForMe();
-  
+
   /**
    * Return the list of triangle that represent this entity and its children.
    */
-  std::vector<std::array<btVector3, 3 >> getTriangles();;
+  std::vector<std::array<btVector3, 3 >> getTriangles();
+  ;
 
 protected:
   /**
    * A Reference to the world.
    */
   WorldFacade &world_;
-    
+
   /**
    * Should this entity be used for building nav-mesh ?
    */
   bool affectNavMesh_;
-  
+
 private:
   std::list<std::shared_ptr<GameEntity >> children_;
   std::shared_ptr<btCollisionShape> shape_;
   std::shared_ptr<btCollisionObject> object_;
   btTransform transform_;
   std::shared_ptr<GameEntity> parent_;
-  boost::uuids::uuid uuid_;
+  Uuid uuid_;
 
 };

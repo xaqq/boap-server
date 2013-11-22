@@ -32,7 +32,6 @@
 World::World() :
 entityFactory_(*this),
 ready_(false),
-uuid_(boost::uuids::random_generator()()),
 navMeshBuilder_(nullptr)
 {
   broadphase_ = new btDbvtBroadphase();
@@ -44,12 +43,15 @@ navMeshBuilder_(nullptr)
 
 World::~World()
 {
-  delete collisionWorld_;
+  entities_.clear();
   delete solver_;
   delete dispatcher_;
   delete collisionConfiguration_;
   delete broadphase_;
   delete navMeshBuilder_;
+  delete collisionWorld_;  
+
+  DEBUG("World destroyed");
 }
 
 std::shared_ptr<GameEntity> World::spawn(int entityId)
@@ -68,7 +70,7 @@ bool World::initNavhMesh()
   std::ofstream geometryFile;
   RecastConverter converter;
 
-  ss << "/tmp/world." << uuid_ << ".geometry";
+  ss << "/tmp/world." << uuid_() << ".geometry";
 
   for (auto e : entities_)
     {
@@ -78,7 +80,7 @@ bool World::initNavhMesh()
           converter.addEntity(e.get());
         }
     }
-
+  
   geometryFile.open(ss.str().c_str(), std::ios::trunc);
   geometryFile << converter.genDataDump();
   geometryFile.close();
@@ -90,10 +92,11 @@ bool World::initNavhMesh()
 
 bool World::init()
 {
-  INFO("Initializing world " << uuid_);
+  INFO("Initializing world " << uuid_());
 
   auto floor = spawn(1);
-  floor->rotate(90, 0, 0);
+  if (floor)
+    floor->rotate(90, 0, 0);
 
   for (int i = 0; i < 30; i++)
     {
@@ -154,7 +157,7 @@ void World::update()
     }
   for (auto e : entities_)
     {
-     // e->update(deltaTime());
+      // e->update(deltaTime());
     }
   deltaTime(true);
 }
@@ -167,4 +170,9 @@ void World::registerOberserver(IWorldObserver *o)
 void World::unregisterObserver(IWorldObserver *o)
 {
   observers_.remove(o);
+}
+
+void World::removeFromCollisionWorld(btCollisionObject *o)
+{
+  collisionWorld_->removeCollisionObject(o);
 }

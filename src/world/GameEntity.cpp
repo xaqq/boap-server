@@ -13,14 +13,17 @@ world_(world),
 affectNavMesh_(true),
 shape_(shape)
 {
-  //  uuid_ = boost::uuids::random_generator()();
-  //  std::string s(uuid_.begin(), uuid_.end());
-  //DEBUG(s);
   transform_.setIdentity();
   transform_.setOrigin(btVector3(0, 0, 0));
   object_ = std::make_shared<btCollisionObject > ();
   object_->setCollisionShape(shape_.get());
   object_->setWorldTransform(transform_);
+}
+
+GameEntity::~GameEntity()
+{
+  world_.removeFromCollisionWorld(object_.get());
+  DEBUG("Entity " << uuid_() << " destroyed");
 }
 
 void GameEntity::translate(const btVector3& v)
@@ -142,7 +145,8 @@ std::vector<std::array<btVector3, 3 >> GameEntity::getTrianglesForMe()
                 {
                   if (i != j && i != k && k != j)
                     {
-                      res.push_back(Triangle{{vertex[i], vertex[j], vertex[k]}});
+                      res.push_back(Triangle{
+                        {vertex[i], vertex[j], vertex[k]}});
                     }
                 }
             }
@@ -173,7 +177,8 @@ std::vector<std::array<btVector3, 3 >> GameEntity::getTrianglesForMe()
                 {
                   if (i != j && i != k && k != j)
                     {
-                      res.push_back(Triangle{{vertex[i], vertex[j], vertex[k]}});
+                      res.push_back(Triangle{
+                        {vertex[i], vertex[j], vertex[k]}});
                     }
                 }
             }

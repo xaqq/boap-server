@@ -9,6 +9,8 @@
 #define	WORLDFACADE_HPP
 
 #include <memory>
+
+#include "GameEntity.hpp"
 class GameEntity;
 
 /**
@@ -26,6 +28,12 @@ public:
    */
   virtual std::shared_ptr<GameEntity> spawn(int entityId) = 0;
 
+  /**
+   * Remove a btCollisionObject from the collision world.
+   * @param e
+   */
+  virtual void removeFromCollisionWorld(btCollisionObject *o) = 0;
+  
   /**
    * Register an observer to be notified by world event.
    * 

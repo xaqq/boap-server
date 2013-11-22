@@ -15,6 +15,7 @@
 #include "world/EntityFactory.hpp"
 #include "world/NavMeshBuilder.hpp"
 #include "WorldFacade.hpp"
+#include "Uuid.hpp"
 
 class ISqlResult;
 
@@ -32,6 +33,8 @@ public:
   virtual ~World();
 
   std::shared_ptr<GameEntity> spawn(int entityId) override;
+  void removeFromCollisionWorld(btCollisionObject *o) override;
+  
   void update();
 
   void registerOberserver(class IWorldObserver *) override;
@@ -79,7 +82,7 @@ private:
   /**
    * The world UUID.
    */
-  boost::uuids::uuid uuid_;
+  Uuid uuid_;
 
   /**
    * This object build the navigation mesh and provide a navMeshQuery used by entity for pathfinding.

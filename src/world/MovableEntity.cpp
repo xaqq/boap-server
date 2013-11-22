@@ -18,7 +18,8 @@ pathHelper_(*this, nullptr)
 
 MovableEntity::~MovableEntity()
 {
-//  world_.unregisterObserver(&pathHelper_);
+  DEBUG("Movable entity destroyed");
+  world_.unregisterObserver(&pathHelper_);
 }
 
 const btVector3 &MovableEntity::destination() const
