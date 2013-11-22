@@ -28,6 +28,10 @@ void TcpServer::do_accept()
       {
                          std::make_shared<TcpSession > (std::move(socket_), handlerFactory_())->start();
       }
+    else
+      {
+                         ERROR("ACCEPT ERROR: " << ec.message());
+      }
                          do_accept();
   });
 }

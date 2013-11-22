@@ -67,7 +67,7 @@ void Server::handle_packets()
 
 void Server::run()
 {
-  int ticks_per_sec = 20;
+  int ticks_per_sec = 100;
   int ms_per_tick = 1000 / ticks_per_sec;
 
   while (isRunning_)

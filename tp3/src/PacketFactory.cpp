@@ -20,7 +20,6 @@ PacketFactory::~PacketFactory() { }
 std::shared_ptr<APacket> PacketFactory::buildPacket(std::shared_ptr<AClient> source,
                                                     std::size_t opcode, ByteArray data)
 {
-  WARN("LMAMA BUILD PACKET" << opcode << ")");
   std::shared_ptr<APacket> p;
   switch (opcode)
     {
@@ -40,7 +39,7 @@ std::shared_ptr<APacket> PacketFactory::buildPacket(std::shared_ptr<AClient> sou
       break;
 
     default:
-      WARN("Opcode not found when building packet (" << opcode << ")");
+      INFO("Opcode not found when building packet (" << opcode << ")");
       return nullptr;
     }
   return p;

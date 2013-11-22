@@ -118,7 +118,7 @@ bool AuthTask::waitForResult()
   if (future_.valid())
     {
       std::future_status status;
-      status = future_.wait_for(std::chrono::milliseconds(10));
+      status = future_.wait_for(std::chrono::milliseconds(0));
       if (status != std::future_status::ready)
         return true;
       SqlTaskReturnType result = future_.get();
