@@ -10,19 +10,15 @@
 #include <cppconn/resultset.h>
 #include <cppconn/connection.h>
 #include <cppconn/prepared_statement.h>
+#include <cppconn/exception.h>
 #include <functional>
 #include "sql/ISqlResult.hpp"
-#include <cppconn/exception.h>
-#include <boost/uuid/uuid.hpp>
 #include "Log.hpp"
 #include "Scheduler.hpp"
-#include "MotdPacket.hpp"
-#include "AClient.hpp"
 #include "Client.hpp"
-#include "AuthPacketHandler.hpp"
-#include "SMSGUdpCode.hpp"
 #include "Uuid.hpp"
-#include "SMSGAuth.hpp"
+#include "packets/SMSGUdpCode.hpp"
+#include "packets/SMSGAuth.hpp"
 
 AuthTask::AuthTask(CMSGAuthPacket packet) : packet_(packet)
 {
@@ -62,7 +58,7 @@ bool AuthTask::resultAvailable()
 
           Uuid u;
           client->udpAuthCode(u.toString());
-          client->username(packet_.username_);
+          client->username(packet_.data_.username());
           client->authenticated(true);
 
           udpCodePacket->authCode_ = client->udpAuthCode();
@@ -85,12 +81,12 @@ SqlTaskReturnType AuthTask::runSqlCode(sql::Connection * c)
       int count = 0;
       std::shared_ptr<sql::PreparedStatement> pstmt(c->prepareStatement("SELECT password FROM users WHERE username = (?)"));
       std::shared_ptr<sql::ResultSet> res;
-      pstmt->setString(1, packet_.username_);
-
+      pstmt->setString(1, packet_.data_.username());
+      DEBUG("username {" << packet_.data_.username() << "}");
       res = std::shared_ptr<sql::ResultSet > (pstmt->executeQuery());
       while (res->next())
         {
-          if (res->getString("password") == packet_.password_)
+          if (res->getString("password") == packet_.data_.password())
             result_ = AuthResult::OK;
           else
             result_ = AuthResult::WRONG_PASSWORD;

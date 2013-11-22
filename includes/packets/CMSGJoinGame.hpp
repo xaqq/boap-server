@@ -3,15 +3,18 @@
 #include <string>  
 #include "APacket.hpp"
 #include "ByteArray.hpp"
-#include "ProtobufDef.hpp"
 
 class APacketHandler;
-class CMSGAuthPacket : public APacket
+
+/**
+ *  Packet sent by client when they want to create a new game
+ */
+class CMSGJoinGame : public APacket
 {
 public:
-  CMSGAuthPacket(std::shared_ptr<AClient> source);
-  CMSGAuthPacket(const CMSGAuthPacket& orig);
-  virtual ~CMSGAuthPacket();
+  CMSGJoinGame(std::shared_ptr<AClient> source);
+  CMSGJoinGame(const CMSGJoinGame& orig);
+  virtual ~CMSGJoinGame();
   
    /**
    * This function MUST be implemented in all APacket's subclasses; This is
@@ -23,15 +26,12 @@ public:
   virtual bool acceptHandler(APacketHandler *handler);
   
   /**
-   * Binary layout: username\0password
+   * Binary layout: gameUuid
    * @param data
    */
   virtual void unserialize(ByteArray data) override;;
   virtual ByteArray serialize() const;
 
 public:
-  /**
-   * Message data
-   */
-  CMSGAuthData data_;
+  std::string gameUuid_;
 };

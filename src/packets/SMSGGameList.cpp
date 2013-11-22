@@ -6,7 +6,7 @@
  */
 
 #include "Log.hpp"
-#include "SMSGGameList.hpp"
+#include "packets/SMSGGameList.hpp"
 
 SMSGGameList::SMSGGameList(std::shared_ptr<AClient> source) : APacket(source) { }
 

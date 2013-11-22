@@ -6,7 +6,7 @@
  */
 
 #include <string>
-#include "SMSGAuth.hpp"
+#include "packets/SMSGAuth.hpp"
 #include "AClient.hpp"
 
 SMSGAuth::SMSGAuth(std::shared_ptr<AClient> source) : APacket(source) { }

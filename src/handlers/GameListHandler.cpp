@@ -16,7 +16,6 @@ bool GameListHandler::handle(CMSGGameList *p)
     return true;
   
   std::shared_ptr<SMSGGameList> response (new SMSGGameList(p->source()));
-  DEBUG("TPTP");
   for (auto game : Server::instance().games())
     {
       response->games_[game->uuid()] = std::make_pair(game->name(), game->countPlayers());

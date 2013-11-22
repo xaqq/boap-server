@@ -25,6 +25,7 @@ Game::~Game()
 bool Game::init()
 {
   world_ = new World();
+  return true;
 }
 
 void Game::handle_packets()

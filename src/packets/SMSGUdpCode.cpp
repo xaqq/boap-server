@@ -5,7 +5,7 @@
  * Created on November 20, 2013, 3:42 AM
  */
 
-#include "SMSGUdpCode.hpp"
+#include "packets/SMSGUdpCode.hpp"
 
 
 SMSGUdpCode::SMSGUdpCode(std::shared_ptr<AClient> source) : APacket(source) { }

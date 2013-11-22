@@ -1,5 +1,6 @@
 #pragma once
 
+#include "handlers/APacketHandler.hpp"
 
 class GameListHandler : public APacketHandler
 {

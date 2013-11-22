@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include "handlers/APacketHandler.hpp"
 class CMSGAuthPacket;
 
 class AuthPacketHandler : public APacketHandler

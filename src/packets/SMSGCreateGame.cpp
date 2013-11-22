@@ -6,7 +6,7 @@
  */
 
 #include <string>
-#include "SMSGCreateGame.hpp"
+#include "packets/SMSGCreateGame.hpp"
 #include "AClient.hpp"
 
 SMSGCreateGame::SMSGCreateGame(std::shared_ptr<AClient> source) : APacket(source) { }
