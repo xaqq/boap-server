@@ -49,7 +49,7 @@ World::~World()
   delete collisionConfiguration_;
   delete broadphase_;
   delete navMeshBuilder_;
-  delete collisionWorld_;  
+  delete collisionWorld_;
 
   DEBUG("World destroyed");
 }
@@ -80,7 +80,7 @@ bool World::initNavhMesh()
           converter.addEntity(e.get());
         }
     }
-  
+
   geometryFile.open(ss.str().c_str(), std::ios::trunc);
   geometryFile << converter.genDataDump();
   geometryFile.close();
@@ -157,7 +157,7 @@ void World::update()
     }
   for (auto e : entities_)
     {
-      // e->update(deltaTime());
+      e->update(deltaTime());
     }
   deltaTime(true);
 }

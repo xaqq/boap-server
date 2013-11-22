@@ -1,5 +1,3 @@
-#include <string>
-#include <algorithm>
 #include "packets/CMSGAuthPacket.hpp"
 #include "Log.hpp"
 #include "handlers/APacketHandler.hpp"

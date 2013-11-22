@@ -5,7 +5,6 @@
  * Created on November 22, 2013, 12:24 AM
  */
 
-#include <string>
 #include "packets/SMSGCreateGame.hpp"
 #include "Log.hpp"
 #include "AClient.hpp"

@@ -1,5 +1,3 @@
-#include <string>
-#include <algorithm>
 #include "packets/CMSGCreateGame.hpp"
 #include "handlers/APacketHandler.hpp"
 #include "Log.hpp"

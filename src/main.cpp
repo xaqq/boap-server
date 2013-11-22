@@ -33,6 +33,7 @@ void start_sql(SqlHandler *h)
 
 void logConfig()
 {
+#ifndef NO_LOG
   using namespace Log;
   std::shared_ptr<ALogger> stdoutLogger(new StdoutLogger(new SimpleFormatter()));
   std::shared_ptr<ALogger> stderrLogger(new StderrLogger(new DefaultFormatter()));
@@ -51,6 +52,7 @@ void logConfig()
   std::shared_ptr<IFilter> syslogFilter(new DefaultFilter(LogLevel::ERROR));
   syslogLogger->registerFilter(syslogFilter);
   LogMgr::registerLogger("syslog", syslogLogger);
+#endif
 #endif
 }
 

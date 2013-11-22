@@ -75,6 +75,7 @@ void MovableEntity::update(Milliseconds diff)
       if (destinationReached())
         {
           DEBUG("I REACHED MY TARGET DESTINATION");
+          setDestination(rand() % 5, rand() % 5, rand() % 5);
         }
       else
         moveTowardTarget();

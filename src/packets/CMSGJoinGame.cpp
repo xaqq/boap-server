@@ -1,10 +1,6 @@
-
 #include "packets/CMSGJoinGame.hpp"
-#include <assert.h>
 #include "Log.hpp"
 #include "handlers/APacketHandler.hpp"
-#include <string>
-#include <algorithm>
 
 CMSGJoinGame::CMSGJoinGame(std::shared_ptr<AClient> source) : APacket(source) { }
 

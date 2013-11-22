@@ -61,7 +61,7 @@ void Game::run()
       t = Clock::now();
 
       DEBUG("Game " << uuid_() << " is running");
-      //world_->update();
+      world_->update();
       Milliseconds diff = std::chrono::duration_cast<Milliseconds > (Clock::now() - t);
 
       if (diff.count() > ms_per_tick)
