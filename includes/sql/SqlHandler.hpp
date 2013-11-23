@@ -12,6 +12,9 @@
 #include <atomic>
 #include <cppconn/driver.h>
 #include <cppconn/connection.h>
+#include <cppconn/prepared_statement.h>
+#include <cppconn/exception.h>
+#include <cppconn/resultset.h>
 #include "SafeQueue.hpp"
 #include <future>
 #include "sql/ISqlResult.hpp"

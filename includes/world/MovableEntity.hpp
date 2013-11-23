@@ -14,6 +14,7 @@
 class MovableEntity : public GameEntity
 {  
 private:
+  bool isMoving_;
   PathFindHelper pathHelper_;
   float velocity_;
   btVector3 destination_;

@@ -40,18 +40,21 @@ bool PathFindHelper::findPath(const btVector3 &start_pos, const btVector3 &end_p
   if (dtStatusFailed(st) || start == 0)
     {
       WARN("FAILED TO FIND START POLYGONE");
+      return false;
     }
 
   st = query_->findNearestPoly(reinterpret_cast<const float *> (&end_pos), searchDst, new dtQueryFilter(), &end, points);
   if (dtStatusFailed(st) || end == 0)
     {
       WARN("FAILED TO FIND END POLYGONE");
+      return false;
     }
 
   st = query_->findPath(start, end, start_pos, end_pos, new dtQueryFilter(), path, &pathCount, 1000);
   if (dtStatusFailed(st))
     {
       WARN("FAILED TO FIND PATH");
+      return false;
     }
 
   corridor_->reset(start, reinterpret_cast<const float *> (&start_pos));
@@ -104,7 +107,7 @@ btVector3 PathFindHelper::nextCorner()
       findPath(entity_.position(), entity_.destination());
       isCacheValid_ = true;
     }
-  return btVector3(nextCorner_[0], nextCorner_[1], nextCorner_[2]);  
+  return btVector3(nextCorner_[0], nextCorner_[1], nextCorner_[2]);
 }
 
 void PathFindHelper::updatePosition(const btVector3 & pos)

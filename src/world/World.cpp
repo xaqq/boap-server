@@ -24,15 +24,18 @@
 #include "world/PathFindHelper.hpp"
 #include "world/MovableEntity.hpp"
 #include "DetourTileCache.h"
+#include "sql/SqlHandler.hpp"
+#include <cppconn/exception.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <future>
 
-World::World() :
+World::World(const std::string &sceneName) :
 entityFactory_(*this),
 ready_(false),
-navMeshBuilder_(nullptr)
+navMeshBuilder_(nullptr),
+sceneName_(sceneName)
 {
   broadphase_ = new btDbvtBroadphase();
   collisionConfiguration_ = new btDefaultCollisionConfiguration();
@@ -64,6 +67,20 @@ std::shared_ptr<GameEntity> World::spawn(int entityId)
   return e;
 }
 
+std::shared_ptr<GameEntity>World:: spawn(int entityId, btVector3 pos, btVector3 rot)
+{
+
+  auto e = entityFactory_.instanciate(entityId, btVector3(0, 0, 0));
+  if (!e)
+    return nullptr;
+  collisionWorld_->addCollisionObject(e->object());
+  entities_.push_back(e);
+
+  e->rotate(rot[0], rot[1], rot[2]);  
+  e->setPosition(pos);
+  return e;
+}
+
 bool World::initNavhMesh()
 {
   std::stringstream ss;
@@ -90,56 +107,47 @@ bool World::initNavhMesh()
   return navMeshBuilder_->build();
 }
 
-bool World::init()
+bool World::getDefaultEntitiesFromDatabase()
 {
-  INFO("Initializing world " << uuid_());
 
-  auto floor = spawn(1);
-  if (floor)
-    {
-      floor->rotate(90, 0, 0);
-    }
+  auto future = Scheduler::instance()->runFutureInSql([this](sql::Connection * c)
+  {
+                                                      std::shared_ptr<ISqlResult> resultWrapper(new ISqlResult());
+                                                      if (!c)
+                                                      return resultWrapper;
 
-  for (int i = 0; i < 1; i++)
-    {
-      std::shared_ptr<MovableEntity> e2 = std::dynamic_pointer_cast<MovableEntity > (spawn(2));
-      if (e2)
+                                                      try
         {
-//          e2->rotate(0, 35, 0);
- //         e2->rotate(0, 0, 35);
-          e2->rotate(45, 0, 0);
-          e2->setDestination(5, 5, 5);
-        }
-    }
+                                                      std::shared_ptr<sql::PreparedStatement> pstmt(c->prepareStatement("SELECT template_id, pos_x, pos_y, pos_z, rot_x, rot_y, rot_z FROM entities WHERE scene_id = (SELECT id FROM scenes WHERE name = (?))"));
+                                                      std::shared_ptr<sql::ResultSet> res;
+                                                      pstmt->setString(1, sceneName_);
 
-  if (initNavhMesh())
-    {
-      for (auto o : observers_)
+                                                      res = std::shared_ptr<sql::ResultSet > (pstmt->executeQuery());
+                                                      while (res->next())
+            {
+                                                      defaultList_.push_back(std::make_tuple(res->getInt("template_id"),
+                                                                                             btVector3(res->getDouble("pos_x"), res->getDouble("pos_y"), res->getDouble("pos_z")),
+                                                                                             btVector3(res->getDouble("rot_x"), res->getDouble("rot_y"), res->getDouble("rot_z"))));
+            }
+
+                                                      resultWrapper->error_ = false;
+                                                      resultWrapper->result_ = nullptr;
+
+                                                      return resultWrapper;
+        }
+                                                      catch (sql::SQLException &e)
         {
-          o->onNavMeshQueryChange(navMeshBuilder_->m_navQuery);
+                                                      ERROR("SQL Exception:" << e.what() << " (MySQL error code: " << e.getErrorCode() << ", SQLState: " << e.getSQLState() << " )");
+                                                      resultWrapper->error_ = true;
+                                                      resultWrapper->result_ = nullptr;
+                                                      return resultWrapper;
         }
-    }
-  else
-    {
-      WARN("Cannot initialize nav mesh");
-    }
+  });
 
-  return true;
-}
-
-void World::update()
-{
-  if (!ready_)
-    {
-      if (entityFactory_.isReady())
-        ready_ = init();
-      else
-        return;
-    }
-  if (future_.valid())
+  if (future.valid())
     {
       std::future_status status;
-      status = future_.wait_for(std::chrono::milliseconds(10));
+      status = future.wait_for(std::chrono::milliseconds(15000));
       if (status == std::future_status::deferred)
         {
           WARN("DEFFERED");
@@ -153,14 +161,57 @@ void World::update()
           INFO("READY !!");
         }
       if (status != std::future_status::ready)
-        return;
-      SqlTaskReturnType result = future_.get();
-      if (!result->error())
+        return false;
+
+      if (future.get()->error_ == true)
         {
-          EntityTemplate *tpl = reinterpret_cast<EntityTemplate *> (result.get()->result());
-          DEBUG("FUTURE!: " << tpl->name_);
-          delete tpl;
+          ERROR("Error when loading default entities");
+          return false;
         }
+      return true;
+    }
+  return false;
+}
+
+bool World::init()
+{
+  INFO("Initializing world " << uuid_() << ". Scene: " << sceneName_);
+
+  bool ret = getDefaultEntitiesFromDatabase();
+  if (!ret)
+    return false;
+
+  for (auto entityToBuild : defaultList_)
+    {
+      auto entity = spawn(std::get < 0 > (entityToBuild),
+                          std::get < 1 > (entityToBuild),
+                          std::get < 2 > (entityToBuild));
+    }
+
+  if (initNavhMesh())
+    {
+      for (auto o : observers_)
+        {
+          o->onNavMeshQueryChange(navMeshBuilder_->m_navQuery);
+        }
+    }
+  else
+    {
+      WARN("Cannot initialize nav mesh");
+      return false;
+    }
+
+  return true;
+}
+
+void World::update()
+{
+  if (!ready_)
+    {
+      if (entityFactory_.isReady())
+        ready_ = init();
+      else
+        return;
     }
   for (auto e : entities_)
     {

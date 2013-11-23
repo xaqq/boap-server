@@ -179,11 +179,11 @@ std::vector<GameEntity::Polygone> GameEntity::getPolygonesForMe()
       // brute force; take all point for each face and generate polygone
       for (int i = 0; i < shape->getNumPlanes(); ++i)
         {
-          for (int j = 0; j < pointsInPlane[i].size(); ++j)
+          for (unsigned int j = 0; j < pointsInPlane[i].size(); ++j)
             {
               Polygone p;
               p.push_back(pointsInPlane[i][j]);
-              for (int k = 0; k < pointsInPlane[i].size(); ++k)
+              for (unsigned int k = 0; k < pointsInPlane[i].size(); ++k)
                 {
                   if (j == k)
                     continue;

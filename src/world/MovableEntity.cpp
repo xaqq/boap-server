@@ -10,6 +10,7 @@
 #include "world/WorldFacade.hpp"
 
 MovableEntity::MovableEntity(WorldFacade &world, std::shared_ptr<btCollisionShape> shape) : GameEntity(world, shape),
+        isMoving_(false),
 pathHelper_(*this, nullptr)
 {
   velocity_ = 1;
@@ -70,7 +71,7 @@ bool MovableEntity::move()
 
 void MovableEntity::update(Milliseconds diff)
 {
-  if (pathHelper_.isUsable())
+  if (pathHelper_.isUsable() && isMoving_)
     {
       if (destinationReached())
         {

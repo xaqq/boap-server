@@ -24,7 +24,7 @@ Game::~Game()
 
 bool Game::init()
 {
-  world_ = new World();
+  world_ = new World("Test Level");
   return true;
 }
 

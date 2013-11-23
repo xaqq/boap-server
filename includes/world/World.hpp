@@ -10,6 +10,7 @@
 
 #include <future>
 #include <list>
+#include <tuple>
 #include <memory>
 #include "sql/SqlHandler.hpp"
 #include "world/EntityFactory.hpp"
@@ -28,11 +29,16 @@ class btCollisionWorld;
 class World : public WorldFacade
 {
 public:
-  World();
+  /**
+   * World constructor.
+   * @param sceneName;  The name of the scene this world represents.
+   */
+  World(const std::string &sceneName);
   World(const World& orig) = delete;
   virtual ~World();
 
   std::shared_ptr<GameEntity> spawn(int entityId) override;
+  std::shared_ptr<GameEntity> spawn(int entityId, btVector3 pos, btVector3 rot) override;
   void removeFromCollisionWorld(btCollisionObject *o) override;
   
   void update();
@@ -41,7 +47,16 @@ public:
   void unregisterObserver(IWorldObserver *) override;
 
 private:
-
+  typedef std::list<std::tuple<int, btVector3, btVector3>> DefaultEntityList;
+  
+  
+  /**
+   * Load a list of entity id + information that represent the default entities in the scene;
+   * This is a blocking sql call;
+   * @return 
+   */
+  bool getDefaultEntitiesFromDatabase();
+  
   /**
    * Initialise the world; this is called when the entity factory is ready;
    * @return 
@@ -67,7 +82,6 @@ private:
    * Internal flag, set to true when the navigation meshe and the scene has been built.
    */
   bool ready_;
-  SqlFutureResult future_;
   btBroadphaseInterface* broadphase_;
   btDefaultCollisionConfiguration* collisionConfiguration_;
   btCollisionDispatcher* dispatcher_;
@@ -91,6 +105,14 @@ private:
   NavMeshBuilder *navMeshBuilder_;
 
   std::list<IWorldObserver *> observers_;
+  
+  std::string sceneName_;
+  
+  /**
+   * List of default entites. This is setted by the SQL code but the world will be blocking anyway
+   * so its safe
+   */
+  DefaultEntityList defaultList_;
 };
 
 #endif	/* WORLD_HPP */
