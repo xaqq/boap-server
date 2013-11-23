@@ -21,7 +21,7 @@ private:
   // All vertices
   std::vector<btVector3> vertices_;
   /**
-   * Index of 3 vertices of each triangle
+   * Each element of the list is a polygone; the vector represents the idx of its vertices;
    */
-  std::list<std::array<int, 3>> trianglesVerticesIndex_;
+  std::list<std::vector<int>> polyVerticesIdx_;
 };

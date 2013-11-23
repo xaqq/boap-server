@@ -13,6 +13,7 @@
 #include "build/CMSGCreateGame.pb.h"
 #include "build/SMSGCreateGame.pb.h"
 #include "build/SMSGGameList.pb.h"
+#include "build/CMSGJoinGame.pb.h"
 
 #endif	/* PROTOBUFDEF_HPP */
 

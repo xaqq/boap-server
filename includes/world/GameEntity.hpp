@@ -13,6 +13,9 @@
 class GameEntity
 {
 public:
+  
+  typedef std::vector<btVector3> Polygone;
+  
   GameEntity(WorldFacade &world, std::shared_ptr<btCollisionShape> shape);
 
   /**
@@ -84,12 +87,12 @@ public:
   /**
    * Return the list of triangle that represent the geometry of this entity.
    */
-  std::vector<std::array<btVector3, 3 >> getTrianglesForMe();
+  std::vector<Polygone> getPolygonesForMe();
 
   /**
    * Return the list of triangle that represent this entity and its children.
    */
-  std::vector<std::array<btVector3, 3 >> getTriangles();
+  std::vector<Polygone> getPolygones();
 
   /**
    * @return true if is a player, false otherwise

@@ -68,7 +68,7 @@ void Server::run()
 {
   int ticks_per_sec = 100;
   int ms_per_tick = 1000 / ticks_per_sec;
-
+  addGame(std::shared_ptr<Game>(new Game()));
   while (isRunning_)
     {
       Clock::time_point t;

@@ -20,6 +20,11 @@ std::map<std::string, EntityFactory::ShapeBuilder> EntityFactory::shapeBuilders_
     {
       return std::shared_ptr<btCollisionShape > (new btBox2dShape(tpl.params_));
     }}
+,
+  {"3dBox", [](const ShapeTemplate & tpl)
+    {
+      return std::shared_ptr<btCollisionShape > (new btBoxShape(tpl.params_));
+    }}
 };
 
 std::map<std::string, EntityFactory::EntityBuilder> EntityFactory::entityBuilders_ = {

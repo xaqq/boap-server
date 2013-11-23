@@ -119,93 +119,92 @@ void GameEntity::addChild(std::shared_ptr<GameEntity> e)
   children_.push_back(e);
 }
 
-std::vector<std::array<btVector3, 3 >> GameEntity::getTrianglesForMe()
+std::vector<GameEntity::Polygone> GameEntity::getPolygonesForMe()
 {
-  typedef std::array<btVector3, 3 > Triangle;
-  std::vector<Triangle> res;
+  std::vector<Polygone> res;
 
   if (!shape_)
     return res;
   if (btBox2dShape * shape = dynamic_cast<btBox2dShape *> (shape_.get()))
     {
-      btVector3 vertex[4];
+      DEBUG("2DSHAPE " << shape->getNumEdges());
       const btMatrix3x3 matrix_rot(transform_.getRotation());
-
-      for (int i = 0; i < 4; i++)
+      Polygone p;
+      for (int i = 0; i < shape->getNumEdges(); i++)
         {
-          shape->getVertex(i, vertex[i]);
-          vertex[i] = vertex[i] * matrix_rot;
-          vertex[i] += transform_.getOrigin();
+          btVector3 a;
+          btVector3 b;
+          shape->getEdge(i, a, b);
+          a = a * matrix_rot;
+          a += transform_.getOrigin();
+          b = b * matrix_rot;
+          b += transform_.getOrigin();
+          p.push_back(a);
+          p.push_back(b);
         }
-
-      for (int i = 0; i < 4; i++)
-        {
-          for (int j = 0; j < 4; j++)
-            {
-              for (int k = 0; k < 4; k++)
-                {
-                  if (i != j && i != k && k != j)
-                    {
-                      res.push_back(Triangle{
-                        {vertex[i], vertex[j], vertex[k]}});
-                    }
-                }
-            }
-        }
-
-
-      //      res.push_back(Triangle{vertex[0], vertex[1], vertex[3]});
-      //      res.push_back(Triangle{vertex[3], vertex[2], vertex[0]});
+      res.push_back(p);
     }
   else if (btBoxShape * shape = dynamic_cast<btBoxShape *> (shape_.get()))
     {
-      btVector3 vertex[8];
+      DEBUG("3DSHAPE " << shape->getNumEdges());
       const btMatrix3x3 matrix_rot(transform_.getRotation());
+      std::vector<btVector3> pointsInPlane[shape->getNumPlanes()];
+      /// blaaaa
+      for (int i = 0; i < shape->getNumPlanes(); i++)
+        {
+          btVector3 normal;
+          btVector3 point;
 
-      //      std::cout << shape->getNumVertices();
-      for (int i = 0; i < 8; i++)
-        {
-          shape->getVertex(i, vertex[i]);
-          vertex[i] = vertex[i] * matrix_rot;
-          vertex[i] += transform_.getOrigin();
-          //	  std::cout << "LOL " << vertex[i][0] << " " << vertex[i][1] << " " << vertex[i][2] << std::endl;
-        }
-      for (int i = 0; i < 8; i++)
-        {
-          for (int j = 0; j < 8; j++)
+          shape->getPlane(normal, point, i);
+
+          for (int j = 0; j < shape->getNumVertices(); j++)
             {
-              for (int k = 0; k < 8; k++)
+              btVector3 v1;
+              shape->getVertex(j, v1);
+
+              btVector3 diff1;
+
+              diff1 = point - v1;
+              btScalar scal1 = diff1.dot(normal);
+
+              if (scal1 == 0)
                 {
-                  if (i != j && i != k && k != j)
-                    {
-                      res.push_back(Triangle{
-                        {vertex[i], vertex[j], vertex[k]}});
-                    }
+                  v1 = v1 * matrix_rot;
+                  v1 += transform_.getOrigin();
+                  pointsInPlane[i].push_back(v1);
                 }
             }
         }
 
-      // res.push_back(Triangle{vertex[0], vertex[1], vertex[3]});
-      // res.push_back(Triangle{vertex[3], vertex[2], vertex[0]});
+      // brute force; take all point for each face and generate polygone
+      for (int i = 0; i < shape->getNumPlanes(); ++i)
+        {
+          for (int j = 0; j < pointsInPlane[i].size(); ++j)
+            {
+              Polygone p;
+              p.push_back(pointsInPlane[i][j]);
+              for (int k = 0; k < pointsInPlane[i].size(); ++k)
+                {
+                  if (j == k)
+                    continue;
+                  p.push_back(pointsInPlane[i][k]);
+                }
+              res.push_back(p);
+            }
 
-      // res.push_back(Triangle{vertex[4], vertex[5], vertex[7]});
-      // res.push_back(Triangle{vertex[7], vertex[6], vertex[4]});
-
-      // res.push_back(Triangle{vertex[0], vertex[1], vertex[6]});
-      // res.push_back(Triangle{vertex[6], vertex[7], vertex[0]});
+        }
     }
   return res;
 }
 
-std::vector<std::array<btVector3, 3 >> GameEntity::getTriangles()
+std::vector<GameEntity::Polygone> GameEntity::getPolygones()
 {
-  typedef std::array<btVector3, 3 > Triangle;
-  std::vector<Triangle> res;
+  std::vector<Polygone> res;
 
-  res = getTrianglesForMe();
+  res = getPolygonesForMe();
   for (auto child : children_)
     {
-      auto tmp = child->getTriangles();
+      auto tmp = child->getPolygones();
       res.insert(res.end(), tmp.begin(), tmp.end());
     }
   return res;
@@ -216,7 +215,7 @@ void GameEntity::update(Milliseconds diff)
   INFO("Updating entity");
 }
 
-const btVector3 &GameEntity::position() const
+const btVector3 & GameEntity::position() const
 {
   return transform_.getOrigin();
 }

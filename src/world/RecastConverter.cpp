@@ -2,6 +2,7 @@
 #include <array>
 #include "world/RecastConverter.hpp"
 #include "world/GameEntity.hpp"
+#include "Log.hpp"
 
 void RecastConverter::addEntity(GameEntity *e)
 {
@@ -17,17 +18,17 @@ std::string RecastConverter::genDataDump()
     {
       if (!e->affectNavMesh())
         continue;
-      auto triangles = e->getTriangles();
-      for (auto triangle : triangles)
+      auto polygones = e->getPolygones();
+      for (auto poly : polygones)
         {
-          std::array<int, 3 > verticesIdx;
-          for (int i = 0; i < 3; ++i)
+          std::vector<int> verticesIdx;
+          for (int i = 0; i < poly.size(); ++i)
             {
-              vertices_.push_back(triangle[i]);
+              vertices_.push_back(poly[i]);
               idx = vertices_.size();
-              verticesIdx[i] = idx;
+              verticesIdx.push_back(idx);
             }
-          trianglesVerticesIndex_.push_back(verticesIdx);
+          polyVerticesIdx_.push_back(verticesIdx);
         }
     }
 
@@ -35,9 +36,12 @@ std::string RecastConverter::genDataDump()
     {
       ss << "v " << vertice[0] << " " << vertice[1] << " " << vertice[2] << std::endl;
     }
-  for (auto triangle : trianglesVerticesIndex_)
+  for (auto poly : polyVerticesIdx_)
     {
-      ss << "f " << triangle[0] << " " << triangle[1] << " " << triangle[2] << std::endl;
+      ss << "f ";
+      for (int i = 0; i < poly.size(); ++i)
+        ss << poly[i] << " ";
+      ss << std::endl;
     }
   return ss.str();
 }

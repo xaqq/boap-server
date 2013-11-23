@@ -96,13 +96,20 @@ bool World::init()
 
   auto floor = spawn(1);
   if (floor)
-    floor->rotate(90, 0, 0);
+    {
+      floor->rotate(90, 0, 0);
+    }
 
-  for (int i = 0; i < 30; i++)
+  for (int i = 0; i < 1; i++)
     {
       std::shared_ptr<MovableEntity> e2 = std::dynamic_pointer_cast<MovableEntity > (spawn(2));
       if (e2)
-        e2->setDestination(5, 5, 5);
+        {
+//          e2->rotate(0, 35, 0);
+ //         e2->rotate(0, 0, 35);
+          e2->rotate(45, 0, 0);
+          e2->setDestination(5, 5, 5);
+        }
     }
 
   if (initNavhMesh())

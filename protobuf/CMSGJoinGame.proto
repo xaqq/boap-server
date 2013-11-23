@@ -1,0 +1,5 @@
+message CMSGJoinGameData
+{
+ required string gameuuid = 1;
+optional string password = 2;
+}

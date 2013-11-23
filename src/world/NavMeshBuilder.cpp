@@ -19,20 +19,20 @@ NavMeshBuilder::NavMeshBuilder(const char *sourceFilePath)
   m_ctx = new rcContext(true);
   m_geom = new InputGeom();
 
-  m_cellSize = 0.10f;
-  m_cellHeight = 0.10f;
+  m_cellSize = 0.20f;
+  m_cellHeight = 0.20f;
   m_agentMaxSlope = 45;
 
   m_agentHeight = 1;
   m_agentMaxClimb = 2;
-  m_agentRadius = 0.1;
+  m_agentRadius = 0.5;
   m_edgeMaxLen = 3;
   m_edgeMaxError = 1;
   m_regionMinSize = 1;
   m_regionMergeSize = 8;
   m_vertsPerPoly = 6;
-  m_detailSampleDist = 1;
-  m_detailSampleMaxError = 1;
+  m_detailSampleDist = 4;
+  m_detailSampleMaxError = 3;
   m_monotonePartitioning = false;
   m_keepInterResults = false;
 
