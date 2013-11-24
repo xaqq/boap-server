@@ -8,6 +8,8 @@
 #ifndef GAME_HPP
 #define	GAME_HPP
 
+#include "observers/Observable.hpp"
+#include <memory>
 #include <thread>
 #include <mutex>
 #include <atomic>
@@ -15,6 +17,7 @@
 #include "GameEntity.hpp"
 #include "SafeQueue.hpp"
 #include "APacket.hpp"
+#include "observers/IGameObserver.hpp"
 class Server;
 
 class Game
@@ -25,6 +28,10 @@ private:
    * Name of the game
    */
   std::string name_;
+  /**
+   * Name of the scene (world name)
+   */
+  std::string sceneName_;
   std::atomic_bool isRunning_;
   Uuid uuid_;
   mutable std::mutex mutex_;
@@ -35,7 +42,7 @@ private:
   std::list<std::shared_ptr<GameEntity >> entities_;
 
   /**
-   * Initialise the game; This is called once the game is in its own thread.
+   * Initialize the game; This is called once the game is in its own thread.
    */
   bool init();
 
@@ -56,8 +63,7 @@ private:
   PacketList packets_;
 
 public:
-
-  Game();
+  Game(const std::string &scene);
   Game(const Game& orig) = delete;
   virtual ~Game();
 
@@ -87,6 +93,16 @@ public:
   {
     std::lock_guard<std::mutex> guard(mutex_);
     name_ = s;
+  }
+
+  /**
+   * Thread safe
+   * @return 
+   */
+  const std::string &sceneName() const
+  {
+    std::lock_guard<std::mutex> guard(mutex_);
+    return sceneName_;
   }
 
   /**

@@ -12,9 +12,10 @@
 #include "Log.hpp"
 #include "Clock.hpp"
 
-Game::Game() :
+Game::Game(const std::string &scene) :
+sceneName_(scene),
 isRunning_(true),
-world_(nullptr){ }
+world_(nullptr) { }
 
 Game::~Game()
 {
@@ -24,13 +25,13 @@ Game::~Game()
 
 bool Game::init()
 {
-  world_ = new World("Test Level");
+  world_ = new World(sceneName_);
   return true;
 }
 
 void Game::handle_packets()
 {
-  
+
   std::shared_ptr<APacket> packet;
 
   while (packets_.tryPop(packet))
@@ -49,31 +50,41 @@ void Game::handle_packets()
         }
     }
 }
+
 void Game::run()
 {
   int ticks_per_sec = 1;
   int ms_per_tick = 1000 / ticks_per_sec;
 
   init();
-  while (isRunning_)
+  try
     {
-      Clock::time_point t;
-      t = Clock::now();
-
-      DEBUG("Game " << uuid_() << " is running");
-      world_->update();
-      Milliseconds diff = std::chrono::duration_cast<Milliseconds > (Clock::now() - t);
-
-      if (diff.count() > ms_per_tick)
+      while (isRunning_)
         {
-          WARN("Game " << uuid_() << "can't keep up; this tick took " << diff.count() << " instead of maximum " << ms_per_tick);
+          Clock::time_point t;
+          t = Clock::now();
+
+          DEBUG("Game " << uuid_() << " is running");
+          world_->update();
+          Milliseconds diff = std::chrono::duration_cast<Milliseconds > (Clock::now() - t);
+
+          if (diff.count() > ms_per_tick)
+            {
+              WARN("Game " << uuid_() << "can't keep up; this tick took " << diff.count() << " instead of maximum " << ms_per_tick);
+            }
+          else if (diff.count() < ms_per_tick)
+            {
+              std::this_thread::sleep_for(Milliseconds(ms_per_tick) - diff);
+            }
         }
-      else if (diff.count() < ms_per_tick)
-        {
-          std::this_thread::sleep_for(Milliseconds(ms_per_tick) - diff);
-        }
+      DEBUG("Game stopped running");
     }
-  DEBUG("Game stopped running");
+  catch (std::exception &e)
+    {
+      ERROR("An exception occured in game " << uuid() << ": " << e.what());
+    }
+
+  //dispatch(std::bind(&IGameObserver::gameStopped, std::placeholders::_1, shared_from_this(), SMSGGameStatus::FAILED_INIT));
 }
 
 const std::string &Game::uuid() const
@@ -91,7 +102,7 @@ void Game::stop()
 int Game::countPlayers() const
 {
   std::lock_guard<std::mutex> guard(mutex_);
-  
+
   int count = 0;
   for (auto &e : entities_)
     {

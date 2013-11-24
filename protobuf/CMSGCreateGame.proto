@@ -1,4 +1,5 @@
 message CMSGCreateGameData
 {
  required string gameName = 1;
+optional string scenename = 2;
 }

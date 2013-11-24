@@ -6,6 +6,7 @@ message GameListEntry
 required string gamename = 1;
 required string uuid = 2;
 required int32 countPlayers = 3;
+required string scenename = 4;
 }
  repeated GameListEntry entry = 2;
 }

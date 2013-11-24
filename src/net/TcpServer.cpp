@@ -1,6 +1,7 @@
 #include "net/TcpServer.hpp"
 #include "net/TcpSession.hpp"
 #include "Log.hpp"
+#include <stdexcept>
 #include <memory>
 
 using namespace Net;

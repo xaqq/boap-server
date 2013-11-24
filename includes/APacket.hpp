@@ -19,6 +19,15 @@ public:
   APacket(const APacket& orig);
   virtual ~APacket();
 
+  /**
+   * Returns a pointer to the source of the packet.
+   * 
+   * Wether source is nullptr or not depends if the packet handler responsible for this
+   * packet creation had a client registered of not.
+   * 
+   * Also, when the APacket objet is a output packet, source may be left to nullptr;
+   * @return Pointer to the source. May be nullptr;
+   */
   std::shared_ptr<AClient> source();
 
   /**

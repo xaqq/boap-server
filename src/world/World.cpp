@@ -25,6 +25,7 @@
 #include "world/MovableEntity.hpp"
 #include "DetourTileCache.h"
 #include "sql/SqlHandler.hpp"
+#include "exceptions/WorldFailedInit.hpp"
 #include <cppconn/exception.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/uuid.hpp>
@@ -67,7 +68,7 @@ std::shared_ptr<GameEntity> World::spawn(int entityId)
   return e;
 }
 
-std::shared_ptr<GameEntity>World:: spawn(int entityId, btVector3 pos, btVector3 rot)
+std::shared_ptr<GameEntity>World::spawn(int entityId, btVector3 pos, btVector3 rot)
 {
 
   auto e = entityFactory_.instanciate(entityId, btVector3(0, 0, 0));
@@ -76,7 +77,7 @@ std::shared_ptr<GameEntity>World:: spawn(int entityId, btVector3 pos, btVector3 
   collisionWorld_->addCollisionObject(e->object());
   entities_.push_back(e);
 
-  e->rotate(rot[0], rot[1], rot[2]);  
+  e->rotate(rot[0], rot[1], rot[2]);
   e->setPosition(pos);
   return e;
 }
@@ -117,11 +118,19 @@ bool World::getDefaultEntitiesFromDatabase()
                                                       return resultWrapper;
 
                                                       try
-        {
-                                                      std::shared_ptr<sql::PreparedStatement> pstmt(c->prepareStatement("SELECT template_id, pos_x, pos_y, pos_z, rot_x, rot_y, rot_z FROM entities WHERE scene_id = (SELECT id FROM scenes WHERE name = (?))"));
+                                                        {
+                                                          /** check if the scene exists */
+                                                         
+                                                      std::shared_ptr<sql::PreparedStatement> pstmt(c->prepareStatement("SELECT id FROM scenes WHERE name = (?)"));
                                                       std::shared_ptr<sql::ResultSet> res;
+                                                      
                                                       pstmt->setString(1, sceneName_);
+                                                      res = std::shared_ptr<sql::ResultSet > (pstmt->executeQuery());
+                                                      if (!res->rowsCount())
+                                                        throw WorldFailedInit("Scene does not exist");
 
+                                                      pstmt = std::shared_ptr<sql::PreparedStatement>(c->prepareStatement("SELECT template_id, pos_x, pos_y, pos_z, rot_x, rot_y, rot_z FROM entities WHERE scene_id = (SELECT id FROM scenes WHERE name = (?))"));
+                                                      pstmt->setString(1, sceneName_);
                                                       res = std::shared_ptr<sql::ResultSet > (pstmt->executeQuery());
                                                       while (res->next())
             {
@@ -165,6 +174,7 @@ bool World::getDefaultEntitiesFromDatabase()
 
       if (future.get()->error_ == true)
         {
+          throw WorldFailedInit("Sql error while loading entities");
           ERROR("Error when loading default entities");
           return false;
         }
@@ -186,8 +196,10 @@ bool World::init()
       auto entity = spawn(std::get < 0 > (entityToBuild),
                           std::get < 1 > (entityToBuild),
                           std::get < 2 > (entityToBuild));
+      if (!entity)
+        throw WorldFailedInit("Failed to spawn one the defaults entities");
     }
-
+  
   if (initNavhMesh())
     {
       for (auto o : observers_)
@@ -209,7 +221,9 @@ void World::update()
   if (!ready_)
     {
       if (entityFactory_.isReady())
-        ready_ = init();
+        {
+          ready_ = init();
+        }
       else
         return;
     }

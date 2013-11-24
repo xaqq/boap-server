@@ -10,6 +10,7 @@ CMSGCreateGame.proto
 SMSGCreateGame.proto
 SMSGGameList.proto
 CMSGJoinGame.proto
+SMSGGameStatus.proto
 )
 
 add_library(boapd-protobuf ${PROTO_SRCS} ${PROTO_HRDS})

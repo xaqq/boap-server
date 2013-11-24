@@ -16,6 +16,7 @@
 #include "SafeQueue.hpp"
 #include "APacket.hpp"
 #include "world/World.hpp"
+#include "observers/AMainThreadGameObserver.hpp"
 
 class APacket;
 class AClient;
@@ -130,7 +131,7 @@ private:
 
   GameThreadMap gameThread_;
 
-  //  World world_;
+//  void onGameStopped(std::shared_ptr<Game>, SMSGGameStatus::Status) override;
 };
 
 #endif	/* SERVER_HPP */

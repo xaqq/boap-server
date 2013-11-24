@@ -53,7 +53,13 @@ bool CreateGameHandler::handle(CMSGCreateGame *p)
         }
     }
 
-  std::shared_ptr<Game> g(new Game());
+  std::string sceneName;
+  if (p->data_.has_scenename())
+    sceneName = p->data_.scenename();
+  else
+    sceneName = "Test Level";
+  
+  std::shared_ptr<Game> g(new Game(sceneName));
   g->name(p->data_.gamename());
   response->data_.set_success(true);
   response->data_.set_gameuuid(g->uuid());

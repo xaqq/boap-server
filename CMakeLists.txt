@@ -16,7 +16,6 @@ add_subdirectory("DebugUtils")
 add_subdirectory("DetourCrowd")
 
 set(SOURCES 
-
 ##Packets
 src/packets/HelloPacket.cpp
 src/packets/CMSGAuthPacket.cpp
@@ -87,6 +86,11 @@ src/sql/ShapeTemplate.cpp
 ## Server
 src/Server.cpp
 
+## Exceptions
+src/exceptions/WorldFailedInit.cpp
+
+## Observer
+src/observers/AMainThreadGameObserver.cpp
 )
 
 include_directories(${Boost_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${BULLET_INCLUDE_DIRS}

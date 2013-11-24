@@ -14,6 +14,7 @@
 #include "build/SMSGCreateGame.pb.h"
 #include "build/SMSGGameList.pb.h"
 #include "build/CMSGJoinGame.pb.h"
+#include "build/SMSGGameStatus.pb.h"
 
 #endif	/* PROTOBUFDEF_HPP */
 

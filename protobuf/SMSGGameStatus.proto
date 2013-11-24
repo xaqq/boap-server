@@ -1,0 +1,10 @@
+message SMSGGameStatus
+{
+enum Status
+{
+PLAYING = 0;
+FAILED_INIT = 1;
+IDLE = 2;
+}
+ required string uuid = 1;
+}

@@ -26,9 +26,12 @@ public:
   AuthTask(const AuthTask& orig) = delete;
   virtual ~AuthTask();
 
-  /**
-   * First state
-   */
+/**
+ * First state of the task.
+ * 
+ * This method is run when the task start processing.
+ * @return false if processing is done, and the task should be destroyed
+ */
   bool start();
 
   /**

@@ -22,6 +22,7 @@ bool GameListHandler::handle(CMSGGameList *p)
       entry->set_countplayers(game->countPlayers());
       entry->set_uuid(game->uuid());
       entry->set_gamename(game->name());
+      entry->set_scenename(game->sceneName());
     }
   p->source()->pushPacket(response);
   return true;
