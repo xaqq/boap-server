@@ -22,7 +22,7 @@ class APacket;
 class AClient;
 class APacketHandler;
 
-class Server
+class Server : public AMainThreadGameObserver
 {
 public:
 
@@ -131,7 +131,7 @@ private:
 
   GameThreadMap gameThread_;
 
-//  void onGameStopped(std::shared_ptr<Game>, SMSGGameStatus::Status) override;
+  void onGameStopped(std::shared_ptr<Game>, SMSGGameStatus::Status) override;
 };
 
 #endif	/* SERVER_HPP */

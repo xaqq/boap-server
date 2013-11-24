@@ -79,16 +79,16 @@ int main(int, char**)
       // fire-up sql asap; it will be required by server initialisation code
       sqlThread = std::thread(start_sql, &sql);
 
-      Server &server = Server::instance();
-      sched->setServer(&server);
+      std::shared_ptr<Server> server(&Server::instance());
+      sched->setServer(server.get());
       boost::asio::io_service tcp_io_service;
-      Net::TcpServer tcpServer(tcp_io_service, 4242, &BoapFactory::createTcpProtocolHandler);
+      Net::TcpServer tcpServer(tcp_io_service, 42412, &BoapFactory::createTcpProtocolHandler);
       // Net::TcpServer tcpServer2(tcp_io_service, 4243, &BoapFactory::createTcpAdminProtocolHandler);
 
       sched->setTcp(&tcpServer);
 
       boost::asio::io_service udp_io_service;
-      Net::UdpServer udpServer(udp_io_service, 4242, &BoapFactory::createUdpProtocolHandler);
+      Net::UdpServer udpServer(udp_io_service, 42412, &BoapFactory::createUdpProtocolHandler);
 
       sched->setUdp(&udpServer);
 
@@ -97,19 +97,18 @@ int main(int, char**)
       signals.add(SIGINT);
       signals.async_wait(std::bind(&Net::TcpServer::stop, &tcpServer));
       signals.async_wait(std::bind(&Net::UdpServer::stop, &udpServer));
-      signals.async_wait(std::bind(&Server::stop, &server));
+      signals.async_wait(std::bind(&Server::stop, server.get()));
       signals.async_wait(std::bind(&SqlHandler::stop, &sql));
 
       tcpThread = std::thread(start_tcp, &tcp_io_service);
       udpThread = std::thread(start_udp, &udp_io_service);
-      gameServerThread = std::thread(start_gameserver, &server);
+      gameServerThread = std::thread(start_gameserver, server.get());
 
       sig_io_service.run();
       tcpThread.join();
       udpThread.join();
       gameServerThread.join();
       sqlThread.join();
-      delete &server;
       delete sched;
     }
   catch (std::exception const & e)

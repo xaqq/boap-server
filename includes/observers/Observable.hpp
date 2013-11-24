@@ -8,8 +8,10 @@
 #ifndef OBSERVABLE_HPP
 #define	OBSERVABLE_HPP
 
+#include <thread>
 #include <list>
 #include <memory>
+#include "Log.hpp"
 
 template<typename ObserverType>
 class Observable
@@ -38,9 +40,11 @@ public:
   template<typename EventCall>
   void dispatch(EventCall c)
   {
+    DEBUG("MDR" << std::this_thread::get_id());
     for (auto o : observers_)
       {
         auto sptr = o.lock();
+        DEBUG("LOL");
         if (sptr)
           c(sptr);
       }

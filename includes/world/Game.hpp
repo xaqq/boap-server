@@ -20,7 +20,7 @@
 #include "observers/IGameObserver.hpp"
 class Server;
 
-class Game
+class Game : public Observable<IGameObserver>, public std::enable_shared_from_this<Game>
 {
 private:
 

@@ -84,7 +84,7 @@ void Game::run()
       ERROR("An exception occured in game " << uuid() << ": " << e.what());
     }
 
-  //dispatch(std::bind(&IGameObserver::gameStopped, std::placeholders::_1, shared_from_this(), SMSGGameStatus::FAILED_INIT));
+  dispatch(std::bind(&IGameObserver::gameStopped, std::placeholders::_1, shared_from_this(), SMSGGameStatus::FAILED_INIT));
 }
 
 const std::string &Game::uuid() const

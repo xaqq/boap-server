@@ -68,10 +68,9 @@ void Server::run()
 {
   int ticks_per_sec = 100;
   int ms_per_tick = 1000 / ticks_per_sec;
-  //addGame(std::shared_ptr<Game>(new Game("Test Level")));
+  addGame(std::shared_ptr<Game>(new Game("Test Level")));
   while (isRunning_)
     {
-      DEBUG("BOAP");
       Clock::time_point t;
       t = Clock::now();
 
@@ -126,7 +125,7 @@ const Server::ClientList &Server::clients() const
 
 void Server::addGame(std::shared_ptr<Game> g)
 {
-  //shared_from_this();
+  g->registerObserver(shared_from_this());
   gameThread_[g] = std::thread([g]()
   {
                                g->run();
@@ -139,8 +138,8 @@ const Server::GameList &Server::games() const
 {
   return gameList_;
 }
-//
-//void Server::onGameStopped(std::shared_ptr<Game> game, SMSGGameStatus::Status st)
-//{
-//  DEBUG("Game with uuid" << game->uuid() << " stopped with status: " << st);
-//}
+
+void Server::onGameStopped(std::shared_ptr<Game> game, SMSGGameStatus::Status st)
+{
+  DEBUG("Game with uuid" << game->uuid() << " stopped with status: " << st << "(from thread: " << std::this_thread::get_id() );
+}
