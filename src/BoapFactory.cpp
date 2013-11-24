@@ -10,8 +10,8 @@
 #include "handlers/CreateGameHandler.hpp"
 #include "handlers/GameListHandler.hpp"
 #include "handlers/HelloPacketHandler.hpp"
-
 #include "Client.hpp"
+#include "handlers/GamePacketHandler.hpp"
 
 std::shared_ptr<Net::ATcpProtocolHandler> BoapFactory::createTcpAdminProtocolHandler()
 {
@@ -42,6 +42,7 @@ std::list<std::shared_ptr<APacketHandler >> BoapFactory::createPacketHandlers()
   list.push_back(std::shared_ptr<APacketHandler > (new AuthPacketHandler()));
   list.push_back(std::shared_ptr<APacketHandler > (new CreateGameHandler()));
   list.push_back(std::shared_ptr<APacketHandler > (new GameListHandler()));
+  list.push_back(std::shared_ptr<APacketHandler > (new GamePacketHandler()));
 
   return list;
 }

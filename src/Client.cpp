@@ -1,7 +1,9 @@
 #include "Client.hpp"
 #include "Log.hpp"
 
-Client::Client() : authenticated_(false)
+Client::Client() : 
+observer_(new GameObserver()),
+authenticated_(false)
 {
   DEBUG("Client constructed");
   udpAuthCode_ = "bla";
@@ -20,4 +22,14 @@ const std::string &Client::udpAuthCode() const
 void Client::udpAuthCode(std::string code)
 {
   udpAuthCode_ = std::move(code);
+}
+
+void Client::GameObserver::onClientJoined(std::shared_ptr<Game>, std::shared_ptr<Client> c)
+{
+  
+}
+
+void Client::GameObserver::onGameStopped(std::shared_ptr<Game>, SMSGGameStatus::Status st)
+{
+  
 }

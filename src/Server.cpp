@@ -14,6 +14,7 @@
 #include "BoapFactory.hpp"
 #include "Scheduler.hpp"
 #include "APacket.hpp"
+#include "Client.hpp"
 #include "world/Game.hpp"
 
 
@@ -145,4 +146,9 @@ void Server::onGameStopped(std::shared_ptr<Game> game, SMSGGameStatus::Status st
   gameList_.remove(game);
   gameThread_[game].join();
   gameThread_.erase(game);
+}
+
+void Server::onClientJoined(std::shared_ptr<Game> game, std::shared_ptr<Client> c)
+{
+  clientGame_[std::dynamic_pointer_cast<AClient>(c)]= game;
 }

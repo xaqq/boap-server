@@ -10,7 +10,6 @@
 
 #include "observers/IGameObserver.hpp"
 
-
 /**
  * Abstract GameObserver that schedule event handling to happen in main thread.
  * 
@@ -27,10 +26,13 @@ public:
    * Override to dispatch the call to the main thread.
    */
   virtual void gameStopped(std::shared_ptr<Game> game, SMSGGameStatus::Status st) override;
-  
-private:
-  virtual void onGameStopped(std::shared_ptr<Game> game, SMSGGameStatus::Status st) = 0;
 
+  virtual void clientJoined(std::shared_ptr<Game> game, std::shared_ptr<class Client>c) override;
+
+private:
+  virtual void onGameStopped(std::shared_ptr<Game> game, SMSGGameStatus::Status st) override = 0;
+
+  virtual void onClientJoined(std::shared_ptr<Game> game, std::shared_ptr<class Client>c) override = 0;
 };
 
 #endif	/* AMAINTHREADGAMEOBSERVER_HPP */

@@ -25,8 +25,11 @@ class Game;
 class IGameObserver : public std::enable_shared_from_this<IGameObserver>
 {
 public:
-  IGameObserver(){}
-  virtual ~IGameObserver(){}
+
+  IGameObserver() { }
+
+  virtual ~IGameObserver() { }
+
   /**
    * When a game stopped, it calls this method of the observer;
    * The observer will then ensure to call onGameStopped();
@@ -37,7 +40,12 @@ public:
   {
     onGameStopped(game, st);
   }
-  
+
+  virtual void clientJoined(std::shared_ptr<Game> game, std::shared_ptr<class Client>c)
+  {
+    onClientJoined(game, c);
+  }
+
 private:
   /**
    * A game has stop - do what you want;   * 
@@ -46,6 +54,14 @@ private:
    * @param st The reason why
    */
   virtual void onGameStopped(std::shared_ptr<Game> game, SMSGGameStatus::Status st) = 0;
+
+
+  /**
+   * A client has joined a game!
+   * @param game
+   * @param c
+   */
+  virtual void onClientJoined(std::shared_ptr<Game> game, std::shared_ptr<Client> c) = 0;
 };
 
 #endif	/* IGAMEOBSERVER_HPP */

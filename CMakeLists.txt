@@ -50,6 +50,8 @@ src/handlers/CreateGameHandler.cpp
 src/handlers/GameListHandler.cpp
 src/handlers/HelloPacketHandler.cpp
 src/handlers/UdpAuthHandler.cpp
+src/handlers/JoinGameHandler.cpp
+src/handlers/GamePacketHandler.cpp
 src/handlers/APacketHandler.cpp
 
 ##Clients

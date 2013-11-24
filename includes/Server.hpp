@@ -26,7 +26,7 @@ class Server : public AMainThreadGameObserver
 {
 public:
 
-  typedef std::map<std::shared_ptr<AClient>, class Game *> ClientGameMap;
+  typedef std::map<std::shared_ptr<AClient>, std::shared_ptr<Game>> ClientGameMap;
   typedef std::map<std::shared_ptr<Game>, std::thread> GameThreadMap;
   typedef std::list<std::shared_ptr<Game >> GameList;
   typedef std::list<std::shared_ptr<AClient >> ClientList;
@@ -132,6 +132,7 @@ private:
   GameThreadMap gameThread_;
 
   void onGameStopped(std::shared_ptr<Game>, SMSGGameStatus::Status) override;
+  void onClientJoined(std::shared_ptr<Game> game, std::shared_ptr<Client> c) override;
 };
 
 #endif	/* SERVER_HPP */

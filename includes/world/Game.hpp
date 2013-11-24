@@ -20,9 +20,12 @@
 #include "observers/IGameObserver.hpp"
 class Server;
 
+class Client;
 class Game : public Observable<IGameObserver>, public std::enable_shared_from_this<Game>
 {
 private:
+  
+  std::map<std::shared_ptr<Client>, std::shared_ptr<GameEntity>> playersToEntities_;
 
   /**
    * Name of the game
@@ -84,6 +87,12 @@ public:
     std::lock_guard<std::mutex> guard(mutex_);
     return name_;
   }
+  
+  /**
+   * Call by handler when a client request a join.
+   * @return 
+   */
+  bool joinGame(std::shared_ptr<Client> client);
 
   /**
    * Thread safe

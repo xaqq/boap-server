@@ -10,16 +10,39 @@
 
 #include <string>
 #include <memory>
+#include "ProtobufDef.hpp"
 #include "AClient.hpp"
+#include "observers/AMainThreadGameObserver.hpp"
 
+class Game;
 class Client : public AClient
 {
 public:
   Client();
   Client(const Client& orig) = delete;
   virtual ~Client();
-
+  
+  /**
+   * This is a helper class for a client to observer a main. Allow for a easy workaround around
+   * the multiple inheritance of shared_from_this();
+   * 
+   */
+  class GameObserver : public AMainThreadGameObserver
+  {
+  private:
+    /**
+     * This means that someone joined the game this client is in
+     */
+    void onClientJoined(std::shared_ptr<Game>, std::shared_ptr<Client> c);
+    void onGameStopped(std::shared_ptr<Game>, SMSGGameStatus::Status st);
+  };
+  
+  friend class GameObserver;
 private:
+  /**
+   * Observer instance
+   */
+  std::shared_ptr<GameObserver> observer_;
   bool authenticated_;
   std::string username_;
   std::string udpAuthCode_;

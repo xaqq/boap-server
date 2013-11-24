@@ -11,6 +11,7 @@
 #include "world/World.hpp"
 #include "Log.hpp"
 #include "Clock.hpp"
+#include "handlers/JoinGameHandler.hpp"
 
 Game::Game(const std::string &scene) :
 sceneName_(scene),
@@ -26,6 +27,7 @@ Game::~Game()
 bool Game::init()
 {
   world_ = new World(sceneName_);
+  packetHandlers_.push_back(std::shared_ptr<APacketHandler > (new JoinGameHandler()));
   return true;
 }
 
@@ -65,6 +67,7 @@ void Game::run()
           t = Clock::now();
 
           DEBUG("Game " << uuid_() << " is running");
+          handle_packets();
           world_->update();
           Milliseconds diff = std::chrono::duration_cast<Milliseconds > (Clock::now() - t);
 
@@ -79,7 +82,7 @@ void Game::run()
         }
       DEBUG("Game stopped running");
     }
-  catch (std::exception &e) 
+  catch (std::exception &e)
     {
       ERROR("An exception occured in game " << uuid() << ": " << e.what());
     }
@@ -110,4 +113,12 @@ int Game::countPlayers() const
         count++;
     }
   return count;
+}
+
+bool Game::joinGame(std::shared_ptr<Client> client)
+{
+  playersToEntities_[client] = world_->spawn(2);
+  if (playersToEntities_[client])
+    return true;
+  return false;
 }
