@@ -142,4 +142,7 @@ const Server::GameList &Server::games() const
 void Server::onGameStopped(std::shared_ptr<Game> game, SMSGGameStatus::Status st)
 {
   DEBUG("Game with uuid" << game->uuid() << " stopped with status: " << st << "(from thread: " << std::this_thread::get_id() );
+  gameList_.remove(game);
+  gameThread_[game].join();
+  gameThread_.erase(game);
 }

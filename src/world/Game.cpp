@@ -79,7 +79,7 @@ void Game::run()
         }
       DEBUG("Game stopped running");
     }
-  catch (std::exception &e)
+  catch (std::exception &e) 
     {
       ERROR("An exception occured in game " << uuid() << ": " << e.what());
     }

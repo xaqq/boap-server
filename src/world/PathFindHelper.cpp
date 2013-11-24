@@ -19,7 +19,10 @@ isCacheValid_(false)
   corridor_->init(1024);
 }
 
-PathFindHelper::~PathFindHelper() { }
+PathFindHelper::~PathFindHelper()
+{
+  delete corridor_;
+}
 
 bool PathFindHelper::findPath(const btVector3 &start_pos, const btVector3 &end_pos)
 {

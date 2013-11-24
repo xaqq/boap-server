@@ -18,16 +18,19 @@ class Observable
 {
 private:
   std::list<std::weak_ptr<ObserverType >> observers_;
+  mutable std::mutex mutex_;
 
 public:
 
   void registerObserver(std::shared_ptr<ObserverType> observer)
   {
+    std::lock_guard<std::mutex> guard(mutex_);
     observers_.push_back(observer);
   }
 
   void unregisterObserver(std::shared_ptr<ObserverType> observer)
   {
+    std::lock_guard<std::mutex> guard(mutex_);
     std::weak_ptr<ObserverType> wptr = observer;
     observers_.remove(wptr);
   }
@@ -40,13 +43,14 @@ public:
   template<typename EventCall>
   void dispatch(EventCall c)
   {
-    DEBUG("MDR" << std::this_thread::get_id());
+    std::lock_guard<std::mutex> guard(mutex_);
     for (auto o : observers_)
       {
         auto sptr = o.lock();
-        DEBUG("LOL");
         if (sptr)
           c(sptr);
+        else
+          WARN("Invalid weak ptr");
       }
   }
 };

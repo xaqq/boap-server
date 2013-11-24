@@ -20,7 +20,8 @@ std::map<std::string, EntityFactory::ShapeBuilder> EntityFactory::shapeBuilders_
     {
       return std::shared_ptr<btCollisionShape > (new btBox2dShape(tpl.params_));
     }}
-,
+
+  ,
   {"3dBox", [](const ShapeTemplate & tpl)
     {
       return std::shared_ptr<btCollisionShape > (new btBoxShape(tpl.params_));
@@ -54,7 +55,14 @@ void EntityFactory::loadEntities()
                                                      SqlTaskReturnType sql_ret = EntityTemplate::loadAllTemplate(sql);
                                                      return sql_ret;
     });
-  sqlFuture_.wait();
+
+  std::future_status status;
+  status = sqlFuture_.wait_for(Milliseconds(5000));
+  if (status != std::future_status::ready)
+    {
+      ERROR("Loading entity never completed");
+      return;
+    }
   SqlTaskReturnType ret = sqlFuture_.get();
   if (ret->error() || !ret->result())
     {
@@ -83,9 +91,15 @@ void EntityFactory::loadShapes()
                                                      SqlTaskReturnType sql_ret = ShapeTemplate::loadAllTemplate(sql);
                                                      return sql_ret;
     });
-  sqlFuture_.wait();
-  SqlTaskReturnType ret = sqlFuture_.get();
 
+  std::future_status status;
+  status = sqlFuture_.wait_for(Milliseconds(5000));
+  if (status != std::future_status::ready)
+    {
+      ERROR("Loading entity never completed");
+      return;
+    }
+  SqlTaskReturnType ret = sqlFuture_.get();
 
   if (ret->error() || !ret->result())
     {

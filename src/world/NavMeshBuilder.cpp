@@ -42,10 +42,14 @@ NavMeshBuilder::NavMeshBuilder(const char *sourceFilePath)
 
 NavMeshBuilder::NavMeshBuilder(const NavMeshBuilder&) { }
 
-NavMeshBuilder::~NavMeshBuilder() {
+NavMeshBuilder::~NavMeshBuilder()
+{
   delete m_ctx;
   delete m_geom;
   delete m_navQuery;
+  rcFreePolyMeshDetail(m_dmesh);
+  rcFreePolyMesh(m_pmesh);
+  dtFreeNavMesh(m_navMesh);
 }
 
 bool NavMeshBuilder::build()
@@ -292,7 +296,7 @@ bool NavMeshBuilder::build()
   DEBUG("TOTO");
   if (m_cfg.maxVertsPerPoly <= DT_VERTS_PER_POLYGON)
     {
-        DEBUG("TITI" << m_pmesh->npolys);
+      DEBUG("TITI" << m_pmesh->npolys);
       unsigned char* navData = 0;
       int navDataSize = 0;
 
