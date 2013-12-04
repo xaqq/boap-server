@@ -19,8 +19,8 @@ NavMeshBuilder::NavMeshBuilder(const char *sourceFilePath)
   m_ctx = new rcContext(true);
   m_geom = new InputGeom();
 
-  m_cellSize = 0.20f;
-  m_cellHeight = 0.20f;
+  m_cellSize = 0.50f;
+  m_cellHeight = 0.50f;
   m_agentMaxSlope = 45;
 
   m_agentHeight = 1;
@@ -293,10 +293,8 @@ bool NavMeshBuilder::build()
 
   // The GUI may allow more max points per polygon than Detour can handle.
   // Only build the detour navmesh if we do not exceed the limit.
-  DEBUG("TOTO");
   if (m_cfg.maxVertsPerPoly <= DT_VERTS_PER_POLYGON)
     {
-      DEBUG("TITI" << m_pmesh->npolys);
       unsigned char* navData = 0;
       int navDataSize = 0;
 
@@ -306,7 +304,6 @@ bool NavMeshBuilder::build()
           if (m_pmesh->areas[i] == RC_WALKABLE_AREA)
             {
               m_pmesh->flags[i] = MY_POLYFLAGS_WALK;
-              DEBUG("LOL");
             }
         }
 

@@ -20,13 +20,12 @@ world_(nullptr) { }
 
 Game::~Game()
 {
-  delete world_;
   DEBUG("Game Destroyed");
 }
 
 bool Game::init()
 {
-  world_ = new World(sceneName_);
+  world_ = std::make_shared<World>(sceneName_);
   packetHandlers_.push_back(std::shared_ptr<APacketHandler > (new JoinGameHandler()));
   return true;
 }
@@ -55,7 +54,7 @@ void Game::handle_packets()
 
 void Game::run()
 {
-  int ticks_per_sec = 1;
+  int ticks_per_sec = 20;
   int ms_per_tick = 1000 / ticks_per_sec;
 
   init();

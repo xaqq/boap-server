@@ -31,7 +31,7 @@ bool PathFindHelper::findPath(const btVector3 &start_pos, const btVector3 &end_p
       WARN("findPath called but the path helper object has no navmesh query -- yet");
       return false;
     }
-  float searchDst[] = {5, 5, 5};
+  float searchDst[] = {0.1, 0.1, 0.1};
   float points[] = {0, 0, 0};
   dtPolyRef start = 0;
   dtPolyRef end = 0;
@@ -71,19 +71,17 @@ bool PathFindHelper::findPath(const btVector3 &start_pos, const btVector3 &end_p
 
   if (nbCorners >= 1)
     {
+      DEBUG("FOUND " << nbCorners << " CORNER;");
       memcpy(static_cast<void *> (nextCorner_), cornerVerts, sizeof (nextCorner_));
     }
-  int i = 0;
-  for (auto f : cornerVerts)
+  else
     {
-      if (i >= nbCorners)
-        continue;
-      DEBUG(f << ", ");
-      i++;
-      if (i % 3 == 0)
-        {
-          DEBUG("new point");
-        }
+      DEBUG("NO CORNER FOUND");
+    }
+  int i = 0;
+  for (i = 0; i < nbCorners; ++i)
+    {
+      DEBUG("Corner: " << cornerVerts[i * 3] << ", " << cornerVerts[i * 3 + 1] << ", " << cornerVerts[i * 3 + 2]);;
     }
 
   DEBUG("Found path with nb_polygone = " << pathCount);
@@ -123,7 +121,6 @@ void PathFindHelper::updatePosition(const btVector3 & pos)
 
 void PathFindHelper::onNavMeshQueryChange(dtNavMeshQuery * query)
 {
-  DEBUG("Query updated: " << query);
   query_ = query;
   isCacheValid_ = false;
 }

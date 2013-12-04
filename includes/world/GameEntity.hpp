@@ -9,8 +9,10 @@
 #include "Clock.hpp"
 #include "world/WorldFacade.hpp"
 #include "Uuid.hpp"
+#include "observers/IEntityObserver.hpp"
+#include "observers/Observable.hpp"
 
-class GameEntity
+class GameEntity : public std::enable_shared_from_this<GameEntity>, public Observable<IEntityObserver>
 {
 public:
   

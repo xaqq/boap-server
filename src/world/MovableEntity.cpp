@@ -10,11 +10,12 @@
 #include "world/WorldFacade.hpp"
 
 MovableEntity::MovableEntity(WorldFacade &world, std::shared_ptr<btCollisionShape> shape) : GameEntity(world, shape),
-        isMoving_(false),
+isMoving_(false),
 pathHelper_(*this, nullptr)
 {
   velocity_ = 1;
   world_.registerOberserver(&pathHelper_);
+  pathHelper_.onNavMeshQueryChange(world_.navMeshQuery());
 }
 
 MovableEntity::~MovableEntity()
@@ -26,6 +27,12 @@ MovableEntity::~MovableEntity()
 const btVector3 &MovableEntity::destination() const
 {
   return destination_;
+}
+
+bool MovableEntity::setDestination(btVector3 dest)
+{
+  destination_ = dest;
+  return pathHelper_.findPath(position(), destination_);
 }
 
 bool MovableEntity::setDestination(float x, float y, float z)

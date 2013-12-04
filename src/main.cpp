@@ -82,13 +82,13 @@ int main(int, char**)
       std::shared_ptr<Server> server(&Server::instance());
       sched->setServer(server.get());
       boost::asio::io_service tcp_io_service;
-      Net::TcpServer tcpServer(tcp_io_service, 42412, &BoapFactory::createTcpProtocolHandler);
+      Net::TcpServer tcpServer(tcp_io_service, 4242, &BoapFactory::createTcpProtocolHandler);
       // Net::TcpServer tcpServer2(tcp_io_service, 4243, &BoapFactory::createTcpAdminProtocolHandler);
 
       sched->setTcp(&tcpServer);
 
       boost::asio::io_service udp_io_service;
-      Net::UdpServer udpServer(udp_io_service, 42412, &BoapFactory::createUdpProtocolHandler);
+      Net::UdpServer udpServer(udp_io_service, 4242, &BoapFactory::createUdpProtocolHandler);
 
       sched->setUdp(&udpServer);
 

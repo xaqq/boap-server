@@ -14,6 +14,8 @@
 #include "world/GameEntity.hpp"
 #include "world/MovableEntity.hpp"
 #include "sql/ShapeTemplate.hpp"
+#include "world/ResourceEntity.hpp"
+#include "world/ResourceCollectorEntity.hpp"
 
 std::map<std::string, EntityFactory::ShapeBuilder> EntityFactory::shapeBuilders_ = {
   {"2dBox", [](const ShapeTemplate & tpl)
@@ -30,10 +32,12 @@ std::map<std::string, EntityFactory::ShapeBuilder> EntityFactory::shapeBuilders_
 
 std::map<std::string, EntityFactory::EntityBuilder> EntityFactory::entityBuilders_ = {
   {"GameEntity", &EntityFactory::buildEntityGameEntity},
-  {"MovableEntity", &EntityFactory::buildMovableEntity}
+  {"MovableEntity", &EntityFactory::buildMovableEntity},
+  {"ResourceEntity", &EntityFactory::buildResourceEntity},
+  {"ResourceCollectorEntity", &EntityFactory::buildResourceCollectorEntity}
 };
 
-EntityFactory::EntityFactory(WorldFacade &world) :
+EntityFactory::EntityFactory(WorldFacade & world) :
 world_(world),
 ready_(false)
 {
@@ -149,14 +153,26 @@ std::shared_ptr<GameEntity> EntityFactory::buildEntityGameEntity(const EntityTem
 {
   std::shared_ptr<GameEntity > e(new GameEntity(world_, shapes_[tpl.shape_id]));
   e->affectNavMesh(tpl.affectNavMesh_);
-  DEBUG("OMGLAMA!" << e->affectNavMesh());
   return e;
 }
 
-std::shared_ptr<GameEntity> EntityFactory::buildMovableEntity(const EntityTemplate &tpl)
+std::shared_ptr<GameEntity> EntityFactory::buildMovableEntity(const EntityTemplate & tpl)
 {
   std::shared_ptr<GameEntity > e(new MovableEntity(world_, shapes_[tpl.shape_id]));
   e->affectNavMesh(tpl.affectNavMesh_);
-  DEBUG("OMG!" << e->affectNavMesh());
+  return e;
+}
+
+std::shared_ptr<GameEntity> EntityFactory::buildResourceEntity(const EntityTemplate & tpl)
+{
+  std::shared_ptr<GameEntity > e(new ResourceEntity(world_, shapes_[tpl.shape_id]));
+  e->affectNavMesh(tpl.affectNavMesh_);
+  return e;
+}
+
+std::shared_ptr<GameEntity> EntityFactory::buildResourceCollectorEntity(const EntityTemplate & tpl)
+{
+  std::shared_ptr<GameEntity > e(new ResourceCollectorEntity(world_, shapes_[tpl.shape_id]));
+  e->affectNavMesh(tpl.affectNavMesh_);
   return e;
 }

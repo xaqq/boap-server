@@ -52,7 +52,7 @@ private:
   /**
    * The world !
    */
-  class World *world_;
+  std::shared_ptr<class World> world_;
 
   /**
    * Handle packets

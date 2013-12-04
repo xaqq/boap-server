@@ -55,7 +55,8 @@ private:
 
   std::shared_ptr<GameEntity> buildEntityGameEntity(const EntityTemplate &tpl);
   std::shared_ptr<GameEntity> buildMovableEntity(const EntityTemplate &tpl);
-
+  std::shared_ptr<GameEntity> buildResourceEntity(const EntityTemplate &tpl);  
+  std::shared_ptr<GameEntity> buildResourceCollectorEntity(const EntityTemplate &tpl);  
 
   void loadShapes();
   void loadEntities();

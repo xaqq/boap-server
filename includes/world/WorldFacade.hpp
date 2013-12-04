@@ -56,6 +56,17 @@ public:
    * @param the observer
    */
   virtual void unregisterObserver(IWorldObserver *) = 0;
+
+  /**
+   * Returns the list of entities in the world
+   */
+  virtual std::list<std::shared_ptr<GameEntity >> entities() = 0;
+
+  /**
+   * Return the current navMeshQuery to use
+   * @return 
+   */
+  virtual class dtNavMeshQuery *navMeshQuery() = 0;
 };
 
 #endif	/* WORLDFACADE_HPP */

@@ -17,6 +17,7 @@
 #include "world/NavMeshBuilder.hpp"
 #include "WorldFacade.hpp"
 #include "Uuid.hpp"
+#include "observers/IEntityObserver.hpp"
 
 class ISqlResult;
 
@@ -26,7 +27,7 @@ class btCollisionDispatcher;
 class btSequentialImpulseConstraintSolver;
 class btCollisionWorld;
 
-class World : public WorldFacade
+class World : public WorldFacade, public IEntityObserver
 {
 public:
   /**
@@ -40,31 +41,34 @@ public:
   std::shared_ptr<GameEntity> spawn(int entityId) override;
   std::shared_ptr<GameEntity> spawn(int entityId, btVector3 pos, btVector3 rot) override;
   void removeFromCollisionWorld(btCollisionObject *o) override;
-  
+
   void update();
 
   void registerOberserver(class IWorldObserver *) override;
   void unregisterObserver(IWorldObserver *) override;
 
+  std::list<std::shared_ptr<GameEntity >> entities() override;
+  dtNavMeshQuery *navMeshQuery() override;
+
 private:
-  typedef std::list<std::tuple<int, btVector3, btVector3>> DefaultEntityList;
-  
-  
+  typedef std::list<std::tuple<int, btVector3, btVector3 >> DefaultEntityList;
+
+
   /**
    * Load a list of entity id + information that represent the default entities in the scene;
    * This is a blocking sql call;
    * @return 
    */
   bool getDefaultEntitiesFromDatabase();
-  
+
   /**
    * Initialise the world; this is called when the entity factory is ready;
    * @return 
    */
   bool init();
-  
+
   bool initNavhMesh();
-  
+
   /**
    * When the world's entities are created, we build the nav mesh.
    */
@@ -92,7 +96,7 @@ private:
    * All entities in the world.
    */
   std::list<std::shared_ptr<GameEntity >> entities_;
-  
+
   /**
    * The world UUID.
    */
@@ -105,14 +109,17 @@ private:
   NavMeshBuilder *navMeshBuilder_;
 
   std::list<IWorldObserver *> observers_;
-  
+
   std::string sceneName_;
-  
+
   /**
    * List of default entites. This is setted by the SQL code but the world will be blocking anyway
    * so its safe
    */
   DefaultEntityList defaultList_;
+
+  void onOutOfResource(std::shared_ptr<ResourceEntity> e) override;
+
 };
 
 #endif	/* WORLD_HPP */

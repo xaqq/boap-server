@@ -17,6 +17,7 @@ shape_(shape)
   transform_.setIdentity();
   transform_.setOrigin(btVector3(0, 0, 0));
   object_ = std::make_shared<btCollisionObject > ();
+  object_->setUserPointer(this);
   object_->setCollisionShape(shape_.get());
   object_->setWorldTransform(transform_);
 }
@@ -212,7 +213,6 @@ std::vector<GameEntity::Polygone> GameEntity::getPolygones()
 
 void GameEntity::update(Milliseconds diff)
 {
-  INFO("Updating entity");
 }
 
 const btVector3 & GameEntity::position() const

@@ -25,6 +25,7 @@ public:
   virtual ~MovableEntity();
   
   bool setDestination(float x, float y, float z);
+  bool setDestination(btVector3 dest);
   const  btVector3 & destination()const;
   bool destinationReached();
   

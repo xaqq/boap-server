@@ -72,6 +72,8 @@ src/world/MeshLoaderObj.cpp
 src/world/ChunkyTriMesh.cpp
 src/world/PathFindHelper.cpp
 src/world/MovableEntity.cpp
+src/world/ResourceEntity.cpp
+src/world/ResourceCollectorEntity.cpp
 
 ##Utils
 src/Uuid.cpp

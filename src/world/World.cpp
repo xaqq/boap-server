@@ -26,6 +26,7 @@
 #include "DetourTileCache.h"
 #include "sql/SqlHandler.hpp"
 #include "exceptions/WorldFailedInit.hpp"
+#include "world/ResourceEntity.hpp"
 #include <cppconn/exception.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/uuid.hpp>
@@ -64,18 +65,16 @@ std::shared_ptr<GameEntity> World::spawn(int entityId)
   if (!e)
     return nullptr;
   collisionWorld_->addCollisionObject(e->object());
+  e->registerObserver(shared_from_this());
   entities_.push_back(e);
   return e;
 }
 
 std::shared_ptr<GameEntity>World::spawn(int entityId, btVector3 pos, btVector3 rot)
 {
-
-  auto e = entityFactory_.instanciate(entityId, btVector3(0, 0, 0));
+  auto e = spawn(entityId);
   if (!e)
     return nullptr;
-  collisionWorld_->addCollisionObject(e->object());
-  entities_.push_back(e);
 
   e->rotate(rot[0], rot[1], rot[2]);
   e->setPosition(pos);
@@ -118,26 +117,26 @@ bool World::getDefaultEntitiesFromDatabase()
                                                       return resultWrapper;
 
                                                       try
-                                                        {
-                                                          /** check if the scene exists */
-                                                         
+        {
+                                                      /** check if the scene exists */
+
                                                       std::shared_ptr<sql::PreparedStatement> pstmt(c->prepareStatement("SELECT id FROM scenes WHERE name = (?)"));
                                                       std::shared_ptr<sql::ResultSet> res;
-                                                      
+
                                                       pstmt->setString(1, sceneName_);
                                                       res = std::shared_ptr<sql::ResultSet > (pstmt->executeQuery());
                                                       if (!res->rowsCount())
-                                                        throw WorldFailedInit("Scene does not exist");
+                                                      throw WorldFailedInit("Scene does not exist");
 
-                                                      pstmt = std::shared_ptr<sql::PreparedStatement>(c->prepareStatement("SELECT template_id, pos_x, pos_y, pos_z, rot_x, rot_y, rot_z FROM entities WHERE scene_id = (SELECT id FROM scenes WHERE name = (?))"));
+                                                      pstmt = std::shared_ptr<sql::PreparedStatement > (c->prepareStatement("SELECT template_id, pos_x, pos_y, pos_z, rot_x, rot_y, rot_z FROM entities WHERE scene_id = (SELECT id FROM scenes WHERE name = (?))"));
                                                       pstmt->setString(1, sceneName_);
                                                       res = std::shared_ptr<sql::ResultSet > (pstmt->executeQuery());
                                                       while (res->next())
-            {
+              {
                                                       defaultList_.push_back(std::make_tuple(res->getInt("template_id"),
                                                                                              btVector3(res->getDouble("pos_x"), res->getDouble("pos_y"), res->getDouble("pos_z")),
                                                                                              btVector3(res->getDouble("rot_x"), res->getDouble("rot_y"), res->getDouble("rot_z"))));
-            }
+              }
 
                                                       resultWrapper->error_ = false;
                                                       resultWrapper->result_ = nullptr;
@@ -199,7 +198,7 @@ bool World::init()
       if (!entity)
         throw WorldFailedInit("Failed to spawn one the defaults entities");
     }
-  
+
   if (initNavhMesh())
     {
       for (auto o : observers_)
@@ -223,6 +222,7 @@ void World::update()
       if (entityFactory_.isReady())
         {
           ready_ = init();
+          deltaTime(true);
         }
       else
         return;
@@ -232,6 +232,13 @@ void World::update()
       e->update(deltaTime());
     }
   deltaTime(true);
+}
+
+dtNavMeshQuery *World::navMeshQuery()
+{
+  if (navMeshBuilder_)
+    return navMeshBuilder_->m_navQuery;
+  return nullptr;
 }
 
 void World::registerOberserver(IWorldObserver *o)
@@ -247,4 +254,15 @@ void World::unregisterObserver(IWorldObserver *o)
 void World::removeFromCollisionWorld(btCollisionObject *o)
 {
   collisionWorld_->removeCollisionObject(o);
+}
+
+std::list<std::shared_ptr<GameEntity >> World::entities()
+{
+  return entities_;
+}
+
+void World::onOutOfResource(std::shared_ptr<ResourceEntity> e)
+{
+  DEBUG("Entity went out of resource");
+  entities_.remove(std::dynamic_pointer_cast<GameEntity > (e));
 }
