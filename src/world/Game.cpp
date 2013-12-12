@@ -65,7 +65,6 @@ void Game::run()
           Clock::time_point t;
           t = Clock::now();
 
-          DEBUG("Game " << uuid_() << " is running");
           handle_packets();
           world_->update();
           Milliseconds diff = std::chrono::duration_cast<Milliseconds > (Clock::now() - t);

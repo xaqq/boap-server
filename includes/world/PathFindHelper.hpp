@@ -13,6 +13,7 @@
 #include "DetourPathCorridor.h"
 #include <bullet/btBulletCollisionCommon.h>
 #include "world/IWorldObserver.hpp"
+#include "PathFindResult.hpp"
 
 /**
  * Path finding helper; Used by entity that requires pathfinding
@@ -42,16 +43,26 @@ public:
   
   
   bool isUsable() const;
+  
+  /**
+   * Returns a reference to the current PathFindResult object.
+   * This method will re-plan the path if the cache becomes invalid.
+   * @return A reference to the path
+   */
+  const PathFindResult &path();
 private:
+  /**
+   * A reference to the entity using this helper.
+   */
   MovableEntity &entity_;
   
   dtPathCorridor *corridor_;
   dtNavMeshQuery *query_;
 
   /**
-   * nextCorner cache
+   * The current path result.
    */
-  float nextCorner_[3];
+  PathFindResult path_;
   
   /**
    * Whereas the cache is valid or not.

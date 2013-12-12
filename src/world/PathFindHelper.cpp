@@ -9,6 +9,7 @@
 #include "Log.hpp"
 #include "world/NavMeshBuilder.hpp"
 #include "world/MovableEntity.hpp"
+#include "world/PathFindResult.hpp"
 
 PathFindHelper::PathFindHelper(MovableEntity &e, dtNavMeshQuery *q)
 : entity_(e),
@@ -26,12 +27,13 @@ PathFindHelper::~PathFindHelper()
 
 bool PathFindHelper::findPath(const btVector3 &start_pos, const btVector3 &end_pos)
 {
+  PathFindResult result;
   if (!query_)
     {
       WARN("findPath called but the path helper object has no navmesh query -- yet");
       return false;
     }
-  float searchDst[] = {0.1, 0.1, 0.1};
+  float searchDst[] = {0.5, 0.5, 0.5};
   float points[] = {0, 0, 0};
   dtPolyRef start = 0;
   dtPolyRef end = 0;
@@ -43,13 +45,16 @@ bool PathFindHelper::findPath(const btVector3 &start_pos, const btVector3 &end_p
   if (dtStatusFailed(st) || start == 0)
     {
       WARN("FAILED TO FIND START POLYGONE");
+      result.status_ = PathFindResult::Status::NO_START;
       return false;
     }
+  result.start_ = start_pos;
 
   st = query_->findNearestPoly(reinterpret_cast<const float *> (&end_pos), searchDst, new dtQueryFilter(), &end, points);
   if (dtStatusFailed(st) || end == 0)
     {
       WARN("FAILED TO FIND END POLYGONE");
+      result.status_ = PathFindResult::Status::NO_END;
       return false;
     }
 
@@ -57,6 +62,7 @@ bool PathFindHelper::findPath(const btVector3 &start_pos, const btVector3 &end_p
   if (dtStatusFailed(st))
     {
       WARN("FAILED TO FIND PATH");
+      result.status_ = PathFindResult::Status::NO_PATH;
       return false;
     }
 
@@ -69,46 +75,14 @@ bool PathFindHelper::findPath(const btVector3 &start_pos, const btVector3 &end_p
   int nbCorners;
   nbCorners = corridor_->findCorners(cornerVerts, cornerFlags, cornerPolys, 99, query_, new dtQueryFilter());
 
-  if (nbCorners >= 1)
+  for (int i = 0; i < nbCorners; ++i)
     {
-      DEBUG("FOUND " << nbCorners << " CORNER;");
-      memcpy(static_cast<void *> (nextCorner_), cornerVerts, sizeof (nextCorner_));
+      result.corners_.push_back(btVector3(cornerVerts[i * 3], cornerVerts[i * 3 + 1], cornerVerts[i * 3 + 2]));
     }
-  else
-    {
-      DEBUG("NO CORNER FOUND");
-    }
-  int i = 0;
-  for (i = 0; i < nbCorners; ++i)
-    {
-      DEBUG("Corner: " << cornerVerts[i * 3] << ", " << cornerVerts[i * 3 + 1] << ", " << cornerVerts[i * 3 + 2]);;
-    }
-
-  DEBUG("Found path with nb_polygone = " << pathCount);
-  DEBUG(path[pathCount - 1]);
-
-  DEBUG("Points:" << points[0] << ", " << points[1] << ", " << points[2]);
-  if (nbCorners)
-    DEBUG("poly:" << cornerPolys[nbCorners - 1]);
+  result.status_ = PathFindResult::Status::VALID;
+  path_ = result;
+  isCacheValid_ = true;
   return true;
-}
-
-btVector3 PathFindHelper::nextCorner()
-{
-  if (!isCacheValid_)
-    {
-      if (!query_)
-        {
-          WARN("PathFindHelper cache invalid and there is no query object available");
-          return
-          {
-            0, 0, 0
-          };
-        }
-      findPath(entity_.position(), entity_.destination());
-      isCacheValid_ = true;
-    }
-  return btVector3(nextCorner_[0], nextCorner_[1], nextCorner_[2]);
 }
 
 void PathFindHelper::updatePosition(const btVector3 & pos)
@@ -128,4 +102,12 @@ void PathFindHelper::onNavMeshQueryChange(dtNavMeshQuery * query)
 bool PathFindHelper::isUsable() const
 {
   return isCacheValid_ || query_;
+}
+
+const PathFindResult &PathFindHelper::path()
+{
+  if (isCacheValid_)
+    return path_;
+  findPath(entity_.position(), entity_.destination());
+  return path_;
 }

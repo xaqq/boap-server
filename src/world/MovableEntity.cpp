@@ -43,10 +43,14 @@ bool MovableEntity::setDestination(float x, float y, float z)
 
 bool MovableEntity::moveTowardTarget()
 {
+  DEBUG("St :" << (int)pathHelper_.path().status());
+  if (!pathHelper_.path().isUsable())
+    return false;
   float forward = (deltaTime().count() / 1000.0f) * velocity_;
-  DEBUG("Forward " << forward << ";Delta time = " << deltaTime().count());
-  btVector3 dst = pathHelper_.nextCorner() - transform().getOrigin();
-  btScalar reqDist = pathHelper_.nextCorner().distance2(transform().getOrigin());
+  DEBUG("Forward " << forward << ";Delta time = " << deltaTime().count() <<
+          "Distance left: " << pathHelper_.path().length());
+  btVector3 dst = pathHelper_.path().nextCorner() - transform().getOrigin();
+  btScalar reqDist = pathHelper_.path().nextCorner().distance2(transform().getOrigin());
 
   dst.normalize();
   DEBUG("PREMove:" << dst[0] << ", " << dst[1] << ", " << dst[2]);
@@ -56,7 +60,7 @@ bool MovableEntity::moveTowardTarget()
 
   // make sure we dont go too far
   if (translatDist > reqDist)
-    translate(pathHelper_.nextCorner() - transform().getOrigin());
+    translate(pathHelper_.path().nextCorner() - transform().getOrigin());
   else
     translate(dst);
   DEBUG("Move:" << dst[0] << ", " << dst[1] << ", " << dst[2]);
@@ -92,7 +96,7 @@ void MovableEntity::update(Milliseconds diff)
 
 bool MovableEntity::destinationReached()
 {
-  if (transform().getOrigin().distance2(pathHelper_.nextCorner()) < 0.001)
+  if (transform().getOrigin().distance2(destination_) < 0.001)
     {
       return true;
     }

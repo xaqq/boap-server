@@ -14,6 +14,7 @@ add_subdirectory("Detour")
 add_subdirectory("DetourTileCache")
 add_subdirectory("DebugUtils")
 add_subdirectory("DetourCrowd")
+add_subdirectory("libbehavior")
 
 set(SOURCES 
 ##Packets
@@ -74,6 +75,7 @@ src/world/PathFindHelper.cpp
 src/world/MovableEntity.cpp
 src/world/ResourceEntity.cpp
 src/world/ResourceCollectorEntity.cpp
+src/world/PathFindResult.cpp
 
 ##Utils
 src/Uuid.cpp
@@ -103,4 +105,4 @@ include_directories(${Boost_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${BULLET_INCL
 
 
 add_executable(boapd ${SOURCES})
-target_link_libraries( boapd ${Boost_LIBRARIES} mysqlcppconn Logger BulletDynamics Detour Recast DebugUtils DetourTileCache DetourCrowd boapd-protobuf)
+target_link_libraries( boapd ${Boost_LIBRARIES} mysqlcppconn Logger BulletDynamics Detour Recast DebugUtils DetourTileCache DetourCrowd libbehavior boapd-protobuf)

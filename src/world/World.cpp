@@ -265,4 +265,8 @@ void World::onOutOfResource(std::shared_ptr<ResourceEntity> e)
 {
   DEBUG("Entity went out of resource");
   entities_.remove(std::dynamic_pointer_cast<GameEntity > (e));
+  
+  auto n = spawn(3);
+  
+  n->setPosition(rand() % 100, 0, rand() % 100);
 }
