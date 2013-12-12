@@ -267,8 +267,10 @@ void World::onOutOfResource(std::shared_ptr<ResourceEntity> e)
   entities_.remove(std::dynamic_pointer_cast<GameEntity > (e));
   
   auto n = spawn(3);
-  
   n->setPosition(rand() % 100, 0, rand() % 100);
+  
+ // auto n2 = spawn(4);
+ // n2->setPosition(rand() % 100, 0, rand() % 100);
 }
 
   void World::onSpeak(std::shared_ptr<GameEntity> e, const std::string &str) 

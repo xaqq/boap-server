@@ -103,6 +103,10 @@ src/observers/AMainThreadGameObserver.cpp
 src/behaviors/Behavior.cpp
 src/behaviors/Speak.cpp
 src/behaviors/Move.cpp
+src/behaviors/MoveToDestination.cpp
+src/behaviors/FindNearestResource.cpp
+src/behaviors/CollectResource.cpp
+src/behaviors/CooldownDecorator.cpp
 )
 
 include_directories(${Boost_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${BULLET_INCLUDE_DIRS}

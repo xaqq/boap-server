@@ -16,7 +16,7 @@ ResourceEntity::~ResourceEntity() { }
 
 int ResourceEntity::collect(std::shared_ptr<GameEntity> collector, int qt)
 {
-  if (qt <= quantity_)
+  if (qt < quantity_)
     {
       quantity_ -= qt;
       return qt;

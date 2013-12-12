@@ -12,7 +12,8 @@ GameEntity::GameEntity(WorldFacade &world, std::shared_ptr<btCollisionShape> sha
 :
 world_(world),
 affectNavMesh_(true),
-shape_(shape)
+shape_(shape),
+        movement_(*this)
 {
   transform_.setIdentity();
   transform_.setOrigin(btVector3(0, 0, 0));

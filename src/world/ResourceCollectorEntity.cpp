@@ -13,7 +13,7 @@ MovableEntity(world, shape),
 searchCooldown_(5000),
 collectCooldown_(1300)
 {
-  velocity(5);
+  movement().velocity(18);
 }
 
 ResourceCollectorEntity::~ResourceCollectorEntity() { }

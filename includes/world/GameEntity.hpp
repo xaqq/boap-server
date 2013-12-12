@@ -12,13 +12,14 @@
 #include "observers/IEntityObserver.hpp"
 #include "observers/Observable.hpp"
 #include "behaviors/Behavior.hpp"
+#include "world/MovementComponent.hpp"
 
 class GameEntity : public std::enable_shared_from_this<GameEntity>, public Observable<IEntityObserver>
 {
 public:
-  
+
   typedef std::vector<btVector3> Polygone;
-  
+
   GameEntity(WorldFacade &world, std::shared_ptr<btCollisionShape> shape);
 
   /**
@@ -51,6 +52,11 @@ public:
    */
   void setRotation(const btQuaternion &q);
 
+  MovementComponent &movement()
+  {
+    return movement_;
+  }
+
   /**
    * Translate the entity and all children entities.
    */
@@ -72,7 +78,7 @@ public:
 
   bool affectNavMesh() const;
   void affectNavMesh(bool v);
-  
+
   const Uuid &uuid() const
   {
     return uuid_;
@@ -110,6 +116,32 @@ public:
     return false;
   };
 
+  WorldFacade &world()
+  {
+    return world_;
+  }
+
+  const WorldFacade &world() const
+  {
+    return world_;
+  }
+  
+  
+  std::shared_ptr<GameEntity> target()
+  {
+    return target_.lock();
+  }
+  
+  void target(std::shared_ptr<GameEntity> e)
+  {
+    target_ = e;
+  }
+  
+  std::shared_ptr<GameEntity> toSharedPtr()
+  {
+    return shared_from_this();
+  }
+  
 protected:
 
   /**
@@ -126,7 +158,7 @@ protected:
    * The entity's behavior. This uses the Libbehavior library to process a behavior tree.
    */
   Behavior behavior_;
-  
+
 private:
   std::list<std::shared_ptr<GameEntity >> children_;
   std::shared_ptr<btCollisionShape> shape_;
@@ -134,5 +166,8 @@ private:
   btTransform transform_;
   std::shared_ptr<GameEntity> parent_;
   Uuid uuid_;
+  MovementComponent movement_;
 
+  std::weak_ptr<GameEntity> target_;
+  
 };

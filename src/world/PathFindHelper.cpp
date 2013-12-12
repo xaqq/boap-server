@@ -8,10 +8,10 @@
 #include "world/PathFindHelper.hpp"
 #include "Log.hpp"
 #include "world/NavMeshBuilder.hpp"
-#include "world/MovableEntity.hpp"
+#include "world/GameEntity.hpp"
 #include "world/PathFindResult.hpp"
 
-PathFindHelper::PathFindHelper(MovableEntity &e, dtNavMeshQuery *q)
+PathFindHelper::PathFindHelper(GameEntity &e, dtNavMeshQuery *q)
 : entity_(e),
 query_(q),
 isCacheValid_(false)
@@ -108,6 +108,11 @@ const PathFindResult &PathFindHelper::path()
 {
   if (isCacheValid_)
     return path_;
-  findPath(entity_.position(), entity_.destination());
+  findPath(entity_.position(), entity_.movement().destination());
   return path_;
+}
+
+btVector3 PathFindHelper::nextCorner()
+{
+  return path_.nextCorner();
 }

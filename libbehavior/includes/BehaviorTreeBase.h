@@ -66,11 +66,9 @@ namespace BehaviorTree
 
     virtual ~BehaviorTreeInternalNode()
     {
-      std::cout << "LAMALAMALMDALMAL" << std::endl;
       BehaviorTreeListIter iter;
       for (iter = children.begin(); iter != children.end(); iter++)
         {
-          std::cout << "Delete internal" << std::endl;
           delete *iter;
         }
     }

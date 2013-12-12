@@ -21,7 +21,7 @@
 class PathFindHelper : public IWorldObserver
 {
 public:
-  PathFindHelper(class MovableEntity &e, dtNavMeshQuery *q);
+  PathFindHelper(class GameEntity &e, dtNavMeshQuery *q);
   PathFindHelper(const PathFindHelper&) = delete;
   virtual ~PathFindHelper();
 
@@ -54,7 +54,7 @@ private:
   /**
    * A reference to the entity using this helper.
    */
-  MovableEntity &entity_;
+  GameEntity &entity_;
   
   dtPathCorridor *corridor_;
   dtNavMeshQuery *query_;

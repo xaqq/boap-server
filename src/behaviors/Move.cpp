@@ -6,7 +6,7 @@
  */
 
 #include "behaviors/Move.hpp"
-#include "world/MovableEntity.hpp"
+#include "world/GameEntity.hpp"
 #include "Log.hpp"
 
 using namespace Behaviors;
@@ -17,14 +17,26 @@ Move::~Move() { }
 
 BehaviorTree::BEHAVIOR_STATUS Move::execute(void *agent)
 {
-  MovableEntity *e = reinterpret_cast<MovableEntity *>(agent);
-  btVector3 dst(deltaTime().count() * e->velocity(), 0, 0);
-  btMatrix3x3 m(e->transform().getRotation());
+  GameEntity *e = reinterpret_cast<GameEntity *>(agent);
+  
+  if (!e->movement().canMove())
+    return BehaviorTree::BT_FAILURE;
+  
+  btVector3 destination = e->movement().nextPoint();
+  float forward = (deltaTime().count() / 1000.0f) * e->movement().velocity();;
+  btVector3 dst = e->movement().nextPoint() - e->position();;
+  btScalar reqDist = e->movement().nextPoint().distance2(e->position());
 
-  dst = m * dst;
-  DEBUG("Move:" << dst[0] << ", " << dst[1] << ", " << dst[2]);
-  e->translate(dst);
-  return BehaviorTree::BT_RUNNING;
+  dst.normalize();
+  dst = dst * forward;
+  btScalar translatDist = e->position().distance2(e->position() + dst);
+  // make sure we dont go too far
+  if (translatDist > reqDist)
+    e->translate(e->movement().nextPoint() - e->position());
+  else
+    e->translate(dst);
+  e->movement().positionUpdated();
+  return BehaviorTree::BT_SUCCESS;;
 }
 
 void Move::init(void *agent)
