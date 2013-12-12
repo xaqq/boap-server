@@ -118,8 +118,9 @@ private:
    */
   DefaultEntityList defaultList_;
 
-  void onOutOfResource(std::shared_ptr<ResourceEntity> e) override;
 
+  void onOutOfResource(std::shared_ptr<ResourceEntity> e) override;
+  void onSpeak(std::shared_ptr<class GameEntity>, const std::string &str)  override;
 };
 
 #endif	/* WORLD_HPP */

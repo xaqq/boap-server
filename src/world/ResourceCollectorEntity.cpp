@@ -43,6 +43,8 @@ bool ResourceCollectorEntity::findNewTarget()
 
 void ResourceCollectorEntity::update(Milliseconds ms)
 {
+  behavior_.update(this);
+  return;
   if (searchCooldown_ + ms > Milliseconds(5000))
     {
       DEBUG("Has a target? : " << findNewTarget());

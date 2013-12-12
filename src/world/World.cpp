@@ -270,3 +270,8 @@ void World::onOutOfResource(std::shared_ptr<ResourceEntity> e)
   
   n->setPosition(rand() % 100, 0, rand() % 100);
 }
+
+  void World::onSpeak(std::shared_ptr<GameEntity> e, const std::string &str) 
+  {
+    INFO("Entity "<< e->uuid()() << " said : " << str);
+  }

@@ -66,6 +66,7 @@ src/main.cpp
 src/world/World.cpp
 src/world/Game.cpp
 src/world/GameEntity.cpp
+src/world/MovementComponent.cpp
 src/world/RecastConverter.cpp
 src/world/NavMeshBuilder.cpp
 src/world/InputGeom.cpp
@@ -97,11 +98,16 @@ src/exceptions/WorldFailedInit.cpp
 
 ## Observer
 src/observers/AMainThreadGameObserver.cpp
+
+## Behavior
+src/behaviors/Behavior.cpp
+src/behaviors/Speak.cpp
+src/behaviors/Move.cpp
 )
 
 include_directories(${Boost_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${BULLET_INCLUDE_DIRS}
 "includes" "logger/logger/includes" "Recast/Include" "Detour/Include" "DebugUtils/Include" "DetourTileCache/Include"
-"DetourCrowd/Include" "protobuf")
+"DetourCrowd/Include" "libbehavior/includes" "protobuf")
 
 
 add_executable(boapd ${SOURCES})

@@ -11,6 +11,7 @@
 #include "Uuid.hpp"
 #include "observers/IEntityObserver.hpp"
 #include "observers/Observable.hpp"
+#include "behaviors/Behavior.hpp"
 
 class GameEntity : public std::enable_shared_from_this<GameEntity>, public Observable<IEntityObserver>
 {
@@ -71,6 +72,11 @@ public:
 
   bool affectNavMesh() const;
   void affectNavMesh(bool v);
+  
+  const Uuid &uuid() const
+  {
+    return uuid_;
+  }
 
   /**
    * Rotate the entity so that it looks towards the location
@@ -116,6 +122,11 @@ protected:
    */
   bool affectNavMesh_;
 
+  /**
+   * The entity's behavior. This uses the Libbehavior library to process a behavior tree.
+   */
+  Behavior behavior_;
+  
 private:
   std::list<std::shared_ptr<GameEntity >> children_;
   std::shared_ptr<btCollisionShape> shape_;

@@ -13,6 +13,10 @@
 #include <memory>
 #include "Log.hpp"
 
+
+/**
+ * Thread safe base class to be observable.
+ */
 template<typename ObserverType>
 class Observable
 {

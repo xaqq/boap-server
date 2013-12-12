@@ -17,6 +17,11 @@ class IEntityObserver : public std::enable_shared_from_this<IEntityObserver>
 public:
 
   virtual ~IEntityObserver() { }
+  
+  virtual void speak(std::shared_ptr<class GameEntity> e, const std::string &str)
+  {
+    onSpeak(e, str);
+  }
 
   virtual void outOfResource(std::shared_ptr<class ResourceEntity> e)
   {
@@ -29,6 +34,8 @@ private:
    * @param e
    */
   virtual void onOutOfResource(std::shared_ptr<ResourceEntity> e) = 0;
+  
+  virtual void onSpeak(std::shared_ptr<class GameEntity>, const std::string &str)  = 0;
 
 };
 
