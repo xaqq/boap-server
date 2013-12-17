@@ -5,6 +5,14 @@ find_package(Bullet REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(Boost COMPONENTS system REQUIRED)
 
+set(Bullet_LIBRARIES
+${BULLET_COLLISION_LIBRARY}
+${BULLET_DYNAMICS_LIBRARY}
+${BULLET_SOFTBODY_LIBRARY}
+LinearMath
+)
+
+
 add_definitions("-g -W -Wall -std=c++11")
 
 add_subdirectory("protobuf")
@@ -115,4 +123,4 @@ include_directories(${Boost_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${BULLET_INCL
 
 
 add_executable(boapd ${SOURCES})
-target_link_libraries( boapd ${Boost_LIBRARIES} mysqlcppconn Logger BulletDynamics Detour Recast DebugUtils DetourTileCache DetourCrowd libbehavior boapd-protobuf)
+target_link_libraries( boapd Logger Detour Recast DebugUtils DetourTileCache DetourCrowd libbehavior boapd-protobuf ${Bullet_LIBRARIES} ${Boost_LIBRARIES} mysqlcppconn mysqlclient pthread )
