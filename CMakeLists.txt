@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 2.6)
 project (boapd)
 
+include(ODB.cmake)
+
 find_package(Bullet REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(Boost COMPONENTS system REQUIRED)
@@ -12,8 +14,19 @@ ${BULLET_SOFTBODY_LIBRARY}
 LinearMath
 )
 
+set(ODB_INCLUDE_DIRS
+${CMAKE_CURRENT_SOURCE_DIR}/odb/libodb-mysql-2.3.0
+${CMAKE_CURRENT_SOURCE_DIR}/odb/libodb-2.3.0
+${CMAKE_CURRENT_SOURCE_DIR}/odb/odb-2.3.0
+)
 
-add_definitions("-g -W -Wall -std=c++11")
+# ODB libraries
+LINK_DIRECTORIES( 
+${CMAKE_CURRENT_SOURCE_DIR}/odb/libodb-2.3.0/odb/.libs
+${CMAKE_CURRENT_SOURCE_DIR}/odb/libodb-mysql-2.3.0/odb/mysql/.libs
+)
+
+add_definitions("-g -W -Wall -std=c++11 -Wunknown-pragmas")
 
 add_subdirectory("protobuf")
 add_subdirectory("logger/logger")
@@ -86,6 +99,8 @@ src/world/ResourceEntity.cpp
 src/world/ResourceCollectorEntity.cpp
 src/world/PathFindResult.cpp
 
+src/world/WorldObject.cpp
+
 ##Utils
 src/Uuid.cpp
 src/ByteArray.cpp
@@ -115,12 +130,32 @@ src/behaviors/MoveToDestination.cpp
 src/behaviors/FindNearestResource.cpp
 src/behaviors/CollectResource.cpp
 src/behaviors/CooldownDecorator.cpp
+
+## Colliders
+src/colliders/ACollider.cpp
+
+## Init scripts
+src/world/initscript/GameObjectInit.cpp
+
+#ODB Generated code
+odb_gen/Account_odb.cpp
 )
+
+set(ODB_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/includes/db/Account.hpp)
+odb_compile(HEADER ${ODB_HEADERS}
+  OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/odb_gen
+  INCLUDE ${ODB_INCLUDE_DIRS}
+  DB mysql
+  STANDARD c++11
+  GENERATE_QUERY
+  GENERATE_SCHEMA)
 
 include_directories(${Boost_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${BULLET_INCLUDE_DIRS}
 "includes" "logger/logger/includes" "Recast/Include" "Detour/Include" "DebugUtils/Include" "DetourTileCache/Include"
-"DetourCrowd/Include" "libbehavior/includes" "protobuf")
+"DetourCrowd/Include" "libbehavior/includes" "protobuf"
+"includes/db"
+${ODB_INCLUDE_DIRS})
 
 
 add_executable(boapd ${SOURCES})
-target_link_libraries( boapd Logger Detour Recast DebugUtils DetourTileCache DetourCrowd libbehavior boapd-protobuf ${Bullet_LIBRARIES} ${Boost_LIBRARIES} mysqlcppconn mysqlclient pthread )
+target_link_libraries( boapd Logger Detour Recast DebugUtils DetourTileCache DetourCrowd libbehavior boapd-protobuf ${Bullet_LIBRARIES} ${Boost_LIBRARIES} mysqlcppconn mysqlclient pthread odb odb-mysql )
