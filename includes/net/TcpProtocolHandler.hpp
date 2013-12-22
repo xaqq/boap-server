@@ -30,8 +30,8 @@ namespace Net
 
     virtual void disconnected() override;
 
+    
   private:
-    std::shared_ptr<Client> client_;
     std::uint16_t opcode_;
     std::uint16_t packetSize_;
     std::size_t bytesReceived_;

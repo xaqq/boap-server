@@ -24,7 +24,7 @@ bool SqlHandler::connect()
 {
   try
     {
-      connection_ = std::shared_ptr<sql::Connection > (driver_->connect("tcp://127.0.0.1:3306", "root", "root"));
+      connection_ = std::shared_ptr<sql::Connection > (driver_->connect("tcp://127.0.0.1:3306", "root", "boap"));
       /* Connect to the MySQL test database */
       connection_->setSchema("boapd");
       return true;

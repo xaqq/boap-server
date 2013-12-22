@@ -13,6 +13,7 @@
 #include "observers/Observable.hpp"
 #include "behaviors/Behavior.hpp"
 #include "world/MovementComponent.hpp"
+#include "colliders/ACollider.hpp"
 
 class GameEntity : public std::enable_shared_from_this<GameEntity>, public Observable<IEntityObserver>
 {
@@ -142,8 +143,15 @@ public:
     return shared_from_this();
   }
   
+  void setCollider(std::shared_ptr<ACollider> c)
+  {
+      collider_ = c;
+  }
+  
 protected:
 
+    std::shared_ptr<ACollider> collider_;
+    
   /**
    * A Reference to the world.
    */

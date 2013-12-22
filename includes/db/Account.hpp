@@ -12,15 +12,37 @@
 #include <string>
 #include "odb/core.hxx"
 
-namespace DB {
+namespace DB
+{
 #pragma db object pointer(std::shared_ptr)
-class Account {
+
+    class Account
+    {
+    public:
+
+        unsigned long id() const
+        {
+            return id_;
+        }
+
+        const std::string &username() const
+        {
+            return username_;
+        }
+
+        const std::string &password() const
+        {
+            return password_;
+        }
+
     private:
         friend class odb::access;
 
 #pragma db id auto 
         unsigned long id_;
 
+#pragma db unique\
+                    type("VARCHAR(255)")
         std::string username_;
         std::string password_;
 

@@ -47,6 +47,16 @@ public:
   void runInServerThread(std::function<void() > f);
   void runInSqlThread(std::function<void (sql::Connection *) > f);
 
+  
+  template <typename Callable>
+  void runInHelper(Callable c)
+  {
+      std::thread t1(c);
+      
+      t1.detach();
+  }
+  
+  
   SqlFutureResult runFutureInSql(std::function<SqlTaskReturnType (sql::Connection *) > f);
 
   void setUdp(Net::UdpServer* udp);

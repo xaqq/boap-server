@@ -19,117 +19,97 @@
 #include "Uuid.hpp"
 #include "packets/SMSGUdpCode.hpp"
 #include "packets/SMSGAuth.hpp"
+#include "DBManager.hpp"
+#include "odb_gen/Account_odb.h"
 
-AuthTask::AuthTask(CMSGAuthPacket packet) : packet_(packet)
+AuthTask::AuthTask(CMSGAuthPacket packet) : packet_(packet),
+status_(Status::START)
 {
-  internalHandler_ = std::bind(&AuthTask::start, this);
 }
 
 AuthTask::~AuthTask()
 {
-  DEBUG("AuthTask destroyed");
+    DEBUG("AuthTask destroyed");
 }
 
 void AuthTask::operator()(void)
 {
-  if (internalHandler_())
-    Scheduler::instance()->runInServerThread(std::bind(&AuthTask::operator (), shared_from_this()));
-}
-
-bool AuthTask::start()
-{
-  future_ = Scheduler::instance()->runFutureInSql(std::bind(&AuthTask::runSqlCode, this, std::placeholders::_1));
-  internalHandler_ = std::bind(&AuthTask::waitForResult, this);
-  return true;
-}
-
-bool AuthTask::resultAvailable()
-{
-  std::shared_ptr<Client> client = std::dynamic_pointer_cast<Client > (packet_.source());
-
-  DEBUG("Auth Task completed");
-  if (client)
+    switch (status_)
     {
-      std::shared_ptr<SMSGAuth> authPacket(new SMSGAuth(packet_.source(), result_));
-      client->pushPacket(authPacket);
-      if (result_ == SMSGAuthData::OK)
+        case Status::START:
+            status_ = Status::CHECK_CREDENTIALS;
+            schedule(Thread::HELPER);
+            break;
+
+        case Status::CHECK_CREDENTIALS:
+            checkCredentials();
+            status_ = Status::HANDLE_RESULT;
+            schedule(Thread::MAIN);
+            break;
+
+        case Status::HANDLE_RESULT:
+            handleResult();
+            break;
+    }
+}
+
+void AuthTask::handleResult()
+{
+    std::shared_ptr<Client> client = std::dynamic_pointer_cast<Client > (packet_.source());
+
+    DEBUG("Auth Task completed");
+    if (client)
+    {
+        std::shared_ptr<SMSGAuth> authPacket(new SMSGAuth(packet_.source(), result_));
+        client->pushPacket(authPacket);
+        if (result_ == SMSGAuthData::OK)
         {
-          std::shared_ptr<SMSGUdpCode> udpCodePacket(new SMSGUdpCode(packet_.source()));
+            std::shared_ptr<SMSGUdpCode> udpCodePacket(new SMSGUdpCode(packet_.source()));
 
-          Uuid u;
-          client->udpAuthCode(u.toString());
-          client->username(packet_.data_.username());
-          client->authenticated(true);
+            Uuid u;
+            client->udpAuthCode(u.toString());
+            client->username(packet_.data_.username());
+            client->authenticated(true);
 
-          udpCodePacket->authCode_ = client->udpAuthCode();
-          client->pushPacket(udpCodePacket);
+            udpCodePacket->authCode_ = client->udpAuthCode();
+            client->pushPacket(udpCodePacket);
         }
     }
-  return false;
 }
 
-SqlTaskReturnType AuthTask::runSqlCode(sql::Connection * c)
+void AuthTask::checkCredentials()
 {
-
-  std::shared_ptr<ISqlResult> resultWrapper(new ISqlResult());
-
-  if (!c)
-    return resultWrapper;
-
-  try
+    try
     {
-      int count = 0;
-      std::shared_ptr<sql::PreparedStatement> pstmt(c->prepareStatement("SELECT password FROM users WHERE username = (?)"));
-      std::shared_ptr<sql::ResultSet> res;
-      pstmt->setString(1, packet_.data_.username());
-      DEBUG("username {" << packet_.data_.username() << "}");
-      res = std::shared_ptr<sql::ResultSet > (pstmt->executeQuery());
-      while (res->next())
+        typedef odb::query<DB::Account> query;
+        typedef odb::result<DB::Account> result;
+
+        result_ = SMSGAuthData::INTERNAL_ERROR;
+        DB::ptr db = DB::DBManager::instance().db();
+
+        odb::transaction t(db->begin());
+        result r(db->query<DB::Account>(query::username == packet_.data_.username()));
+        result::iterator i(r.begin());
+
+        if (i != r.end())
         {
-          if (res->getString("password") == packet_.data_.password())
-            result_ = SMSGAuthData::OK;
-          else
-            result_ = SMSGAuthData::WRONG_PASSWORD;
-          count++;
+            if (i->password() == packet_.data_.password())
+            {
+                result_ = SMSGAuthData::OK;
+                resultAccount_ = db->load<DB::Account>(i->id());
+            }
+            else
+                result_ = SMSGAuthData::WRONG_PASSWORD;
+            return;
         }
-      if (count == 0)
         result_ = SMSGAuthData::UNKNOWN_USER;
-      resultWrapper->error_ = false;
-      resultWrapper->result_ = nullptr; // no custom data because they are embeded in class
-
-      return resultWrapper;
     }
-  catch (sql::SQLException &e)
+    catch (const odb::recoverable &r)
     {
-      ERROR("SQL Exception:" << e.what() << " (MySQL error code: " << e.getErrorCode() << ", SQLState: " << e.getSQLState() << " )");
-      resultWrapper->error_ = true;
-      resultWrapper->result_ = nullptr;
-      return resultWrapper;
+        WARN(r.what());
     }
-
-}
-
-bool AuthTask::waitForResult()
-{
-  if (future_.valid())
+    catch (const odb::exception& e)
     {
-      std::future_status status;
-      status = future_.wait_for(std::chrono::milliseconds(0));
-      if (status != std::future_status::ready)
-        return true;
-      SqlTaskReturnType result = future_.get();
-      if (!result)
-        {
-          WARN("No result at all (callable returned null)");
-          return false;
-        }
-      else if (result->error())
-        {
-          WARN("Error when processing query");
-          packet_.source()->pushPacket(std::shared_ptr<APacket>(new SMSGAuth(packet_.source(), SMSGAuthData::INTERNAL_ERROR)));
-          return false;
-        }
-      return resultAvailable();
+        ERROR(e.what());
     }
-  return true;
 }

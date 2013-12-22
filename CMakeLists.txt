@@ -27,7 +27,6 @@ ${CMAKE_CURRENT_SOURCE_DIR}/odb/libodb-mysql-2.3.0/odb/mysql/.libs
 )
 
 add_definitions("-g -W -Wall -std=c++11 -Wunknown-pragmas")
-
 add_subdirectory("protobuf")
 add_subdirectory("logger/logger")
 add_subdirectory("Recast")
@@ -107,6 +106,7 @@ src/ByteArray.cpp
 src/Clock.cpp
 src/Scheduler.cpp
 src/SafeQueue.cpp
+src/ATask.cpp
 
 ## Sql
 src/sql/SqlHandler.cpp
@@ -137,7 +137,10 @@ src/colliders/ACollider.cpp
 ## Init scripts
 src/world/initscript/GameObjectInit.cpp
 
-#ODB Generated code
+## DB 
+src/db/DBManager.cpp
+
+## ODB Generated code
 odb_gen/Account_odb.cpp
 )
 
@@ -154,7 +157,9 @@ include_directories(${Boost_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${BULLET_INCL
 "includes" "logger/logger/includes" "Recast/Include" "Detour/Include" "DebugUtils/Include" "DetourTileCache/Include"
 "DetourCrowd/Include" "libbehavior/includes" "protobuf"
 "includes/db"
-${ODB_INCLUDE_DIRS})
+${ODB_INCLUDE_DIRS}
+${CMAKE_SOURCE_DIR}
+)
 
 
 add_executable(boapd ${SOURCES})

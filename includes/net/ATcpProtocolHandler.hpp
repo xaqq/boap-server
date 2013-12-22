@@ -8,9 +8,11 @@
 #ifndef ATCPPROTOCOLHANDLER_HPP
 #define	ATCPPROTOCOLHANDLER_HPP
 
-class APacket;
 #include <memory>
 #include "ByteArray.hpp"
+
+class APacket;
+class AClient;
 namespace Net
 {
   class TcpSession;
@@ -52,6 +54,26 @@ namespace Net
      */
     virtual void disconnected();
     
+    
+    /**
+     * Set the client associated with this handler.
+     * 
+     * This is useful is the server wants to handle re-logging.
+     * @param c
+     */
+    void client(std::shared_ptr<AClient> c)
+    {
+        client_ = c;
+    }
+    
+    /**
+     * Return a pointer to the client instance associated with this handler.
+     */
+    std::shared_ptr<AClient> client() 
+    {
+        return client_;
+    }
+    
   protected:
     /**
      * Call this function is you protocol handler to request data. When the data you requested
@@ -61,6 +83,15 @@ namespace Net
      */
     bool request(std::size_t bytes);
 
+    
+    /**
+     * This is the client instance associated with this handler.
+     * 
+     * When the handler is first created, this is null.
+     * The default implementation request a new client object; This can change to "hot-swap" client.
+     */
+    std::shared_ptr<AClient> client_;
+    
   private:
     friend class TcpSession;
     
