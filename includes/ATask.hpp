@@ -11,12 +11,11 @@
 #include "Clock.hpp"
 #include <memory>
 
-
 class ATask : public std::enable_shared_from_this<ATask>
 {
 public:
     ATask();
-    ATask(const ATask& orig);
+    ATask(const ATask&) = delete;
     virtual ~ATask();
 
     enum Thread
@@ -29,7 +28,7 @@ public:
     };
 
     void schedule(Thread t = Thread::THIS);
-    void schedule(Thread t, Milliseconds delay);
+    //  void schedule(Thread t, Milliseconds delay);
 
     virtual void operator()() = 0;
 private:

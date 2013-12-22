@@ -26,7 +26,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/odb/libodb-2.3.0/odb/.libs
 ${CMAKE_CURRENT_SOURCE_DIR}/odb/libodb-mysql-2.3.0/odb/mysql/.libs
 )
 
-add_definitions("-g -W -Wall -std=c++11 -Wunknown-pragmas")
+add_definitions("-g -W -std=c++11 -Wno-pragmas -Wno-unused-parameter")
 add_subdirectory("protobuf")
 add_subdirectory("logger/logger")
 add_subdirectory("Recast")
@@ -142,9 +142,17 @@ src/db/DBManager.cpp
 
 ## ODB Generated code
 odb_gen/Account_odb.cpp
+odb_gen/GeometryObject_odb.cpp
 )
 
-set(ODB_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/includes/db/Account.hpp)
+set(ODB_HEADERS
+${CMAKE_CURRENT_SOURCE_DIR}/includes/db/Account.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/includes/db/GeometryObject.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/includes/db/Geometry3dBox.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/includes/db/Geometry3dBox.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/includes/db/GeometrySphere.hpp
+)
+
 odb_compile(HEADER ${ODB_HEADERS}
   OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/odb_gen
   INCLUDE ${ODB_INCLUDE_DIRS}

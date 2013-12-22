@@ -36,12 +36,12 @@ private:
   Net::UdpServer *udp_;
   Server *server_;
   SqlHandler *sql_;
-
+  
 public:
   virtual ~Scheduler();
 
   static Scheduler *instance();
-
+  
   void runInTcpThread(std::function<void() > f);
   void runInUdpThread(std::function<void() > f);
   void runInServerThread(std::function<void() > f);

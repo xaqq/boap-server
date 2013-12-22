@@ -13,10 +13,6 @@ ATask::ATask()
 {
 }
 
-ATask::ATask(const ATask& orig)
-{
-}
-
 ATask::~ATask()
 {
 }
@@ -27,6 +23,12 @@ void ATask::schedule(Thread t)
     {
         case Thread::MAIN:
             Scheduler::instance()->runInServerThread(std::bind(&ATask::operator(), shared_from_this()));
+            break;
+        case Thread::TCP:
+            Scheduler::instance()->runInTcpThread(std::bind(&ATask::operator(), shared_from_this()));
+            break;
+        case Thread::UDP:
+            Scheduler::instance()->runInUdpThread(std::bind(&ATask::operator(), shared_from_this()));
             break;
         case Thread::HELPER:
             Scheduler::instance()->runInHelper(std::bind(&ATask::operator(), shared_from_this()));

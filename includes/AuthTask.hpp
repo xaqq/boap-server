@@ -24,26 +24,28 @@
 class AuthTask : public ATask
 {
 public:
-  AuthTask(CMSGAuthPacket packet);
-  AuthTask(const AuthTask& orig) = delete;
-  virtual ~AuthTask();
+    AuthTask(CMSGAuthPacket packet);
+    AuthTask(const AuthTask& orig) = delete;
+    virtual ~AuthTask();
 
-  /**
-   * If the internal handler returns false the task will stop registering itself.
-   */
-  void operator()(void);
-  
+    /**
+     * If the internal handler returns false the task will stop registering itself.
+     */
+    void operator()(void);
+
 private:
-    
+
+    CMSGAuthPacket packet_;
+
     enum class Status
     {
         START, // when the task first starts (main thread)
         CHECK_CREDENTIALS, // when we should run the sql code (helper thread)
         HANDLE_RESULT // handling the result. (main thread)
     };
-    
+
     Status status_;
-    
+
     /**
      * Query the database, check credentials and set the auth result in the result_ member.
      * It also set the resultAccount_ field to a valid account if the auth was sucessful.
@@ -55,18 +57,17 @@ private:
      * request (and therfore the task) if necessary.
      */
     void handleResult();
-    
-  CMSGAuthPacket packet_;
-  /**
-   * Authentification result; This is set by the sql code;
-   */
-  SMSGAuthData::AuthResult result_;
-  
-  /**
-   * The resulting account (ie the authenfication was successful). On completion, the task will
-   * set the resultAccount_ pointer to the account_ field of the client.
-   */
-  std::shared_ptr<DB::Account> resultAccount_;
+
+    /**
+     * Authentification result; This is set by the sql code;
+     */
+    SMSGAuthData::AuthResult result_;
+
+    /**
+     * The resulting account (ie the authenfication was successful). On completion, the task will
+     * set the resultAccount_ pointer to the account_ field of the client.
+     */
+    std::shared_ptr<DB::Account> resultAccount_;
 };
 
 #endif	/* AUTHTASK_HPP */
