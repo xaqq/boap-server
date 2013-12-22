@@ -74,8 +74,8 @@ int main(int, char**)
 
     try
     {
-        logConfig();
-        DB::DBManager::instance();
+        logConfig(); // logger configuration.
+        DB::DBManager::instance(); // start mysql connection pool.
         Scheduler *sched = Scheduler::instance();
         SqlHandler sql;
         sched->setSql(&sql);

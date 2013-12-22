@@ -13,64 +13,72 @@
 #include "ProtobufDef.hpp"
 #include "AClient.hpp"
 #include "observers/AMainThreadGameObserver.hpp"
+#include "db/Account.hpp"
 
 class Game;
+
 class Client : public AClient
 {
 public:
-  Client();
-  Client(const Client& orig) = delete;
-  virtual ~Client();
-  
-  /**
-   * This is a helper class for a client to observer a main. Allow for a easy workaround around
-   * the multiple inheritance of shared_from_this();
-   * 
-   */
-  class GameObserver : public AMainThreadGameObserver
-  {
-  private:
+    Client();
+    Client(const Client& orig) = delete;
+    virtual ~Client();
+
     /**
-     * This means that someone joined the game this client is in
+     * This is a helper class for a client to observer a main. Allow for a easy workaround around
+     * the multiple inheritance of shared_from_this();
+     * 
      */
-    void onClientJoined(std::shared_ptr<Game>, std::shared_ptr<Client> c);
-    void onGameStopped(std::shared_ptr<Game>, SMSGGameStatus::Status st);
-  };
-  
-  friend class GameObserver;
+    class GameObserver : public AMainThreadGameObserver
+    {
+    private:
+        /**
+         * This means that someone joined the game this client is in
+         */
+        void onClientJoined(std::shared_ptr<Game>, std::shared_ptr<Client> c);
+        void onGameStopped(std::shared_ptr<Game>, SMSGGameStatus::Status st);
+    };
+
+    friend class GameObserver;
 private:
-  /**
-   * Observer instance
-   */
-  std::shared_ptr<GameObserver> observer_;
-  bool authenticated_;
-  std::string username_;
-  std::string udpAuthCode_;
+    /**
+     * Observer instance
+     */
+    std::shared_ptr<GameObserver> observer_;
+
+    /**
+     * The account database entry of the client, if any.
+     */
+    std::shared_ptr<DB::Account> account_;
+
+    std::string udpAuthCode_;
 
 public:
 
-  void udpAuthCode(std::string code);
-  const std::string &udpAuthCode() const;
+    void udpAuthCode(std::string code);
+    const std::string &udpAuthCode() const;
 
-  const std::string &username() const
-  {
-    return username_;
-  }
+    std::string username() const
+    {
+        if (account_)
+            return account_->username();
+        return "NO_USERNAME";
+    }
 
-  void username(const std::string &username)
-  {
-    username_ = username;
-  }
+    void account(std::shared_ptr<DB::Account> a)
+    {
+        account_ = a;
+    }
 
-  bool authenticated() const
-  {
-    return authenticated_;
-  }
+    std::shared_ptr<DB::Account> account()
+    {
+        return account_;
+    }
 
-  void authenticated(bool v)
-  {
-    authenticated_ = v;
-  }
+    bool authenticated() const
+    {
+        return account_ ? true : false;
+    }
 
 };
 

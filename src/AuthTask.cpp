@@ -68,8 +68,7 @@ void AuthTask::handleResult()
 
             Uuid u;
             client->udpAuthCode(u.toString());
-            client->username(packet_.data_.username());
-            client->authenticated(true);
+            client->account(resultAccount_);
 
             udpCodePacket->authCode_ = client->udpAuthCode();
             client->pushPacket(udpCodePacket);
@@ -81,6 +80,7 @@ void AuthTask::checkCredentials()
 {
     try
     {
+        
         typedef odb::query<DB::Account> query;
         typedef odb::result<DB::Account> result;
 
@@ -91,7 +91,7 @@ void AuthTask::checkCredentials()
         result r(db->query<DB::Account>(query::username == packet_.data_.username()));
         result::iterator i(r.begin());
 
-        if (i != r.end())
+        if (i != r.end()) // query returned >= 1 entry.
         {
             if (i->password() == packet_.data_.password())
             {

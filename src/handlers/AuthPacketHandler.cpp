@@ -20,10 +20,7 @@ AuthPacketHandler::~AuthPacketHandler() { }
 bool AuthPacketHandler::handle(CMSGAuthPacket *p)
 {
   
-  auto task = std::make_shared<AuthTask>(*p);
- // Scheduler::instance()->runInServerThread(std::bind(&AuthTask::operator (), task));
- 
-  
+  auto task = std::make_shared<AuthTask>(*p);  
   task->schedule(ATask::Thread::MAIN);
   
   return true;
