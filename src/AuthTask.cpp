@@ -79,13 +79,12 @@ void AuthTask::handleResult()
 void AuthTask::checkCredentials()
 {
     try
-    {
-        
+    {        
         typedef odb::query<DB::Account> query;
         typedef odb::result<DB::Account> result;
 
         result_ = SMSGAuthData::INTERNAL_ERROR;
-        DB::ptr db = DB::DBManager::instance().db();
+        DB::DatabasePtr db = DB::DBManager::instance().db();
 
         odb::transaction t(db->begin());
         result r(db->query<DB::Account>(query::username == packet_.data_.username()));

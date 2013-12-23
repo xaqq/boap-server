@@ -20,7 +20,7 @@ namespace DB
     /**
      * DB::ptr is a database pointer type
      */
-    typedef std::shared_ptr<odb::database> ptr;
+    typedef std::shared_ptr<odb::database> DatabasePtr;
     
     /**
      * This class is the database manager. Basically, it is implemented as a singleton to allow anyone

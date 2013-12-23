@@ -99,6 +99,12 @@ public:
   
 private:
   Server();
+  
+  /**
+   * Initialize the server, creating required area instance if required, loading up previously saved ones, etc
+   * @return 
+   */
+  bool initialize();
 
   static Server *instance_;
 

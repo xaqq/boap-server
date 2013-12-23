@@ -139,18 +139,35 @@ src/world/initscript/GameObjectInit.cpp
 
 ## DB 
 src/db/DBManager.cpp
+src/db/Area.cpp
+src/db/DAO.cpp
 
 ## ODB Generated code
 odb_gen/Account_odb.cpp
+odb_gen/Area_odb.cpp
+odb_gen/AreaInstance_odb.cpp
+odb_gen/GameObject_odb.cpp
+odb_gen/GameObjectTemplate_odb.cpp
+odb_gen/GameObjectSpawn_odb.cpp
 odb_gen/GeometryObject_odb.cpp
+odb_gen/Geometry3dBox_odb.cpp
+odb_gen/Geometry2dBox_odb.cpp
+odb_gen/GeometrySphere_odb.cpp
+odb_gen/StatSheet_odb.cpp
 )
 
 set(ODB_HEADERS
-${CMAKE_CURRENT_SOURCE_DIR}/includes/db/Account.hpp
-${CMAKE_CURRENT_SOURCE_DIR}/includes/db/GeometryObject.hpp
-${CMAKE_CURRENT_SOURCE_DIR}/includes/db/Geometry3dBox.hpp
-${CMAKE_CURRENT_SOURCE_DIR}/includes/db/Geometry3dBox.hpp
-${CMAKE_CURRENT_SOURCE_DIR}/includes/db/GeometrySphere.hpp
+${CMAKE_SOURCE_DIR}/includes/db/Account.hpp
+${CMAKE_SOURCE_DIR}/includes/db/Area.hpp
+${CMAKE_SOURCE_DIR}/includes/db/AreaInstance.hpp
+${CMAKE_SOURCE_DIR}/includes/db/GameObject.hpp
+${CMAKE_SOURCE_DIR}/includes/db/GameObjectTemplate.hpp
+${CMAKE_SOURCE_DIR}/includes/db/GameObjectSpawn.hpp
+${CMAKE_SOURCE_DIR}/includes/db/GeometryObject.hpp
+${CMAKE_SOURCE_DIR}/includes/db/Geometry3dBox.hpp
+${CMAKE_SOURCE_DIR}/includes/db/Geometry2dBox.hpp
+${CMAKE_SOURCE_DIR}/includes/db/GeometrySphere.hpp
+${CMAKE_SOURCE_DIR}/includes/db/StatSheet.hpp
 )
 
 odb_compile(HEADER ${ODB_HEADERS}
@@ -159,6 +176,7 @@ odb_compile(HEADER ${ODB_HEADERS}
   DB mysql
   STANDARD c++11
   GENERATE_QUERY
+  GENERATE_SESSION
   GENERATE_SCHEMA)
 
 include_directories(${Boost_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${BULLET_INCLUDE_DIRS}

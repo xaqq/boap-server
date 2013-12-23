@@ -28,8 +28,7 @@ public:
     virtual void accept(GeometryVisitor *v)
     {
         v->visit(this);
-    }
-    
+    }    
 
     float xHalfExtend() const {
         return xHalfExtend_;
@@ -42,7 +41,14 @@ public:
     float zHalfExtend() const {
         return zHalfExtend_;
     }
-
+    
+    void halfExtends(const std::array<float, 3> &he)    
+    {
+        xHalfExtend_ = he[0];
+        yHalfExtend_ = he[1];
+        zHalfExtend_ = he[2];
+    }
+    
 private:
     friend class odb::access;
     /**

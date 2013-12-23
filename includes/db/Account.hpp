@@ -16,6 +16,12 @@ namespace DB
 {
 #pragma db object pointer(std::shared_ptr)
 
+    /**
+     * A database model class for an account.
+     * 
+     * When a Client sucessfully authenticates, the corresponding account class is set
+     * to the client's account_ field.
+     */
     class Account
     {
     public:

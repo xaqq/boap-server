@@ -5,7 +5,8 @@
  * Created on December 19, 2013, 9:27 PM
  */
 
-#pragma once
+#ifndef GEOMETRYSPHERE_HPP
+#define GEOMETRYSPHERE_HPP
 
 #include <memory>
 #include "odb/core.hxx"
@@ -35,6 +36,11 @@ namespace DB
         {
             return radius_;
         }
+        
+        void radius(float r)
+        {
+            radius_ = r;
+        }
 
     private:
         friend class odb::access;
@@ -47,3 +53,5 @@ namespace DB
     };
 #pragma db object(GeometrySphere)
 };
+
+#endif
