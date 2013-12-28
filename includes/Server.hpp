@@ -17,6 +17,7 @@
 #include "APacket.hpp"
 #include "world/World.hpp"
 #include "observers/AMainThreadGameObserver.hpp"
+#include "world/AreaInstance.hpp"
 
 class APacket;
 class AClient;
@@ -26,119 +27,132 @@ class Server : public AMainThreadGameObserver
 {
 public:
 
-  typedef std::map<std::shared_ptr<AClient>, std::shared_ptr<Game>> ClientGameMap;
-  typedef std::map<std::shared_ptr<Game>, std::thread> GameThreadMap;
-  typedef std::list<std::shared_ptr<Game >> GameList;
-  typedef std::list<std::shared_ptr<AClient >> ClientList;
-  typedef SafeQueue<std::shared_ptr<APacket >> PacketList;
-  typedef std::list<std::shared_ptr<APacketHandler >> PacketHandlerList;
+    typedef std::map<std::shared_ptr<AClient>, std::shared_ptr<Game >> ClientGameMap;
+    typedef std::map<std::shared_ptr<Game>, std::thread> GameThreadMap;
+    typedef std::list<std::shared_ptr<Game >> GameList;
+    typedef std::list<std::shared_ptr<AClient >> ClientList;
+    typedef SafeQueue<std::shared_ptr<APacket >> PacketList;
+    typedef std::list<std::shared_ptr<APacketHandler >> PacketHandlerList;
+
+    typedef std::vector<std::shared_ptr<AreaInstance >> InstanceList;
 
 
-  Server(const Server& orig) = delete;
-  virtual ~Server();
+    Server(const Server& orig) = delete;
+    virtual ~Server();
 
-  static Server &instance();
+    static Server &instance();
 
-  /**
-   * Call to shutdown the server;
-   */
-  void stop();
+    /**
+     * Call to shutdown the server;
+     */
+    void stop();
 
-  /**
-   * Server main loop;
-   */
-  void run();
+    /**
+     * Server main loop;
+     */
+    void run();
 
-  /**
-   * Asynchronously add the client to the server's client list.
-   * This function is thread safe, because it simply queue the call
-   * @param c
-   */
-  void addClient(std::shared_ptr<AClient> c);
+    /**
+     * Asynchronously add the client to the server's client list.
+     * This function is thread safe, because it simply queue the call
+     * @param c
+     */
+    void addClient(std::shared_ptr<AClient> c);
 
-  /**
-   * Asynchronously remove the client to the server's client list.
-   * This function is thread safe, because it simply queue the call
-   * @param c
-   */
-  void removeClient(std::shared_ptr<AClient> c);
+    /**
+     * Asynchronously remove the client to the server's client list.
+     * This function is thread safe, because it simply queue the call
+     * @param c
+     */
+    void removeClient(std::shared_ptr<AClient> c);
 
 
-  /**
-   * This returns the list of client known by the server. This is intended for use by packet handler
-   * @return  list of client
-   */
-  const ClientList &clients() const;
+    /**
+     * This returns the list of client known by the server. This is intended for use by packet handler
+     * @return  list of client
+     */
+    const ClientList &clients() const;
 
-  /**
-   * Use to schedule a call of f() in the server's thread.
-   * This method is thread safe.
-   * @param f
-   */
-  void post(std::function<void() > f)
-  {
-    operationQueue_.push(f);
-  }
+    /**
+     * Use to schedule a call of f() in the server's thread.
+     * This method is thread safe.
+     * @param f
+     */
+    void post(std::function<void() > f)
+    {
+        operationQueue_.push(f);
+    }
 
-  /**
-   * Use to push a packet that will be handled later; 
-   * This is thread safe;
-   */
-  void pushPacket(std::shared_ptr<APacket> p)
-  {
-    packets_.push(p);
-  }
+    /**
+     * Use to push a packet that will be handled later; 
+     * This is thread safe;
+     */
+    void pushPacket(std::shared_ptr<APacket> p)
+    {
+        packets_.push(p);
+    }
 
-  /**
-   * Add a game and start a thread for it.
-   * Making the game name is unique the role of the CreateGameHandler class.
-   */
-  void addGame(std::shared_ptr<Game> g);
+    /**
+     * Add a game and start a thread for it.
+     * Making the game name is unique the role of the CreateGameHandler class.
+     */
+    void addGame(std::shared_ptr<Game> g);
 
-  const GameList &games() const;
-  
+    const GameList &games() const;
+
 private:
-  Server();
-  
-  /**
-   * Initialize the server, creating required area instance if required, loading up previously saved ones, etc
-   * @return 
-   */
-  bool initialize();
+    Server();
 
-  static Server *instance_;
+    /**
+     * Initialize the server, creating required area instance if required, loading up previously saved ones, etc
+     * @return 
+     */
+    bool initialize();
+    
+    /**
+     * Perform some cleanup before returning from run();
+     * Currently, it erase all AreaInstance, so each start is a clean, new one.
+     */
+    void cleanup();
 
-  std::atomic_bool isRunning_;
+    static Server *instance_;
 
-  ClientList clients_;
-  PacketList packets_;
-  PacketHandlerList packetHandlers_;
+    std::atomic_bool isRunning_;
 
-  /**
-   * Invoke queued handler;
-   */
-  void flush_operations();
+    ClientList clients_;
+    PacketList packets_;
+    PacketHandlerList packetHandlers_;
 
-  /**
-   * Invoke packet handler;
-   */
-  void handle_packets();
+    /**
+     * Invoke queued handler;
+     */
+    void flush_operations();
 
-  SafeQueue<std::function<void () >> operationQueue_;
+    /**
+     * Invoke packet handler;
+     */
+    void handle_packets();
+
+    SafeQueue<std::function<void () >> operationQueue_;
 
 
-  /**
-   * Map between client and game
-   */
+    /**
+     * AreaInstance the server is running
+     */
+    InstanceList instances_;
 
-  ClientGameMap clientGame_;
+    /**
+     * Map between client and game
+     */
 
-  GameList gameList_;
+    ClientGameMap clientGame_;
 
-  GameThreadMap gameThread_;
+    GameList gameList_;
 
-  void onGameStopped(std::shared_ptr<Game>, SMSGGameStatus::Status) override;
-  void onClientJoined(std::shared_ptr<Game> game, std::shared_ptr<Client> c) override;
+    GameThreadMap gameThread_;
+
+    void onGameStopped(std::shared_ptr<Game>, SMSGGameStatus::Status) override;
+    void onClientJoined(std::shared_ptr<Game> game, std::shared_ptr<Client> c) override;
 };
 
 #endif	/* SERVER_HPP */

@@ -109,9 +109,8 @@ bool Server::initialize()
     for (auto area : areas)
     {
         INFO("Area: id(" << area->id() << "), name(" << area->name() << ")");
-        std::shared_ptr<DB::AreaInstance> instance (new DB::AreaInstance());
-        instance->areaTemplate(area);
-        INFO("Creating instance: " << std::boolalpha<< DB::DAO::persist(instance));
+        std::shared_ptr<AreaInstance> areaInstance(new AreaInstance(area));
+        instances_.push_back(areaInstance);
     }
     return true;
 }
@@ -152,6 +151,19 @@ void Server::run()
     {
         gameThread.first->stop();
         gameThread.second.join();
+    }
+    
+    cleanup();
+}
+
+void Server::cleanup()
+{
+    for (auto areaInstance : instances_)
+    {
+        if (!areaInstance->erase())
+        {
+            WARN("Cannot erase areaInstance: " << areaInstance->uuid()());
+        }
     }
 }
 

@@ -61,6 +61,17 @@ class StatSheet
             moveSpeed_ = ms;
         }
 
+        /**
+         * Copy a Stat sheet. We copy all value except the id, so we end up having
+         * two stat sheet with the same stats.
+         */
+        StatSheet &operator=(const StatSheet &other)
+        {
+            health_ = other.health_;
+            mana_ = other.mana_;
+            moveSpeed_ = other.moveSpeed_;
+        }
+        
     private:
         friend class odb::access;
 

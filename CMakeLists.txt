@@ -98,6 +98,8 @@ src/world/ResourceEntity.cpp
 src/world/ResourceCollectorEntity.cpp
 src/world/PathFindResult.cpp
 
+src/world/AreaInstance.cpp
+src/world/GameObject.cpp
 src/world/WorldObject.cpp
 
 ##Utils

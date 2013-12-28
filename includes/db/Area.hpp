@@ -52,14 +52,9 @@ namespace DB
             return instanceRequired_;
         }
         
-        /**
-         * Build a vector of GameObjectSpawn object.
-         * This method can be costly, because it queries the database to load the collection.
-         */
-        GameObjectSpawnVector spawnData();
-
     public:
         friend class odb::access;
+        friend class DAO;
 
 #pragma db id auto 
         unsigned long id_;
@@ -77,7 +72,7 @@ namespace DB
 #pragma db inverse(area_)
         /**
          * Collection of Spawn information for GameObject in this Area.
-         * This is lazy
+         * This is lazy. Use the DAO class to retrieve those.
          */
         LazyGameObjectSpawnVector goSpawnData_;
     };

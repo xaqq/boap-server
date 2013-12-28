@@ -5,8 +5,8 @@
  * Created on December 21, 2013, 11:46 PM
  */
 
-#ifndef GAMEOBJECT_HPP
-#define	GAMEOBJECT_HPP
+#ifndef DB_GAMEOBJECT_HPP
+#define	DB_GAMEOBJECT_HPP
 
 
 #include <memory>
@@ -16,6 +16,7 @@
 #include "StatSheet.hpp"
 #include "GeometryObject.hpp"
 #include "GameObjectTemplate.hpp"
+#include "AreaInstance.hpp"
 
 namespace DB
 {
@@ -77,9 +78,24 @@ namespace DB
             return uuid_;
         }
 
+        void uuid(const std::string &str)
+        {
+            uuid_ = str;
+        }
+
         std::shared_ptr<GameObjectTemplate> goTemplate()
         {
             return goTemplate_;
+        }
+
+        std::shared_ptr<class AreaInstance> instance()
+        {
+            return area_.lock();
+        }
+
+        void instance(std::shared_ptr<AreaInstance> a)
+        {
+            area_ = a;
         }
 
     protected:
@@ -149,8 +165,8 @@ namespace DB
 }
 
 #ifdef ODB_COMPILER
- #include "AreaInstance.hpp"
+#include "AreaInstance.hpp"
 #endif
 
-#endif	/* GAMEOBJECT_HPP */
+#endif	/* DB_GAMEOBJECT_HPP */
 
