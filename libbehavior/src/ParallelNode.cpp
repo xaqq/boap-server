@@ -9,6 +9,12 @@ ParallelNode::ParallelNode(FAILURE_POLICY failurePolicy, SUCCESS_POLICY successP
 	succeedPolicy = successPolicy;
 	childrenStatus = NULL;
 }
+
+ParallelNode::~ParallelNode()
+{
+    delete childrenStatus;
+}
+
 void ParallelNode::init(void* agent)
 {
 	for (BehaviorTreeListIter iter = children.begin(); iter!= children.end(); iter++)
