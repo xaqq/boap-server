@@ -28,10 +28,14 @@ bool JoinGameHandler::handle(CMSGJoinGame* p)
     }
   for (auto game : Server::instance().games())
     {
-      if (game->uuid() == p->data_.gameuuid())
+      if (game->uuid().toString() == p->data_.gameuuid())
         {
           DEBUG("found game ... todo join");
-          ok = game->joinGame(client);
+
+
+          
+          // replace with something like character spawn ?
+//          ok = game->joinGame(client);
 //          game->registerObserver(client);
           if (ok)
             {

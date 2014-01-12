@@ -14,6 +14,5 @@ APacketHandler::~APacketHandler() { }
 
 bool APacketHandler::handle(APacket *p)
 {
-  DEBUG("APacketHandler handling APacket, nothing interesting here");
   return true;
 }

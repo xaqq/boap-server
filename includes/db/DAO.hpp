@@ -68,6 +68,28 @@ namespace DB
         DAO(const DAO& orig);
         virtual ~DAO();
 
+        template<typename T, typename PrimaryKey>
+        static std::shared_ptr<T > find(const PrimaryKey &id)
+        {
+            try
+            {
+                DatabasePtr db = DBManager::instance().db();
+
+                odb::transaction t(db->begin());
+                // t.tracer(odb::stderr_tracer);
+                std::shared_ptr<T> ptr = db->load<T>(id);
+                return ptr;
+            }
+            catch (const odb::recoverable &recoverableException)
+            {
+                WARN(recoverableException.what());
+            }
+            catch (const odb::exception& e)
+            {
+                ERROR(e.what());
+            }
+        }
+
         template<typename T>
         static std::vector<std::shared_ptr<T >> findAll()
         {
@@ -120,7 +142,7 @@ namespace DB
             }
             return false;
         }
-        
+
         template<typename T>
         static bool erase(std::shared_ptr<T> object)
         {

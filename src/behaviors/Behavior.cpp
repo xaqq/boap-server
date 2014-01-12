@@ -20,43 +20,46 @@ using namespace Behaviors;
 Behavior::Behavior() :
 brain_(new ParallelNode(/*FAIL_ON_ALL, SUCCEED_ON_ONE*/))
 {
-  // brain_->addChild((new RepeatNode(-1))->addChild(new Behaviors::Speak("lama")))
-  //        ->addChild(new Behaviors::Move());
+    // brain_->addChild((new RepeatNode(-1))->addChild(new Behaviors::Speak("lama")))
+    //        ->addChild(new Behaviors::Move());
 
-  ProbabilityNode *sayNode = new ProbabilityNode();
-  sayNode->addChild(new Speak("Lama"), 2);
-  sayNode->addChild(new Speak("Kikoo :D"), 1);
+    ProbabilityNode *sayNode = new ProbabilityNode();
+    sayNode->addChild(new Speak("Lama"), 2);
+    sayNode->addChild(new Speak("Kikoo :D"), 1);
 
-  brain_->addChild((new RepeatNode(-1))
-                   ->addChild(((new SequentialNode())
-                               ->addChild(new FindNearestResource())
-                               ->addChild(new Speak("Going toward my new destination !"))
-                               ->addChild(new MoveToDestination())
-                               ->addChild(new CooldownDecorator(Milliseconds(2000), new CollectResource()))
-                               ->addChild(new Speak("Done collecting resources")))))
-          ->addChild((new RepeatNode(-1))
-                     ->addChild(new CooldownDecorator(Milliseconds(10000), sayNode)));
+    brain_->addChild((new RepeatNode(-1))
+            ->addChild(((new SequentialNode())
+            ->addChild(new FindNearestResource())
+            ->addChild(new Speak("Going toward my new destination !"))
+            ->addChild(new MoveToDestination())
+            ->addChild(new CooldownDecorator(Milliseconds(2000), new CollectResource()))
+            ->addChild(new Speak("Done collecting resources")))))
+            ->addChild((new RepeatNode(-1))
+            ->addChild(new CooldownDecorator(Milliseconds(10000), sayNode)));
 }
 
 Behavior::~Behavior()
 {
-  DEBUG("DELETING BEHAVIOR");
-  delete brain_;
+    DEBUG("DELETING BEHAVIOR");
+    delete brain_;
 }
 
-void Behavior::update(GameEntity *e)
+bool Behavior::update(void *param)
 {
-  switch (brain_->execute(e))
+    switch (brain_->execute(param))
     {
-    case BT_FAILURE:
-      WARN("Behavior Tree failure");
-      break;
-    case BT_SUCCESS:
-      WARN("Behavior tree success");
-      break;
-    case BT_RUNNING:
-      // WARN("Behavior tree running");
-      break;
+        case BT_FAILURE:
+            WARN("Behavior Tree failure");
+            return false;
+            break;
+        case BT_SUCCESS:
+            WARN("Behavior tree success");
+            return true;
+            break;
+        case BT_RUNNING:
+            // WARN("Behavior tree running");
+            return true;
+            break;
     }
 }
 

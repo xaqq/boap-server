@@ -24,12 +24,12 @@ void Client::udpAuthCode(std::string code)
     udpAuthCode_ = std::move(code);
 }
 
-void Client::GameObserver::onClientJoined(std::shared_ptr<Game>, std::shared_ptr<Client> c)
+void Client::GameObserver::onClientJoined(std::shared_ptr<AreaInstance>, std::shared_ptr<Client> c)
 {
 
 }
 
-void Client::GameObserver::onGameStopped(std::shared_ptr<Game>, SMSGGameStatus::Status st)
+void Client::GameObserver::onInstanceStopped(std::shared_ptr<AreaInstance>, SMSGGameStatus::Status st)
 {
 
 }

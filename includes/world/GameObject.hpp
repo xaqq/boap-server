@@ -41,7 +41,7 @@ public:
      */
     virtual bool erase();
     
-    virtual bool save();
+//    virtual bool save();
 
 private:
     Uuid uuid_;

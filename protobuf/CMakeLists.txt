@@ -6,6 +6,8 @@ find_package(Protobuf REQUIRED)
 add_definitions("-g -W -Wall -std=c++11")
 PROTOBUF_GENERATE_CPP (PROTO_SRCS PROTO_HRDS 
 CMSGAuth.proto SMSGAuth.proto
+CMSGGameObjectInfo.proto
+SMSGGameObjectInfo.proto
 CMSGCreateGame.proto
 SMSGCreateGame.proto
 SMSGGameList.proto

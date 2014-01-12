@@ -16,20 +16,19 @@
 #include "SafeQueue.hpp"
 #include "APacket.hpp"
 #include "world/World.hpp"
-#include "observers/AMainThreadGameObserver.hpp"
+#include "observers/AMainThreadInstanceObserver.hpp"
 #include "world/AreaInstance.hpp"
 
 class APacket;
 class AClient;
 class APacketHandler;
 
-class Server : public AMainThreadGameObserver
+class Server : public AMainThreadInstanceObserver
 {
 public:
 
-    typedef std::map<std::shared_ptr<AClient>, std::shared_ptr<Game >> ClientGameMap;
-    typedef std::map<std::shared_ptr<Game>, std::thread> GameThreadMap;
-    typedef std::list<std::shared_ptr<Game >> GameList;
+    typedef std::map<std::shared_ptr<AClient>, std::shared_ptr<AreaInstance >> ClientInstanceMap;
+    typedef std::map<std::shared_ptr<AreaInstance>, std::shared_ptr<std::thread>> InstanceThreadMap;
     typedef std::list<std::shared_ptr<AClient >> ClientList;
     typedef SafeQueue<std::shared_ptr<APacket >> PacketList;
     typedef std::list<std::shared_ptr<APacketHandler >> PacketHandlerList;
@@ -92,13 +91,16 @@ public:
         packets_.push(p);
     }
 
+    
     /**
-     * Add a game and start a thread for it.
-     * Making the game name is unique the role of the CreateGameHandler class.
+     * A new AreaInstance is ready to run.
+     * This method will setup a thread for the instance to run.
+     * 
+     * The instance will self-initialize itself, in its own thread.
      */
-    void addGame(std::shared_ptr<Game> g);
-
-    const GameList &games() const;
+    void registerInstance(std::shared_ptr<AreaInstance> i);
+    
+    const InstanceList &games() const;
 
 private:
     Server();
@@ -145,14 +147,12 @@ private:
      * Map between client and game
      */
 
-    ClientGameMap clientGame_;
+    ClientInstanceMap clientInstance_;
 
-    GameList gameList_;
+    InstanceThreadMap instancesThread_;
 
-    GameThreadMap gameThread_;
-
-    void onGameStopped(std::shared_ptr<Game>, SMSGGameStatus::Status) override;
-    void onClientJoined(std::shared_ptr<Game> game, std::shared_ptr<Client> c) override;
+    void onInstanceStopped(std::shared_ptr<AreaInstance>, SMSGGameStatus::Status) override;
+    void onClientJoined(std::shared_ptr<AreaInstance> game, std::shared_ptr<Client> c) override;
 };
 
 #endif	/* SERVER_HPP */

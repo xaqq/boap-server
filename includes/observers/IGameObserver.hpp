@@ -31,9 +31,9 @@ public:
   virtual ~IGameObserver() { }
 
   /**
-   * When a game stopped, it calls this method of the observer;
-   * The observer will then ensure to call onGameStopped();
-   * @param game
+   * When a instance stopped, it calls this method of the observer;
+   * The observer will then ensure to call onInstanceStopped();
+   * @param instance
    * @param st
    */
   virtual void gameStopped(std::shared_ptr<Game> game, SMSGGameStatus::Status st)

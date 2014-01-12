@@ -12,10 +12,10 @@
 #include <memory>
 #include "ProtobufDef.hpp"
 #include "AClient.hpp"
-#include "observers/AMainThreadGameObserver.hpp"
+#include "observers/AMainThreadInstanceObserver.hpp"
 #include "db/Account.hpp"
 
-class Game;
+class AreaInstance;;
 
 class Client : public AClient
 {
@@ -29,14 +29,14 @@ public:
      * the multiple inheritance of shared_from_this();
      * 
      */
-    class GameObserver : public AMainThreadGameObserver
+    class GameObserver : public AMainThreadInstanceObserver
     {
     private:
         /**
          * This means that someone joined the game this client is in
          */
-        void onClientJoined(std::shared_ptr<Game>, std::shared_ptr<Client> c);
-        void onGameStopped(std::shared_ptr<Game>, SMSGGameStatus::Status st);
+        void onClientJoined(std::shared_ptr<AreaInstance>, std::shared_ptr<Client> c);
+        void onInstanceStopped(std::shared_ptr<AreaInstance>, SMSGGameStatus::Status st);
     };
 
     friend class GameObserver;

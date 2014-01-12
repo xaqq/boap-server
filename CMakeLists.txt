@@ -99,6 +99,7 @@ src/world/ResourceCollectorEntity.cpp
 src/world/PathFindResult.cpp
 
 src/world/AreaInstance.cpp
+src/world/AreaInstanceBuilder.cpp
 src/world/GameObject.cpp
 src/world/WorldObject.cpp
 
@@ -122,10 +123,11 @@ src/Server.cpp
 src/exceptions/WorldFailedInit.cpp
 
 ## Observer
-src/observers/AMainThreadGameObserver.cpp
+src/observers/AMainThreadInstanceObserver.cpp
 
 ## Behavior
 src/behaviors/Behavior.cpp
+src/behaviors/Callable.cpp
 src/behaviors/Speak.cpp
 src/behaviors/Move.cpp
 src/behaviors/MoveToDestination.cpp
@@ -149,6 +151,7 @@ odb_gen/Account_odb.cpp
 odb_gen/Area_odb.cpp
 odb_gen/AreaInstance_odb.cpp
 odb_gen/GameObject_odb.cpp
+odb_gen/Character_odb.cpp
 odb_gen/GameObjectTemplate_odb.cpp
 odb_gen/GameObjectSpawn_odb.cpp
 odb_gen/GeometryObject_odb.cpp
@@ -163,6 +166,7 @@ ${CMAKE_SOURCE_DIR}/includes/db/Account.hpp
 ${CMAKE_SOURCE_DIR}/includes/db/Area.hpp
 ${CMAKE_SOURCE_DIR}/includes/db/AreaInstance.hpp
 ${CMAKE_SOURCE_DIR}/includes/db/GameObject.hpp
+${CMAKE_SOURCE_DIR}/includes/db/Character.hpp
 ${CMAKE_SOURCE_DIR}/includes/db/GameObjectTemplate.hpp
 ${CMAKE_SOURCE_DIR}/includes/db/GameObjectSpawn.hpp
 ${CMAKE_SOURCE_DIR}/includes/db/GeometryObject.hpp

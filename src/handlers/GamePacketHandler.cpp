@@ -23,9 +23,9 @@ bool GamePacketHandler::handle(CMSGJoinGame *p)
   
   for (auto game : Server::instance().games())
     {
-      if (game->uuid() == p->data_.gameuuid())
+      if (game->uuid().toString() == p->data_.gameuuid())
         {
-          game->pushPacket(std::shared_ptr<APacket>(new CMSGJoinGame(*p)));
+  //        game->pushPacket(std::shared_ptr<APacket>(new CMSGJoinGame(*p)));
         }
     }
 
